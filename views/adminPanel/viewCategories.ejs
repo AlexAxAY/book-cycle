@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Add Products</title>
+
+    <!-- css -->
+    <link rel="stylesheet" href="/admin/stylesheets/viewCategories.css" />
+
+    <!-- bootstrap -->
+    <%- include("../partials/admin/bootLink.ejs") %>
+
+    <!-- google fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Port+Lligat+Slab&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <header><%- include("../partials/admin/adminNavbar.ejs") %></header>
+    <section class="container">
+      <div
+        class="main-section d-flex"
+        style="min-height: calc(100vh - 146px); flex-direction: column"
+      >
+        <div class="row">
+          <% datas.forEach((data) => { %> <% if (!data.is_deleted) { %>
+          <!-- Check if is_deleted is false -->
+          <div class="col-12 col-md-6 col-lg-4 col-xl-3 mb-3">
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title"><%= data.category %></h5>
+                <p class="card-text">
+                  <%= data.description || "No description given." %>
+                </p>
+                <a
+                  href="/admin/manage-category/<%= data._id %>"
+                  class="btn btn-outline-primary btn-sm"
+                  >Update</a
+                >
+                <form
+                  action="/admin/manage-category/<%= data._id %>?_method=DELETE"
+                  method="POST"
+                  style="display: inline"
+                >
+                  <button type="submit" class="btn btn-outline-danger btn-sm">
+                    Delete
+                  </button>
+                </form>
+              </div>
+            </div>
+          </div>
+          <% } %> <% }) %>
+        </div>
+      </div>
+    </section>
+
+    <!-- footer -->
+    <%- include("../partials/admin/adminFooter.ejs") %>
+
+    <!-- bootstrap -->
+    <%- include("../partials/admin/bootScript.ejs") %>
+  </body>
+</html>

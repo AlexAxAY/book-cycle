@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Add Products</title>
+
+    <!-- css -->
+    <link rel="stylesheet" href="/admin/stylesheets/categoryManagement.css" />
+
+    <!-- bootstrap -->
+    <%- include("../partials/admin/bootLink.ejs") %>
+
+    <!-- google fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Port+Lligat+Slab&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <header><%- include("../partials/admin/adminNavbar.ejs") %></header>
+    <section class="main-section">
+      <div
+        class="container d-flex justify-content-center align-items-center"
+        style="min-height: calc(100vh - 146px); flex-direction: column"
+      >
+        <h1 class="mb-5 mt-5">Manage Category</h1>
+        <div
+          class="alert alert-warning alert-dismissible fade show d-none"
+          role="alert"
+          id="alert-message"
+        >
+          <span id="alert-text"></span>
+          <button
+            type="button"
+            class="btn-close"
+            aria-label="Close"
+            id="close-button"
+          ></button>
+        </div>
+        <form class="w-50 text-center mb-auto" id="form">
+          <div class="mb-3">
+            <label for="category" class="form-label"
+              >Category<span style="color: red">*</span></label
+            >
+            <input
+              type="text"
+              class="form-control"
+              id="category"
+              name="category"
+            />
+          </div>
+
+          <div class="mb-3">
+            <label for="description" class="form-label">Description</label>
+            <textarea
+              class="form-control"
+              id="description"
+              name="description"
+              rows="2"
+            ></textarea>
+          </div>
+
+          <button type="submit" class="btn btn-primary mb-3">Save</button>
+        </form>
+      </div>
+    </section>
+
+    <!-- footer -->
+    <%- include("../partials/admin/adminFooter.ejs") %>
+
+    <!-- bootstrap -->
+    <%- include("../partials/admin/bootScript.ejs") %>
+
+    <!-- js validation file -->
+    <script src="/admin/front-end-validation/categoryFormValidation.js"></script>
+
+    <!-- axios -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  </body>
+</html>

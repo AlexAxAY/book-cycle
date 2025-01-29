@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+    <!-- css -->
+    <link rel="stylesheet" href="/admin/stylesheets/singleProduct.css" />
+
+    <!-- bootstrap -->
+    <%- include("../partials/admin/bootLink.ejs") %>
+  </head>
+  <body>
+    <!-- navbar -->
+    <header><%- include("../partials/admin/adminNavbar.ejs") %></header>
+
+    <!-- alert -->
+    <div
+      id="alert"
+      class="alert alert-success text-center d-none"
+      role="alert"
+      style="
+        width: fit-content;
+        position: fixed;
+        left: 50%;
+        transform: translateX(-50%);
+        top: 10%;
+        z-index: 1000;
+      "
+    ></div>
+
+    <!-- main section -->
+    <section>
+      <div class="container py-5" style="min-height: calc(100vh - 146px)">
+        <div class="row">
+          <div class="col-md-6">
+            <!-- Carousel for Product Images -->
+            <div
+              id="productCarousel"
+              class="carousel slide"
+              data-bs-ride="carousel"
+              style="max-width: 60%; margin: 0 auto"
+            >
+              <div class="carousel-inner">
+                <% product.images.forEach((image, index) => { %>
+                <div class="carousel-item <%= index === 0 ? 'active' : '' %>">
+                  <img
+                    src="<%= image.url %>"
+                    class="d-block w-100"
+                    style="max-height: 500px"
+                    alt="<%= product.name %> image <%= index + 1 %>"
+                  />
+                </div>
+                <% }) %>
+              </div>
+              <button
+                class="carousel-control-prev"
+                type="button"
+                data-bs-target="#productCarousel"
+                data-bs-slide="prev"
+              >
+                <span
+                  class="carousel-control-prev-icon"
+                  aria-hidden="true"
+                ></span>
+                <span class="visually-hidden">Previous</span>
+              </button>
+              <button
+                class="carousel-control-next"
+                type="button"
+                data-bs-target="#productCarousel"
+                data-bs-slide="next"
+              >
+                <span
+                  class="carousel-control-next-icon"
+                  aria-hidden="true"
+                ></span>
+                <span class="visually-hidden">Next</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <h2><%= product.name %></h2>
+            <p><strong>Author:</strong> <%= product.author %></p>
+            <p><strong>Category:</strong> <%= product.category %></p>
+            <p><strong>Price:</strong> ₹<%= product.price %></p>
+            <p><strong>Description:</strong> <%= product.description %></p>
+            <p>
+              <strong>Publisher:</strong> <%= product.publisher ?
+              product.publisher : 'Not Available' %>
+            </p>
+            <p><strong>Stock Status:</strong> <%= product.stock %></p>
+            <p>
+              <strong>Discount:</strong> <%= product.discount %> <%=
+              product.discount_type === 'percentage' ? '%' : '₹' %>
+            </p>
+            <p><strong>Final Price:</strong> ₹<%= product.final_price %></p>
+
+            <p>
+              <strong>Ratings:</strong> <%= product.avg_rating ?
+              product.avg_rating : 'N/A' %>
+            </p>
+
+            <!-- Modal -->
+            <div
+              class="modal fade"
+              id="exampleModal"
+              tabindex="-1"
+              aria-labelledby="exampleModalLabel"
+              aria-hidden="true"
+            >
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">
+                      Confirmation
+                    </h1>
+                    <button
+                      type="button"
+                      class="btn-close"
+                      data-bs-dismiss="modal"
+                      aria-label="Close"
+                    ></button>
+                  </div>
+                  <div class="modal-body">
+                    Are you sure you want to delete <%= product.name %>?
+                  </div>
+                  <div class="modal-footer">
+                    <button
+                      type="button"
+                      class="btn btn-secondary"
+                      data-bs-dismiss="modal"
+                    >
+                      Close
+                    </button>
+                    <button
+                      type="button"
+                      id="dlt-button"
+                      class="btn btn-danger"
+                      data-bs-dismiss="modal"
+                    >
+                      Yes
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Update and Delete Buttons -->
+            <div class="mt-4">
+              <a
+                href="/admin/product/<%= product._id %>"
+                class="btn btn-primary btn-sm"
+                >Update</a
+              >
+
+              <button
+                type="button"
+                class="btn btn-danger btn-sm"
+                data-bs-toggle="modal"
+                data-bs-target="#exampleModal"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- footer -->
+    <%- include("../partials/admin/adminFooter.ejs") %>
+
+    <!-- bootstrap -->
+    <%- include("../partials/admin/bootScript.ejs") %>
+
+    <!-- js file -->
+    <script src="/admin/front-end-validation/productDeleteValidation.js"></script>
+
+    <!-- axios -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  </body>
+</html>
