@@ -8,7 +8,13 @@ const productSchema = new mongoose.Schema(
     description: { type: String, required: true, trim: true },
     publisher: { type: String, trim: true, default: null },
     name: { type: String, required: true, trim: true },
-    images: [{ url: String, filename: String }],
+    images: [
+      {
+        original_url: { type: String },
+        cropped_url: { type: String },
+        filename: { type: String },
+      },
+    ],
     author: { type: String, required: true, trim: true },
     avg_rating: { type: Number, trim: true },
     rating_count: { type: Number, trim: true },

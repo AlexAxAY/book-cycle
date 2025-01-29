@@ -21,6 +21,8 @@ document.addEventListener("DOMContentLoaded", () => {
     "publish_date",
   ];
 
+  let isSubmitting = false; // Flag to prevent multiple submissions
+
   // Function to validate the file input
   function validateImageInput() {
     const imageInput = document.getElementById("images");
@@ -44,7 +46,8 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // Listen to the file input change event to restrict file selection
-  document.getElementById("images").addEventListener("change", function () {
+  document.getElementById("images").addEventListener("change", function (e) {
+    e.preventDefault();
     const files = this.files;
 
     // If more than 3 files are selected, reset the input and show an alert
@@ -54,8 +57,22 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
+  document.getElementById("images").addEventListener("change", function (e) {
+    e.preventDefault();
+    const files = this.files;
+
+    // If more than 3 files are selected, reset the input and show an alert
+    if (files.length > 3) {
+      this.value = ""; // Clear the file input
+      alert("You can only select up to 3 images");
+    }
+  });
+
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
+
+    if (isSubmitting) return; // Prevent multiple submissions
+    isSubmitting = true;
 
     let isValid = true;
 
@@ -76,12 +93,35 @@ document.addEventListener("DOMContentLoaded", () => {
       isValid = false;
     }
 
-    // If any field is invalid, stop further processing
-    if (!isValid) return;
+    // If any field is invalid, reset the flag and stop further processing
+    if (!isValid) {
+      isSubmitting = false;
+      return;
+    }
+
+    // Collect cropped images data
+    const croppedImages = [];
+    document.querySelectorAll(".cropped-image-input").forEach((input) => {
+      croppedImages.push(input.value);
+    });
+
+    console.log("Cropped Images before stringyfying:", croppedImages);
 
     // Proceed with form submission if all fields are valid
     try {
       const formData = new FormData(form);
+
+      // Append cropped images to formData as a JSON string
+
+      croppedImages.forEach((image, index) => {
+        formData.append(`cropped_images[${index}]`, image); // Key: "cropped_images[0]", "cropped_images[1]", etc.
+      });
+
+      // Debug FormData to check values
+      for (let pair of formData.entries()) {
+        console.log(pair[0], pair[1]); // This should log each image as a Base64 string, not a File
+      }
+
       const response = await axios.post("/admin/add-products", formData);
 
       // Create alert container
@@ -99,6 +139,7 @@ document.addEventListener("DOMContentLoaded", () => {
         form.reset();
       }
     } catch (error) {
+      const alertText = document.getElementById("alert-text");
       console.error("Error submitting form:", error);
       alertBox.classList.remove("d-none", "alert-success");
       alertBox.classList.add("alert-warning");
@@ -106,6 +147,8 @@ document.addEventListener("DOMContentLoaded", () => {
         error.response && error.response.data.message
           ? error.response.data.message
           : "Something went wrong while submitting the form!";
+    } finally {
+      isSubmitting = false; // Reset the flag after submission is complete
     }
   });
 

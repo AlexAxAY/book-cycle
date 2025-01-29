@@ -127,7 +127,7 @@
                   <% product.images.forEach((image, index) => { %>
                   <div class="carousel-item <%= index === 0 ? 'active' : '' %>">
                     <img
-                      src="<%= image.url %>"
+                      src="<%= image.cropped_url || image.original_url %>"
                       class="d-block w-100"
                       alt="<%= product.name %>"
                       id="my-image"
@@ -162,7 +162,7 @@
               </div>
               <% } else { %>
               <img
-                src="<%= product.images[0]?.url || '/default-image.jpg' %>"
+                src="<%= product.images[0]?.cropped_url || product.images[0]?.original_url || '/default-image.jpg' %>"
                 class="card-img-top"
                 alt="<%= product.name %>"
               />
@@ -204,7 +204,7 @@
                 <p class="card-text text-warning">
                   <strong>Pre-loved Books</strong>
                 </p>
-                <% }else { %>
+                <% } else { %>
                 <p class="card-text text-success">
                   <strong>Yet to be loved</strong>
                 </p>

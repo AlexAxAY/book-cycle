@@ -46,9 +46,9 @@
                 <% product.images.forEach((image, index) => { %>
                 <div class="carousel-item <%= index === 0 ? 'active' : '' %>">
                   <img
-                    src="<%= image.url %>"
+                    src="<%= image.cropped_url || image.original_url %>"
                     class="d-block w-100"
-                    style="max-height: 500px"
+                    style="max-height: 500px; object-fit: cover"
                     alt="<%= product.name %> image <%= index + 1 %>"
                   />
                 </div>

@@ -231,7 +231,12 @@ const addProduct = async (req, res) => {
       description,
       publish_date,
       used,
+      cropped_images, // Extract cropped_images from the request body
     } = req.body;
+
+    console.log("request body:", req.body);
+
+    console.log("before parsing :", cropped_images);
 
     // Validate required fields and ensure price, discount, and count are numbers
     if (
@@ -267,15 +272,55 @@ const addProduct = async (req, res) => {
       stockStatus = "Limited stock";
     }
 
-    // Process image uploads from req.files
-    const images = [];
-    for (const file of req.files) {
-      console.log("whats inside the req file:", req.files);
-      images.push({
-        url: file.path, // Cloudinary provides the URL in `file.path`
-        filename: file.filename, // Cloudinary provides the filename
-      });
+    let croppedImagesArray = [];
+
+    // Check if cropped_images exists and is not empty
+    if (cropped_images) {
+      // Check if cropped_images is an object (which is what you are seeing in the log)
+      if (
+        typeof cropped_images === "object" &&
+        !Array.isArray(cropped_images)
+      ) {
+        // If it's an object, convert it to an array (if needed)
+        croppedImagesArray = Object.values(cropped_images);
+      } else if (typeof cropped_images === "string") {
+        // If it's a string, parse it as JSON
+        try {
+          croppedImagesArray = JSON.parse(cropped_images);
+          if (!Array.isArray(croppedImagesArray)) {
+            croppedImagesArray = [croppedImagesArray]; // Convert to array if it's a single item
+          }
+        } catch (error) {
+          console.error("Error parsing cropped_images:", error);
+          return res.status(400).json({
+            success: false,
+            message: "Invalid cropped_images format.",
+          });
+        }
+      }
     }
+
+    console.log("Parsed cropped images:", croppedImagesArray);
+
+    console.log("after parsing :", cropped_images);
+
+    // Process image uploads from req.files and include cropped URLs
+    const images = [];
+
+    if (req.files && req.files.length > 0) {
+      for (let i = 0; i < req.files.length; i++) {
+        const file = req.files[i];
+        const croppedUrl = croppedImagesArray[i] || null; // Prevent index error
+
+        images.push({
+          original_url: file.path, // Cloudinary provides this
+          cropped_url: croppedUrl, // Use corresponding cropped URL
+          filename: file.filename,
+        });
+      }
+    }
+
+    console.log("Processed images array:", images);
 
     // Calculate final price based on discount type
     const finalPrice =
@@ -396,13 +441,8 @@ const updateProduct = async (req, res) => {
     const { id } = req.params;
     console.log("Product ID:", id);
 
-    // Log raw JSON strings
-    console.log("Raw existingImages:", req.body.existingImages);
-    console.log("Raw existingCroppedImages:", req.body.existingCroppedImages);
-    console.log("Raw newImages:", req.body.newImages);
-
     // Parse JSON strings from req.body
-    const existingImages = Array.isArray(req.body.existingImages)
+    const existingImages = req.body.existingImages
       ? req.body.existingImages.map((img) => JSON.parse(img))
       : [];
     const existingCroppedImages = JSON.parse(
@@ -417,7 +457,8 @@ const updateProduct = async (req, res) => {
     // Process image uploads from req.files
     for (const file of req.files) {
       newImages.push({
-        url: file.path, // Cloudinary provides the URL in `file.path`
+        original_url: file.path, // Cloudinary provides the URL in `file.path`
+        cropped_url: null,
         filename: file.filename, // Cloudinary provides the filename
       });
     }
@@ -425,33 +466,28 @@ const updateProduct = async (req, res) => {
     console.log("Processed New Images:", newImages);
 
     // Combine all images into the images array
-    const images = existingImages.map((image) => ({
-      url: image.url,
-      filename: image.filename,
-    }));
+    const images = [];
 
-    existingCroppedImages.forEach((image) => {
+    existingImages.forEach((image) => {
+      const croppedImage = existingCroppedImages.find(
+        (img) => img.filename === image.filename
+      );
       images.push({
-        url: image.url,
+        original_url: image.url,
+        cropped_url: croppedImage ? croppedImage.url : null,
         filename: image.filename,
       });
     });
 
     newImages.forEach((image) => {
       images.push({
-        url: image.url,
+        original_url: image.original_url,
+        cropped_url: image.cropped_url,
         filename: image.filename,
       });
     });
 
-    // Remove duplicates based on URL
-    const uniqueImages = Array.from(new Set(images.map((a) => a.url))).map(
-      (url) => {
-        return images.find((a) => a.url === url);
-      }
-    );
-
-    console.log("Final Unique Images Array:", uniqueImages);
+    console.log("Final Images Array:", images);
 
     // Calculate final price based on discount type
     const finalPrice =
@@ -478,7 +514,7 @@ const updateProduct = async (req, res) => {
         publish_date: publish_date || null,
         used: used === "true",
         description,
-        images: uniqueImages,
+        images,
       },
       { new: true, runValidators: true }
     );

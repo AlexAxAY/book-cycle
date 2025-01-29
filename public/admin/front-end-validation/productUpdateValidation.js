@@ -18,11 +18,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const imageInput = document.getElementById("images");
   imageInput.addEventListener("input", () => {
-    const existingImages = document.querySelectorAll(
+    const existingImagesCount = document.querySelectorAll(
       "input[name='existingImages[]']"
     ).length;
-    const newImages = imageInput.files.length;
-    if (existingImages + newImages > 3) {
+    const newImagesCount = imageInput.files.length;
+    if (existingImagesCount + newImagesCount > 3) {
       imageInput.value = "";
       alert("Sorry, you cannot upload more than 3 images in total!");
     }
@@ -43,35 +43,47 @@ document.addEventListener("DOMContentLoaded", () => {
     try {
       const id = window.location.pathname.split("/").pop();
       const formData = new FormData(form);
+
       const existingImagesArray = Array.from(
         document.getElementsByName("existingImages[]")
       ).map((img) => JSON.parse(img.value));
 
       const previewImages = document.querySelectorAll("#image-previews img");
-      const newImagesArray = [],
-        existingCroppedImagesArray = [];
+      const newImagesArray = [];
+      const existingCroppedImagesArray = [];
+
       previewImages.forEach((img) => {
         const imageDetails = {
           url: img.src,
           filename: img.dataset.filename || null,
         };
+
         if (!img.dataset.originalSrc) {
           newImagesArray.push(imageDetails);
         } else if (img.src !== img.dataset.originalSrc) {
           existingCroppedImagesArray.push(imageDetails);
+
+          // Remove original image from UI and FormData
+          document
+            .querySelectorAll(`input[value='${img.dataset.originalSrc}']`)
+            .forEach((input) => {
+              input.remove();
+            });
+
+          // Remove original image from existingImagesArray
+          const originalIndex = existingImagesArray.findIndex(
+            (img) => img.url === img.dataset.originalSrc
+          );
+          if (originalIndex > -1) {
+            existingImagesArray.splice(originalIndex, 1);
+          }
         }
       });
 
-      const filteredExistingImages = existingImagesArray.filter(
-        (image) =>
-          !existingCroppedImagesArray.some(
-            (cropped) => cropped.url === image.url
-          )
-      );
-
-      filteredExistingImages.forEach((image) =>
-        formData.append("existingImages[]", JSON.stringify(image))
-      );
+      // Append remaining existing images and cropped images to formData
+      existingImagesArray.forEach((imageDetails) => {
+        formData.append("existingImages[]", JSON.stringify(imageDetails));
+      });
       formData.append(
         "existingCroppedImages",
         JSON.stringify(existingCroppedImagesArray)
@@ -79,6 +91,7 @@ document.addEventListener("DOMContentLoaded", () => {
       formData.append("newImages", JSON.stringify(newImagesArray));
 
       const response = await axios.put(`/admin/product/${id}`, formData);
+
       if (response.data.success) {
         alertBox.classList.remove("d-none", "alert-warning");
         alertBox.classList.add("alert-success");
@@ -89,7 +102,8 @@ document.addEventListener("DOMContentLoaded", () => {
         }, 2000);
       }
     } catch (error) {
-      alertBox.classList.remove("d-none", "alert-warning");
+      alertBox.classList.remove("d-none", "alert-success");
+      alertBox.classList.add("alert-warning");
       document.getElementById("alert-text").innerText =
         error.response?.data.message ||
         "Something went wrong while submitting the form!";

@@ -2,6 +2,7 @@ document.addEventListener("DOMContentLoaded", () => {
   let cropper; // Global reference to the Cropper instance
   const imageInput = document.getElementById("images");
   const imagePreviewsContainer = document.getElementById("image-previews");
+  const form = document.getElementById("productForm"); // Assuming you have a form element
 
   // Handle image selection and previewing
   imageInput.addEventListener("change", (event) => {
@@ -15,7 +16,6 @@ document.addEventListener("DOMContentLoaded", () => {
           const previewContainer = document.createElement("div");
           previewContainer.classList.add("image-preview-container");
 
-          // Create an image element for preview
           const imgElement = document.createElement("img");
           imgElement.src = originalImageSrc;
           imgElement.classList.add("preview-image");
@@ -23,16 +23,19 @@ document.addEventListener("DOMContentLoaded", () => {
           imgElement.style.maxHeight = "300px";
           previewContainer.appendChild(imgElement);
 
-          // Store original image as a data attribute
           imgElement.setAttribute("data-original-src", originalImageSrc);
 
-          // Create Crop button
+          const croppedInput = document.createElement("input");
+          croppedInput.type = "hidden";
+          croppedInput.name = "cropped_images";
+          croppedInput.classList.add("cropped-image-input");
+          previewContainer.appendChild(croppedInput);
+
           const cropButton = document.createElement("button");
           cropButton.textContent = "Crop";
           cropButton.classList.add("btn", "btn-primary", "crop-button");
           previewContainer.appendChild(cropButton);
 
-          // Create Save button (hidden initially)
           const saveButton = document.createElement("button");
           saveButton.textContent = "Save";
           saveButton.classList.add(
@@ -43,7 +46,6 @@ document.addEventListener("DOMContentLoaded", () => {
           );
           previewContainer.appendChild(saveButton);
 
-          // Create Edit button (hidden initially)
           const editButton = document.createElement("button");
           editButton.textContent = "Edit";
           editButton.classList.add(
@@ -54,21 +56,16 @@ document.addEventListener("DOMContentLoaded", () => {
           );
           previewContainer.appendChild(editButton);
 
-          // Create Remove button
           const removeButton = document.createElement("button");
           removeButton.textContent = "Remove";
           removeButton.classList.add("btn", "btn-danger", "remove-button");
           previewContainer.appendChild(removeButton);
 
-          // Append preview container to the image previews container
           imagePreviewsContainer.appendChild(previewContainer);
 
-          // Crop button functionality
-          cropButton.addEventListener("click", () => {
-            // Destroy any existing Cropper instance
+          cropButton.addEventListener("click", (event) => {
+            event.preventDefault();
             if (cropper) cropper.destroy();
-
-            // Initialize Cropper for the image preview
             cropper = new Cropper(imgElement, {
               aspectRatio: NaN,
               viewMode: 1,
@@ -76,38 +73,36 @@ document.addEventListener("DOMContentLoaded", () => {
               responsive: true,
             });
 
-            // Hide Crop button, show Save button
             cropButton.classList.add("d-none");
             saveButton.classList.remove("d-none");
           });
 
-          // Save button functionality to finalize cropping
-          saveButton.addEventListener("click", () => {
+          saveButton.addEventListener("click", (event) => {
+            event.preventDefault();
             if (cropper) {
               const canvas = cropper.getCroppedCanvas({
-                width: 300, // Desired width
-                height: 450, // Desired height
+                width: 300,
+                height: 450,
               });
 
-              // Replace the preview with the cropped image
               imgElement.src = canvas.toDataURL("image/jpeg");
 
-              // Destroy the Cropper instance
+              croppedInput.value = imgElement.src;
+
               cropper.destroy();
               cropper = null;
 
-              // Hide Save button, show Edit button
               saveButton.classList.add("d-none");
               editButton.classList.remove("d-none");
+
+              // Enable the form submission after image is cropped
+              form.querySelector('button[type="submit"]').disabled = false;
             }
           });
 
-          // Edit button functionality to re-enable cropping with the original image
-          editButton.addEventListener("click", () => {
-            // Reset the image to the original
+          editButton.addEventListener("click", (e) => {
+            e.preventDefault();
             imgElement.src = imgElement.getAttribute("data-original-src");
-
-            // Initialize Cropper for the image again
             cropper = new Cropper(imgElement, {
               aspectRatio: NaN,
               viewMode: 1,
@@ -115,12 +110,10 @@ document.addEventListener("DOMContentLoaded", () => {
               responsive: true,
             });
 
-            // Hide Edit button, show Save button
             editButton.classList.add("d-none");
             saveButton.classList.remove("d-none");
           });
 
-          // Remove button functionality to remove the image
           removeButton.addEventListener("click", () => {
             previewContainer.remove();
             if (cropper) {
@@ -132,6 +125,21 @@ document.addEventListener("DOMContentLoaded", () => {
 
         reader.readAsDataURL(file);
       });
+    }
+  });
+
+  // Prevent form submission if the cropped images are not populated
+  form.addEventListener("submit", (event) => {
+    // Check if the user has either uploaded an image or cropped one
+    const croppedImagesInput = form.querySelector(
+      "input[name='cropped_images']"
+    );
+    if (
+      croppedImagesInput &&
+      !croppedImagesInput.value &&
+      !imageInput.files.length
+    ) {
+      return;
     }
   });
 });

@@ -49,6 +49,17 @@ document.addEventListener("DOMContentLoaded", () => {
           removeButton.classList.add("btn", "btn-danger", "remove-button");
           previewContainer.appendChild(removeButton);
 
+          // Create Edit button (hidden initially)
+          const editButton = document.createElement("button");
+          editButton.textContent = "Edit";
+          editButton.classList.add(
+            "btn",
+            "btn-warning",
+            "edit-button",
+            "d-none"
+          );
+          previewContainer.appendChild(editButton);
+
           // Append preview container to the image previews container
           imagePreviewsContainer.appendChild(previewContainer);
 
@@ -66,9 +77,10 @@ document.addEventListener("DOMContentLoaded", () => {
               responsive: true,
             });
 
-            // Hide Crop button, show Save button
+            // Hide Crop button, show Save button and Edit button
             cropButton.classList.add("d-none");
             saveButton.classList.remove("d-none");
+            editButton.classList.remove("d-none");
           });
 
           // Save button functionality to finalize cropping
@@ -106,6 +118,19 @@ document.addEventListener("DOMContentLoaded", () => {
           removeButton.addEventListener("click", (event) => {
             event.preventDefault();
             previewContainer.remove();
+            if (cropper) {
+              cropper.destroy();
+              cropper = null;
+            }
+          });
+
+          // Edit button functionality to revert to the original image
+          editButton.addEventListener("click", (event) => {
+            event.preventDefault();
+            imgElement.src = imgElement.getAttribute("data-original-src");
+            cropButton.classList.remove("d-none");
+            saveButton.classList.add("d-none");
+            editButton.classList.add("d-none");
             if (cropper) {
               cropper.destroy();
               cropper = null;
