@@ -114,12 +114,12 @@ document.addEventListener("DOMContentLoaded", () => {
       // Append cropped images to formData as a JSON string
 
       croppedImages.forEach((image, index) => {
-        formData.append(`cropped_images[${index}]`, image); // Key: "cropped_images[0]", "cropped_images[1]", etc.
+        formData.append(`cropped_images[${index}]`, image);
       });
 
       // Debug FormData to check values
       for (let pair of formData.entries()) {
-        console.log(pair[0], pair[1]); // This should log each image as a Base64 string, not a File
+        console.log(pair[0], pair[1]);
       }
 
       const response = await axios.post("/admin/add-products", formData);
