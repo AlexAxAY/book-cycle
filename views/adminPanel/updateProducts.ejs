@@ -228,13 +228,18 @@
                 <% product.images.forEach((image, index) => { %>
                 <div class="image-preview-container">
                   <img
-                    src="<%= image.cropped_url !== null ? image.cropped_url : image.original_url %>"
+                    src="<%= image.cropped_url || image.original_url %>"
                     class="preview-image"
                     style="max-width: 100%; max-height: 300px;"
                     data-original-src="<%= image.original_url %>"
+                    data-cropped-src="<%= image.cropped_url %>"
                     data-filename="<%= image.filename %>" 
+                    data-id="<%= image._id %>"
                   />
-                  <input type="hidden" name="existingImages[]" value='{"original_url": "<%= image.original_url %>", "cropped_url": "<%= image.cropped_url %>", "filename": "<%= image.filename %>", "_id": "<%= image._id %>"}' />
+                  <input 
+                  type="hidden" 
+                  name="existingImages[]" 
+                 value='<%= JSON.stringify({ original_url: image.original_url, cropped_url: image.cropped_url, filename: image.filename,_id: image._id.toString()}) %>' />
 
     <!-- Crop Button for existing images -->
     <button type="button" class="btn btn-primary crop-button" data-url="<%= image.original_url %>">Crop</button>
