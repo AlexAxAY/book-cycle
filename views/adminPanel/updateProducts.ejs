@@ -228,7 +228,7 @@
                 <% product.images.forEach((image, index) => { %>
                 <div class="image-preview-container">
                   <img
-                    src="<%= image.cropped_url || image.original_url %>"
+                    src="<%= image.cropped_url !== null ? image.cropped_url : image.original_url %>"
                     class="preview-image"
                     style="max-width: 100%; max-height: 300px;"
                     data-original-src="<%= image.original_url %>"

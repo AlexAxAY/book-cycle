@@ -451,15 +451,22 @@ const updateProduct = async (req, res) => {
     const newImages = JSON.parse(req.body.newImages || "[]");
 
     // Process file uploads
+    const processedNewImages = [];
     if (req.files) {
       req.files.forEach((file) => {
-        newImages.push({
-          original_url: file.path,
+        processedNewImages.push({
+          original_url: file.path, // Cloudinary URL
           cropped_url: null,
           filename: file.filename,
+          isNew: true, // Flag new images
         });
       });
     }
+
+    const allNewImages = [
+      ...newImages.filter((img) => !img.isNew), // Existing new images from frontend
+      ...processedNewImages, // Freshly uploaded files
+    ];
 
     // Build images array
     const images = [];
@@ -474,7 +481,7 @@ const updateProduct = async (req, res) => {
         images.push({
           _id: originalImage._id,
           original_url: originalImage.original_url,
-          cropped_url: formImage.cropped_url || originalImage.cropped_url,
+          cropped_url: formImage.cropped_url,
           filename: originalImage.filename,
         });
       }
@@ -482,22 +489,15 @@ const updateProduct = async (req, res) => {
 
     // 2. Process modified existing images
     existingCroppedImages.forEach((modifiedImage) => {
-      // Match using both filename AND ID
       const existingIndex = images.findIndex(
         (img) =>
-          img.filename === modifiedImage.filename &&
-          img._id?.toString() === modifiedImage._id
+          img._id?.toString() === modifiedImage._id &&
+          img.filename === modifiedImage.filename
       );
 
       if (existingIndex > -1) {
         images[existingIndex].cropped_url = modifiedImage.url;
-
-        // Preserve original URL if missing
-        if (!images[existingIndex].original_url) {
-          images[existingIndex].original_url = modifiedImage.original_url;
-        }
       } else {
-        // Handle orphaned cropped images
         images.push({
           original_url: modifiedImage.original_url,
           cropped_url: modifiedImage.url,
@@ -508,11 +508,13 @@ const updateProduct = async (req, res) => {
     });
 
     // 3. Add new images
-    newImages.forEach((newImage) => {
+    allNewImages.forEach((newImage) => {
       images.push({
         original_url: newImage.original_url,
         cropped_url: newImage.cropped_url,
         filename: newImage.filename,
+        // Generate new ID for proper deduplication
+        _id: new mongoose.Types.ObjectId(),
       });
     });
 
@@ -521,7 +523,7 @@ const updateProduct = async (req, res) => {
     const seen = new Set();
 
     images.forEach((img) => {
-      const key = img._id ? img._id.toString() : img.filename;
+      const key = img._id.toString();
       if (!seen.has(key)) {
         seen.add(key);
         uniqueImages.push(img);
@@ -571,10 +573,16 @@ const updateProduct = async (req, res) => {
       product: updatedProduct,
     });
   } catch (err) {
-    console.error("Update error:", err);
+    console.error("Update error details:", {
+      error: err.message,
+      stack: err.stack,
+      body: req.body,
+      files: req.files,
+    });
     res.status(500).json({
       success: false,
       message: "Internal server error while updating product",
+      error: process.env.NODE_ENV === "development" ? err.message : undefined,
     });
   }
 };

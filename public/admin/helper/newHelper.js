@@ -244,17 +244,20 @@ document.addEventListener("DOMContentLoaded", () => {
         'input[name="existingImages[]"]'
       );
 
+      // Revert to original image
       imgElement.src = imgElement.dataset.originalSrc;
 
-      // Reset hidden input
+      // Clear cropped_url in hidden input
       const existingData = JSON.parse(hiddenInput.value);
-      existingData.cropped_url = null;
+      existingData.cropped_url = null; // Explicit null assignment
       hiddenInput.value = JSON.stringify(existingData);
 
+      // Reset UI state
       target.classList.add("d-none");
       cropButton.classList.remove("d-none");
       saveButton.classList.add("d-none");
 
+      // Cleanup cropper
       if (cropper) {
         cropper.destroy();
         cropper = null;
