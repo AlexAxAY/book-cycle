@@ -22,9 +22,11 @@ document.addEventListener("DOMContentLoaded", () => {
           imgElement.style.maxHeight = "300px";
           previewContainer.appendChild(imgElement);
 
+          // Store original URL in dataset
           imgElement.setAttribute("data-original-src", originalImageSrc);
+          imgElement.setAttribute("data-cropped-src", ""); // Initialize cropped URL
 
-          // When creating new images:
+          // Hidden input for new images
           const hiddenInput = document.createElement("input");
           hiddenInput.type = "hidden";
           hiddenInput.name = "newImages[]";
@@ -35,6 +37,7 @@ document.addEventListener("DOMContentLoaded", () => {
           });
           previewContainer.appendChild(hiddenInput);
 
+          // Buttons for new images
           const cropButton = document.createElement("button");
           cropButton.textContent = "Crop";
           cropButton.classList.add("btn", "btn-primary", "crop-button");
@@ -67,11 +70,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
           imagePreviewsContainer.appendChild(previewContainer);
 
-          // New image crop handler
+          // Crop button handler for new images
           cropButton.addEventListener("click", (event) => {
             event.preventDefault();
             if (cropper) cropper.destroy();
 
+            // Initialize cropper with the original image URL
             cropper = new Cropper(imgElement, {
               aspectRatio: NaN,
               viewMode: 1,
@@ -84,6 +88,7 @@ document.addEventListener("DOMContentLoaded", () => {
             editButton.classList.remove("d-none");
           });
 
+          // Save button handler for new images
           saveButton.addEventListener("click", (event) => {
             event.preventDefault();
             if (cropper) {
@@ -94,13 +99,14 @@ document.addEventListener("DOMContentLoaded", () => {
                 });
                 if (!canvas) throw new Error("Canvas creation failed");
 
+                // Update image source and cropped URL
                 imgElement.src = canvas.toDataURL("image/jpeg");
+                imgElement.setAttribute("data-cropped-src", imgElement.src);
 
+                // Update hidden input
                 const hiddenInput = previewContainer.querySelector(
                   'input[name="newImages[]"]'
                 );
-
-                // Update hidden input
                 const imageData = JSON.parse(hiddenInput.value);
                 imageData.cropped_url = imgElement.src;
                 hiddenInput.value = JSON.stringify(imageData);
@@ -114,18 +120,18 @@ document.addEventListener("DOMContentLoaded", () => {
             }
           });
 
+          // Remove button handler for new images
           removeButton.addEventListener("click", (event) => {
             event.preventDefault();
             previewContainer.remove();
 
-            // Get remaining files
+            // Reset input if no new images remain
             const remainingFiles = Array.from(
               imagePreviewsContainer.children
             ).filter((container) =>
               container.querySelector('input[name="newImages[]"]')
             ).length;
 
-            // Reset input only if no new images remain
             if (remainingFiles === 0) {
               imageInput.value = "";
             }
@@ -136,6 +142,7 @@ document.addEventListener("DOMContentLoaded", () => {
             }
           });
 
+          // Edit button handler for new images
           editButton.addEventListener("click", (event) => {
             event.preventDefault();
             if (cropper) {
@@ -143,9 +150,9 @@ document.addEventListener("DOMContentLoaded", () => {
               cropper = null;
             }
 
-            if (imgElement.dataset.originalSrc) {
-              imgElement.src = imgElement.dataset.originalSrc;
-            }
+            // Revert to original image
+            imgElement.src = imgElement.dataset.originalSrc;
+            imgElement.setAttribute("data-cropped-src", "");
 
             // Update hidden input
             const hiddenInput = previewContainer.querySelector(
@@ -155,6 +162,7 @@ document.addEventListener("DOMContentLoaded", () => {
             imageData.cropped_url = null;
             hiddenInput.value = JSON.stringify(imageData);
 
+            // Reset UI state
             cropButton.classList.remove("d-none");
             saveButton.classList.add("d-none");
             editButton.classList.add("d-none");
@@ -171,7 +179,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const target = event.target;
     const container = target.closest(".image-preview-container");
 
-    // Crop button handler
+    // Crop button handler for existing images
     if (target.classList.contains("crop-button") && container) {
       const imgElement = container.querySelector("img");
       const saveButton = container.querySelector(".save-button");
@@ -179,6 +187,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       if (cropper) cropper.destroy();
 
+      // Initialize cropper with the original image URL
       cropper = new Cropper(imgElement, {
         aspectRatio: NaN,
         viewMode: 1,
@@ -191,7 +200,7 @@ document.addEventListener("DOMContentLoaded", () => {
       editButton.classList.remove("d-none");
     }
 
-    // Save button handler
+    // Save button handler for existing images
     if (target.classList.contains("save-button") && container) {
       const imgElement = container.querySelector("img");
       const cropButton = container.querySelector(".crop-button");
@@ -208,16 +217,13 @@ document.addEventListener("DOMContentLoaded", () => {
           });
 
           if (canvas) {
+            // Update image source and cropped URL
             imgElement.src = canvas.toDataURL("image/jpeg");
+            imgElement.setAttribute("data-cropped-src", imgElement.src);
 
             // Update hidden input
             const existingData = JSON.parse(hiddenInput.value);
             existingData.cropped_url = imgElement.src;
-
-            if (!existingData.original_url) {
-              existingData.original_url = imgElement.dataset.originalSrc;
-            }
-
             hiddenInput.value = JSON.stringify(existingData);
           }
         }
@@ -235,7 +241,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
 
-    // Edit button handler
+    // Edit button handler for existing images
     if (target.classList.contains("edit-button") && container) {
       const imgElement = container.querySelector("img");
       const cropButton = container.querySelector(".crop-button");
@@ -246,10 +252,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
       // Revert to original image
       imgElement.src = imgElement.dataset.originalSrc;
+      imgElement.setAttribute("data-cropped-src", "");
 
       // Clear cropped_url in hidden input
       const existingData = JSON.parse(hiddenInput.value);
-      existingData.cropped_url = null; // Explicit null assignment
+      existingData.cropped_url = null;
       hiddenInput.value = JSON.stringify(existingData);
 
       // Reset UI state
@@ -264,7 +271,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
 
-    // Remove button handler
+    // Remove button handler for existing images
     if (target.classList.contains("remove-button") && container) {
       container.remove();
       if (cropper) {

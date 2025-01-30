@@ -29,13 +29,21 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const imageInput = document.getElementById("images");
   imageInput.addEventListener("input", () => {
+    // Count ALL images: existing + new previews + new files
     const existingImagesCount = document.querySelectorAll(
       "input[name='existingImages[]']"
     ).length;
-    const newImagesCount = imageInput.files.length;
-    if (existingImagesCount + newImagesCount > 3) {
+    const newPreviewImagesCount = document.querySelectorAll(
+      "input[name='newImages[]']"
+    ).length;
+    const newFilesCount = imageInput.files.length;
+
+    const totalImages =
+      existingImagesCount + newPreviewImagesCount + newFilesCount;
+
+    if (totalImages > 3) {
       imageInput.value = "";
-      alert("Sorry, you cannot upload more than 3 images in total!");
+      alert("Total images cannot exceed 3. Remove some images first!");
     }
   });
 
@@ -84,8 +92,17 @@ document.addEventListener("DOMContentLoaded", () => {
       const existingCount = document.querySelectorAll(
         'input[name="existingImages[]"]'
       ).length;
-      if (existingCount + newFileCount > 3) {
+      const newPreviewCount = document.querySelectorAll(
+        'input[name="newImages[]"]'
+      ).length;
+
+      if (existingCount + newPreviewCount > 3) {
         alert("Total images cannot exceed 3!");
+        return;
+      }
+
+      if (existingCount + newPreviewCount <= 0) {
+        alert("At least one image is required!");
         return;
       }
 
