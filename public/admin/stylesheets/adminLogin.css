@@ -37,3 +37,58 @@ body {
 .login p {
   color: white;
 }
+
+@media (max-width: 991px) {
+  .right-side {
+    border-left: none;
+  }
+
+  .left-side {
+    border-bottom: 1px solid white;
+  }
+}
+
+@media (max-width: 580px) {
+  .logo img {
+    width: 200px;
+    height: 170px;
+  }
+  .left-side {
+    width: 400px !important;
+  }
+  .firstP {
+    font-size: 40px !important;
+  }
+
+  .secP {
+    font-size: 18px !important;
+  }
+  .left-side {
+    border-bottom: none;
+    margin-top: auto !important;
+  }
+  .right-side {
+    margin-bottom: auto !important;
+  }
+}
+
+@media (max-width: 440px) {
+  .logo img {
+    width: 120px;
+    height: 100px;
+  }
+  .left-side {
+    width: 300px !important;
+  }
+  .firstP {
+    font-size: 30px !important;
+  }
+
+  .secP {
+    font-size: 15px !important;
+  }
+
+  .form-control {
+    width: 300px !important;
+  }
+}

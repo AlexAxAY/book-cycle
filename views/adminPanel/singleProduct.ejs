@@ -48,7 +48,6 @@
                   <img
                     src="<%= image.cropped_url || image.original_url %>"
                     class="d-block w-100"
-                    style="max-height: 500px; object-fit: cover"
                     alt="<%= product.name %> image <%= index + 1 %>"
                   />
                 </div>
@@ -178,6 +177,9 @@
 
     <!-- js file -->
     <script src="/admin/front-end-validation/productDeleteValidation.js"></script>
+
+    <!-- js logout validation file -->
+    <script src="/admin/front-end-validation/logoutValidation.js"></script>
 
     <!-- axios -->
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>

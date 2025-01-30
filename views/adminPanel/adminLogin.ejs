@@ -20,18 +20,35 @@
     />
   </head>
   <body>
+    <!-- alert -->
+    <div
+      class="alert alert-danger d-none tex-center d-flex"
+      id="alertBox"
+      role="alert"
+      style="
+        position: fixed;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: fit-content;
+        justify-content: center;
+        align-items: center;
+      "
+    ></div>
     <div class="main container">
-      <div class="main-frame d-flex">
-        <div class="left-side col-6">
+      <div class="main-frame row">
+        <div class="left-side col-12 col-lg-6">
           <div class="logo d-flex">
             <img src="/images/Screenshot 2025-01-23 163042.png" alt="logo" />
           </div>
         </div>
-        <div class="right-side col-6">
+        <div class="right-side col-12 col-lg-6">
           <div class="login d-flex">
-            <p style="font-size: 50px">Welcome</p>
+            <p style="font-size: 50px" class="firstP">Welcome</p>
 
-            <p style="font-size: 20px">PLEASE LOGIN TO ADMIN DASHBOARD</p>
+            <p style="font-size: 20px" class="secP">
+              PLEASE LOGIN TO ADMIN DASHBOARD
+            </p>
             <form class="signin-form">
               <div class="mb-3">
                 <label for="email" class="form-label"></label>
@@ -42,7 +59,7 @@
                   name="email"
                   aria-describedby="emailHelp"
                   placeholder="email"
-                  style="min-width: 400px"
+                  style="width: 400px"
                 />
               </div>
               <div class="mb-3">
@@ -71,5 +88,11 @@
     </div>
     <!-- bootsrtap -->
     <%- include("../partials/admin/bootScript.ejs") %>
+
+    <!-- Include Axios -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+    <!-- Include validation script -->
+    <script src="/admin/front-end-validation/adminLoginValidation.js"></script>
   </body>
 </html>

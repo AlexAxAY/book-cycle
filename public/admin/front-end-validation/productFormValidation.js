@@ -45,7 +45,6 @@ document.addEventListener("DOMContentLoaded", () => {
     return true;
   }
 
-  // Listen to the file input change event to restrict file selection
   document.getElementById("images").addEventListener("change", function (e) {
     e.preventDefault();
     const files = this.files;
@@ -60,11 +59,17 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("images").addEventListener("change", function (e) {
     e.preventDefault();
     const files = this.files;
+    const previewContainer = document.getElementById("image-previews");
+    const existingImages = previewContainer.children.length; // Count already displayed images
+    const totalImages = existingImages + files.length;
 
     // If more than 3 files are selected, reset the input and show an alert
-    if (files.length > 3) {
-      this.value = ""; // Clear the file input
-      alert("You can only select up to 3 images");
+    if (totalImages > 3) {
+      this.value = "";
+      alert(
+        "You can only have up to 3 images. Remove existing images before adding new ones."
+      );
+      return;
     }
   });
 

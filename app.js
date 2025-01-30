@@ -31,11 +31,26 @@ app.set("views", path.join(__dirname, "views"));
 app.use(
   session({
     secret: process.env.SECRET_KEYS,
-    resave: false,
-    saveUninitialized: true,
-    cookie: { secure: false },
+    resave: true,
+    saveUninitialized: false,
+    cookie: {
+      secure: false,
+      maxAge: 3600000,
+      sameSite: "lax",
+    },
+    store:
+      process.env.NODE_ENV === "production"
+        ? yourProductionStore
+        : new session.MemoryStore(),
   })
 );
+
+app.use((req, res, next) => {
+  if (req.session.user) {
+    req.user = req.session.user;
+  }
+  next();
+});
 
 // permissions
 app.use((req, res, next) => {
