@@ -52,33 +52,48 @@ document.addEventListener("DOMContentLoaded", () => {
       const newImagesArray = [];
       const existingCroppedImagesArray = [];
 
+      // Inside the form submit event handler:
       previewImages.forEach((img) => {
+        const container = img.closest(".image-preview-container");
+        const hiddenInput = container.querySelector(
+          'input[name="existingImages[]"], input[name="newImages[]"]'
+        );
+
+        if (!hiddenInput) {
+          console.error("Hidden input missing for image:", img);
+          return;
+        }
+
+        const imageData = JSON.parse(hiddenInput.value);
+
         const imageDetails = {
           url: img.src,
-          filename: img.dataset.filename || null,
+          filename: imageData.filename || `new_image_${Date.now()}`,
+          original_url: imageData.original_url || img.src,
+          _id: imageData._id || null,
         };
 
-        if (!img.dataset.originalSrc) {
-          newImagesArray.push(imageDetails);
-        } else if (img.src !== img.dataset.originalSrc) {
-          existingCroppedImagesArray.push(imageDetails);
-
-          // Remove original image from UI and FormData
-          document
-            .querySelectorAll(`input[value='${img.dataset.originalSrc}']`)
-            .forEach((input) => {
-              input.remove();
-            });
-
-          // Remove original image from existingImagesArray
-          const originalIndex = existingImagesArray.findIndex(
-            (img) => img.url === img.dataset.originalSrc
+        if (!imageData._id) {
+          if (
+            !newImagesArray.some((i) => i.filename === imageDetails.filename)
+          ) {
+            newImagesArray.push(imageDetails);
+          }
+        } else if (img.src !== imageData.original_url) {
+          const exists = existingCroppedImagesArray.some(
+            (i) =>
+              i._id === imageDetails._id && i.filename === imageDetails.filename
           );
-          if (originalIndex > -1) {
-            existingImagesArray.splice(originalIndex, 1);
+          if (!exists) {
+            existingCroppedImagesArray.push(imageDetails);
           }
         }
       });
+
+      // Clear previous values
+      formData.delete("existingImages[]");
+      formData.delete("existingCroppedImages");
+      formData.delete("newImages");
 
       // Append remaining existing images and cropped images to formData
       existingImagesArray.forEach((imageDetails) => {

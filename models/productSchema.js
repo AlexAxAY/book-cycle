@@ -1,3 +1,4 @@
+const { required } = require("joi");
 const mongoose = require("mongoose");
 
 const productSchema = new mongoose.Schema(
@@ -10,9 +11,9 @@ const productSchema = new mongoose.Schema(
     name: { type: String, required: true, trim: true },
     images: [
       {
-        original_url: { type: String },
+        original_url: { type: String, required: true },
         cropped_url: { type: String },
-        filename: { type: String },
+        filename: { type: String, required: true },
       },
     ],
     author: { type: String, required: true, trim: true },

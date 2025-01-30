@@ -10,12 +10,11 @@ document.addEventListener("DOMContentLoaded", () => {
       Array.from(files).forEach((file) => {
         const reader = new FileReader();
         reader.onload = () => {
-          const originalImageSrc = reader.result; // Save original image data
+          const originalImageSrc = reader.result;
 
           const previewContainer = document.createElement("div");
           previewContainer.classList.add("image-preview-container");
 
-          // Create an image element for preview
           const imgElement = document.createElement("img");
           imgElement.src = originalImageSrc;
           imgElement.classList.add("preview-image");
@@ -23,16 +22,24 @@ document.addEventListener("DOMContentLoaded", () => {
           imgElement.style.maxHeight = "300px";
           previewContainer.appendChild(imgElement);
 
-          // Store original image as a data attribute
           imgElement.setAttribute("data-original-src", originalImageSrc);
 
-          // Create Crop button
+          // When creating new images:
+          const hiddenInput = document.createElement("input");
+          hiddenInput.type = "hidden";
+          hiddenInput.name = "newImages[]";
+          hiddenInput.value = JSON.stringify({
+            original_url: originalImageSrc,
+            cropped_url: null,
+            filename: `${Date.now()}_${file.name}`, // Unique filename
+          });
+          previewContainer.appendChild(hiddenInput);
+
           const cropButton = document.createElement("button");
           cropButton.textContent = "Crop";
           cropButton.classList.add("btn", "btn-primary", "crop-button");
           previewContainer.appendChild(cropButton);
 
-          // Create Save button (hidden initially)
           const saveButton = document.createElement("button");
           saveButton.textContent = "Save";
           saveButton.classList.add(
@@ -43,13 +50,11 @@ document.addEventListener("DOMContentLoaded", () => {
           );
           previewContainer.appendChild(saveButton);
 
-          // Create Remove button
           const removeButton = document.createElement("button");
           removeButton.textContent = "Remove";
           removeButton.classList.add("btn", "btn-danger", "remove-button");
           previewContainer.appendChild(removeButton);
 
-          // Create Edit button (hidden initially)
           const editButton = document.createElement("button");
           editButton.textContent = "Edit";
           editButton.classList.add(
@@ -60,16 +65,13 @@ document.addEventListener("DOMContentLoaded", () => {
           );
           previewContainer.appendChild(editButton);
 
-          // Append preview container to the image previews container
           imagePreviewsContainer.appendChild(previewContainer);
 
-          // Crop button functionality for new images
+          // New image crop handler
           cropButton.addEventListener("click", (event) => {
             event.preventDefault();
-            // Destroy any existing Cropper instance
             if (cropper) cropper.destroy();
 
-            // Initialize Cropper for the image preview
             cropper = new Cropper(imgElement, {
               aspectRatio: NaN,
               viewMode: 1,
@@ -77,163 +79,195 @@ document.addEventListener("DOMContentLoaded", () => {
               responsive: true,
             });
 
-            // Hide Crop button, show Save button and Edit button
             cropButton.classList.add("d-none");
             saveButton.classList.remove("d-none");
             editButton.classList.remove("d-none");
           });
 
-          // Save button functionality to finalize cropping
           saveButton.addEventListener("click", (event) => {
             event.preventDefault();
             if (cropper) {
-              const canvas = cropper.getCroppedCanvas({
-                width: 300, // Desired width
-                height: 450, // Desired height
-              });
+              try {
+                const canvas = cropper.getCroppedCanvas({
+                  width: 300,
+                  height: 450,
+                });
+                if (!canvas) throw new Error("Canvas creation failed");
 
-              // Check if canvas exists
-              if (!canvas) {
-                console.error("Canvas not created for cropping");
-                return;
+                imgElement.src = canvas.toDataURL("image/jpeg");
+
+                const hiddenInput = previewContainer.querySelector(
+                  'input[name="newImages[]"]'
+                );
+
+                // Update hidden input
+                const imageData = JSON.parse(hiddenInput.value);
+                imageData.cropped_url = imgElement.src;
+                hiddenInput.value = JSON.stringify(imageData);
+              } catch (err) {
+                console.error("Cropping failed:", err);
+                alert("Failed to save cropped image");
+              } finally {
+                cropper.destroy();
+                cropper = null;
               }
-
-              // Replace the preview with the cropped image
-              imgElement.src = canvas.toDataURL("image/jpeg");
-
-              // Destroy the Cropper instance
-              cropper.destroy();
-              cropper = null;
-
-              // Remove the onload event listener to prevent reinitialization
-              imgElement.onload = null;
-
-              // Hide Save button, show Crop button
-              saveButton.classList.add("d-none");
-              cropButton.classList.remove("d-none");
             }
           });
 
-          // Remove button functionality to remove the image
           removeButton.addEventListener("click", (event) => {
             event.preventDefault();
             previewContainer.remove();
+
+            // Get remaining files
+            const remainingFiles = Array.from(
+              imagePreviewsContainer.children
+            ).filter((container) =>
+              container.querySelector('input[name="newImages[]"]')
+            ).length;
+
+            // Reset input only if no new images remain
+            if (remainingFiles === 0) {
+              imageInput.value = "";
+            }
+
             if (cropper) {
               cropper.destroy();
               cropper = null;
             }
           });
 
-          // Edit button functionality to revert to the original image
           editButton.addEventListener("click", (event) => {
             event.preventDefault();
-            imgElement.src = imgElement.getAttribute("data-original-src");
+            if (cropper) {
+              cropper.destroy();
+              cropper = null;
+            }
+
+            if (imgElement.dataset.originalSrc) {
+              imgElement.src = imgElement.dataset.originalSrc;
+            }
+
+            // Update hidden input
+            const hiddenInput = previewContainer.querySelector(
+              'input[name="newImages[]"]'
+            );
+            const imageData = JSON.parse(hiddenInput.value);
+            imageData.cropped_url = null;
+            hiddenInput.value = JSON.stringify(imageData);
+
             cropButton.classList.remove("d-none");
             saveButton.classList.add("d-none");
             editButton.classList.add("d-none");
-            if (cropper) {
-              cropper.destroy();
-              cropper = null;
-            }
           });
         };
-
         reader.readAsDataURL(file);
       });
     }
   });
 
-  // Event delegation for existing image previews
+  // Event delegation for existing images
   imagePreviewsContainer.addEventListener("click", (event) => {
     event.preventDefault();
     const target = event.target;
+    const container = target.closest(".image-preview-container");
 
-    // Handle Crop button click for existing images
-    if (target.classList.contains("crop-button")) {
-      const imgElement = target
-        .closest(".image-preview-container")
-        .querySelector("img");
+    // Crop button handler
+    if (target.classList.contains("crop-button") && container) {
+      const imgElement = container.querySelector("img");
+      const saveButton = container.querySelector(".save-button");
+      const editButton = container.querySelector(".edit-button");
 
-      // Check if imgElement exists
-      if (!imgElement) {
-        console.error("Image element not found for cropping");
-        return;
-      }
+      if (cropper) cropper.destroy();
 
-      // Ensure image is loaded before initializing cropper
-      imgElement.onload = () => {
-        // Destroy any existing Cropper instance
-        if (cropper) cropper.destroy();
+      cropper = new Cropper(imgElement, {
+        aspectRatio: NaN,
+        viewMode: 1,
+        autoCropArea: 1,
+        responsive: true,
+      });
 
-        // Initialize Cropper for the existing image preview
-        cropper = new Cropper(imgElement, {
-          aspectRatio: NaN,
-          viewMode: 1,
-          autoCropArea: 1,
-          responsive: true,
-        });
+      target.classList.add("d-none");
+      saveButton.classList.remove("d-none");
+      editButton.classList.remove("d-none");
+    }
 
-        // Toggle Crop and Save button visibility
+    // Save button handler
+    if (target.classList.contains("save-button") && container) {
+      const imgElement = container.querySelector("img");
+      const cropButton = container.querySelector(".crop-button");
+      const editButton = container.querySelector(".edit-button");
+      const hiddenInput = container.querySelector(
+        'input[name="existingImages[]"]'
+      );
+
+      try {
+        if (cropper) {
+          const canvas = cropper.getCroppedCanvas({
+            width: 300,
+            height: 450,
+          });
+
+          if (canvas) {
+            imgElement.src = canvas.toDataURL("image/jpeg");
+
+            // Update hidden input
+            const existingData = JSON.parse(hiddenInput.value);
+            existingData.cropped_url = imgElement.src;
+
+            if (!existingData.original_url) {
+              existingData.original_url = imgElement.dataset.originalSrc;
+            }
+
+            hiddenInput.value = JSON.stringify(existingData);
+          }
+        }
+      } catch (err) {
+        console.error("Save failed:", err);
+        alert("Failed to save cropped image");
+      } finally {
+        if (cropper) {
+          cropper.destroy();
+          cropper = null;
+        }
         target.classList.add("d-none");
-        const saveButton = target
-          .closest(".image-preview-container")
-          .querySelector(".save-button");
-        saveButton.classList.remove("d-none");
-      };
-
-      // Trigger image load if it's already cached
-      if (imgElement.complete) {
-        imgElement.onload();
+        cropButton.classList.remove("d-none");
+        editButton.classList.add("d-none");
       }
     }
 
-    // Handle Save button click for existing images
-    if (target.classList.contains("save-button")) {
-      const imgElement = target
-        .closest(".image-preview-container")
-        .querySelector("img");
+    // Edit button handler
+    if (target.classList.contains("edit-button") && container) {
+      const imgElement = container.querySelector("img");
+      const cropButton = container.querySelector(".crop-button");
+      const saveButton = container.querySelector(".save-button");
+      const hiddenInput = container.querySelector(
+        'input[name="existingImages[]"]'
+      );
 
-      // Check if imgElement exists
-      if (!imgElement) {
-        console.error("Image element not found for saving");
-        return;
-      }
+      imgElement.src = imgElement.dataset.originalSrc;
+
+      // Reset hidden input
+      const existingData = JSON.parse(hiddenInput.value);
+      existingData.cropped_url = null;
+      hiddenInput.value = JSON.stringify(existingData);
+
+      target.classList.add("d-none");
+      cropButton.classList.remove("d-none");
+      saveButton.classList.add("d-none");
 
       if (cropper) {
-        const canvas = cropper.getCroppedCanvas({
-          width: 300, // Desired width
-          height: 450, // Desired height
-        });
-
-        // Check if canvas exists
-        if (!canvas) {
-          console.error("Canvas not created for cropping");
-          return;
-        }
-
-        // Replace the preview with the cropped image
-        imgElement.src = canvas.toDataURL("image/jpeg");
-
-        // Destroy the Cropper instance
         cropper.destroy();
         cropper = null;
-
-        // Remove the onload event listener to prevent reinitialization
-        imgElement.onload = null;
-
-        // Hide Save button and show Crop button
-        target.classList.add("d-none");
-        const cropButton = target
-          .closest(".image-preview-container")
-          .querySelector(".crop-button");
-        cropButton.classList.remove("d-none");
       }
     }
 
-    // Handle Remove button click for existing images
-    if (target.classList.contains("remove-button")) {
-      const container = target.closest(".image-preview-container");
-      container.remove(); // Remove the image preview container
+    // Remove button handler
+    if (target.classList.contains("remove-button") && container) {
+      container.remove();
+      if (cropper) {
+        cropper.destroy();
+        cropper = null;
+      }
     }
   });
 });

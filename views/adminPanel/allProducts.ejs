@@ -131,6 +131,8 @@
                       class="d-block w-100"
                       alt="<%= product.name %>"
                       id="my-image"
+                      onerror="this.src='<%= image.original_url %>';this.onerror=null;"
+                    />
                     />
                   </div>
                   <% }) %>

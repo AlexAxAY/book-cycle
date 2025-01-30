@@ -406,6 +406,7 @@ const updateProduct = async (req, res) => {
     console.log("Request body:", req.body);
     console.log("Request files:", req.files);
 
+    // Validation checks
     if (
       !name ||
       !author ||
@@ -417,96 +418,141 @@ const updateProduct = async (req, res) => {
       !description ||
       !publish_date
     ) {
-      console.log("Error: Missing required fields");
-      return res
-        .status(400)
-        .json({ success: false, message: "Required fields are missing." });
+      return res.status(400).json({
+        success: false,
+        message: "Required fields are missing.",
+      });
     }
 
     if (isNaN(price) || isNaN(discount) || isNaN(count)) {
-      console.log("Error: Invalid number input", { price, discount, count });
-      return res
-        .status(400)
-        .json({ message: "Price, discount, and count must be valid numbers." });
+      return res.status(400).json({
+        message: "Price, discount, and count must be valid numbers.",
+      });
     }
 
-    // Determine stock status based on the count value
-    let stockStatus = "In stock";
-    if (count === 0) {
-      stockStatus = "Out of stock";
-    } else if (count <= 5) {
-      stockStatus = "Limited stock";
-    }
-
+    // Get original product data
     const { id } = req.params;
-    console.log("Product ID:", id);
+    const originalProduct = await Product.findById(id);
+    if (!originalProduct) {
+      return res.status(404).json({
+        success: false,
+        message: "Product not found",
+      });
+    }
 
-    // Parse JSON strings from req.body
+    // Parse image data
     const existingImages = req.body.existingImages
       ? req.body.existingImages.map((img) => JSON.parse(img))
       : [];
+
     const existingCroppedImages = JSON.parse(
       req.body.existingCroppedImages || "[]"
     );
     const newImages = JSON.parse(req.body.newImages || "[]");
 
-    console.log("Parsed Existing Images:", existingImages);
-    console.log("Parsed Existing Cropped Images:", existingCroppedImages);
-    console.log("Parsed New Images:", newImages);
-
-    // Process image uploads from req.files
-    for (const file of req.files) {
-      newImages.push({
-        original_url: file.path, // Cloudinary provides the URL in `file.path`
-        cropped_url: null,
-        filename: file.filename, // Cloudinary provides the filename
+    // Process file uploads
+    if (req.files) {
+      req.files.forEach((file) => {
+        newImages.push({
+          original_url: file.path,
+          cropped_url: null,
+          filename: file.filename,
+        });
       });
     }
 
-    console.log("Processed New Images:", newImages);
-
-    // Combine all images into the images array
+    // Build images array
     const images = [];
 
-    existingImages.forEach((image) => {
-      const croppedImage = existingCroppedImages.find(
-        (img) => img.filename === image.filename
+    // 1. Process existing images (preserve original data)
+    existingImages.forEach((formImage) => {
+      const originalImage = originalProduct.images.find(
+        (dbImage) => dbImage._id.toString() === formImage._id
       );
+
+      if (originalImage) {
+        images.push({
+          _id: originalImage._id,
+          original_url: originalImage.original_url,
+          cropped_url: formImage.cropped_url || originalImage.cropped_url,
+          filename: originalImage.filename,
+        });
+      }
+    });
+
+    // 2. Process modified existing images
+    existingCroppedImages.forEach((modifiedImage) => {
+      // Match using both filename AND ID
+      const existingIndex = images.findIndex(
+        (img) =>
+          img.filename === modifiedImage.filename &&
+          img._id?.toString() === modifiedImage._id
+      );
+
+      if (existingIndex > -1) {
+        images[existingIndex].cropped_url = modifiedImage.url;
+
+        // Preserve original URL if missing
+        if (!images[existingIndex].original_url) {
+          images[existingIndex].original_url = modifiedImage.original_url;
+        }
+      } else {
+        // Handle orphaned cropped images
+        images.push({
+          original_url: modifiedImage.original_url,
+          cropped_url: modifiedImage.url,
+          filename: modifiedImage.filename,
+          _id: modifiedImage._id,
+        });
+      }
+    });
+
+    // 3. Add new images
+    newImages.forEach((newImage) => {
       images.push({
-        original_url: image.url,
-        cropped_url: croppedImage ? croppedImage.url : null,
-        filename: image.filename,
+        original_url: newImage.original_url,
+        cropped_url: newImage.cropped_url,
+        filename: newImage.filename,
       });
     });
 
-    newImages.forEach((image) => {
-      images.push({
-        original_url: image.original_url,
-        cropped_url: image.cropped_url,
-        filename: image.filename,
-      });
+    // 4. Deduplicate images
+    const uniqueImages = [];
+    const seen = new Set();
+
+    images.forEach((img) => {
+      const key = img._id ? img._id.toString() : img.filename;
+      if (!seen.has(key)) {
+        seen.add(key);
+        uniqueImages.push(img);
+      }
     });
 
-    console.log("Final Images Array:", images);
+    // Calculate final price
+    const numericPrice = parseFloat(price);
+    const numericDiscount = parseFloat(discount);
 
-    // Calculate final price based on discount type
     const finalPrice =
       discount_type === "percentage"
-        ? price - (price * discount) / 100
-        : price - discount;
+        ? numericPrice - (numericPrice * numericDiscount) / 100
+        : numericPrice - numericDiscount;
 
-    console.log("Final Price:", finalPrice);
+    // Stock status calculation
+    let stockStatus = "In stock";
+    if (count === 0) stockStatus = "Out of stock";
+    else if (count <= 5) stockStatus = "Limited stock";
 
+    // Update product
     const updatedProduct = await Product.findByIdAndUpdate(
       id,
       {
         name,
         author,
         category,
-        price: parseFloat(price),
+        price: numericPrice,
         brand: brand || null,
         publisher: publisher || null,
-        discount: parseFloat(discount),
+        discount: numericDiscount,
         discount_type,
         stock: stockStatus,
         count: parseInt(count, 10),
@@ -514,24 +560,21 @@ const updateProduct = async (req, res) => {
         publish_date: publish_date || null,
         used: used === "true",
         description,
-        images,
+        images: uniqueImages,
       },
       { new: true, runValidators: true }
     );
 
-    if (updatedProduct) {
-      console.log("Updated product:", updatedProduct);
-    }
-
     res.status(200).json({
       success: true,
       message: "Product updated successfully!",
+      product: updatedProduct,
     });
   } catch (err) {
-    console.log("Internal error while updating the product!", err);
-    return res.status(500).json({
+    console.error("Update error:", err);
+    res.status(500).json({
       success: false,
-      message: "Internal service error while updating the product!",
+      message: "Internal server error while updating product",
     });
   }
 };
