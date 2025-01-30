@@ -1,5 +1,6 @@
 const Category = require("../../models/categorySchema");
 const Product = require("../../models/productSchema");
+const mongoose = require("mongoose");
 
 // Navigates to the category management page
 const catManagePage = async (req, res) => {
@@ -440,85 +441,35 @@ const updateProduct = async (req, res) => {
       });
     }
 
-    // Parse image data
-    const existingImages = req.body.existingImages
-      ? req.body.existingImages.map((img) => JSON.parse(img))
-      : [];
+    // Process ALL images (simplified)
+    const images = [];
 
-    const existingCroppedImages = JSON.parse(
-      req.body.existingCroppedImages || "[]"
-    );
-    const newImages = JSON.parse(req.body.newImages || "[]");
-
-    // Process file uploads
-    const processedNewImages = [];
-    if (req.files) {
-      req.files.forEach((file) => {
-        processedNewImages.push({
-          original_url: file.path, // Cloudinary URL
-          cropped_url: null,
-          filename: file.filename,
-          isNew: true, // Flag new images
+    // 1. Existing images
+    if (req.body.existingImages) {
+      req.body.existingImages.forEach((imgStr) => {
+        const img = JSON.parse(imgStr);
+        images.push({
+          _id: img._id || new mongoose.Types.ObjectId(),
+          original_url: img.original_url,
+          cropped_url: img.cropped_url,
+          filename: img.filename,
         });
       });
     }
 
-    const allNewImages = [
-      ...newImages.filter((img) => !img.isNew), // Existing new images from frontend
-      ...processedNewImages, // Freshly uploaded files
-    ];
-
-    // Build images array
-    const images = [];
-
-    // 1. Process existing images (preserve original data)
-    existingImages.forEach((formImage) => {
-      const originalImage = originalProduct.images.find(
-        (dbImage) => dbImage._id.toString() === formImage._id
-      );
-
-      if (originalImage) {
+    // 2. New uploaded images (including cropped ones)
+    if (req.files) {
+      req.files.forEach((file) => {
         images.push({
-          _id: originalImage._id,
-          original_url: originalImage.original_url,
-          cropped_url: formImage.cropped_url,
-          filename: originalImage.filename,
+          original_url: file.path, // Cloudinary URL
+          cropped_url: null,
+          filename: file.filename,
+          _id: new mongoose.Types.ObjectId(), // Proper ID generation
         });
-      }
-    });
-
-    // 2. Process modified existing images
-    existingCroppedImages.forEach((modifiedImage) => {
-      const existingIndex = images.findIndex(
-        (img) =>
-          img._id?.toString() === modifiedImage._id &&
-          img.filename === modifiedImage.filename
-      );
-
-      if (existingIndex > -1) {
-        images[existingIndex].cropped_url = modifiedImage.url;
-      } else {
-        images.push({
-          original_url: modifiedImage.original_url,
-          cropped_url: modifiedImage.url,
-          filename: modifiedImage.filename,
-          _id: modifiedImage._id,
-        });
-      }
-    });
-
-    // 3. Add new images
-    allNewImages.forEach((newImage) => {
-      images.push({
-        original_url: newImage.original_url,
-        cropped_url: newImage.cropped_url,
-        filename: newImage.filename,
-        // Generate new ID for proper deduplication
-        _id: new mongoose.Types.ObjectId(),
       });
-    });
+    }
 
-    // 4. Deduplicate images
+    // Deduplicate images
     const uniqueImages = [];
     const seen = new Set();
 
