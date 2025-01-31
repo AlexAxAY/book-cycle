@@ -4,11 +4,12 @@ const mongoose = require("mongoose");
 const productSchema = new mongoose.Schema(
   {
     price: { type: Number, required: true, trim: true },
+    language: { type: String, required: true, trim: true },
     count: { type: Number, required: true, trim: true },
     category: { type: String, required: true },
     description: { type: String, required: true, trim: true },
     publisher: { type: String, trim: true, default: null },
-    name: { type: String, required: true, trim: true },
+    name: { type: String, required: true, trim: true, index: true },
     images: [
       {
         original_url: { type: String, required: true },

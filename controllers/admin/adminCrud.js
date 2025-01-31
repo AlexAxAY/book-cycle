@@ -223,6 +223,7 @@ const addProduct = async (req, res) => {
       name,
       author,
       category,
+      language,
       price,
       brand,
       publisher,
@@ -249,7 +250,8 @@ const addProduct = async (req, res) => {
       !discount_type ||
       !count ||
       !description ||
-      !publish_date
+      !publish_date ||
+      !language
     ) {
       console.log("Error: Missing required fields");
       return res
@@ -277,7 +279,6 @@ const addProduct = async (req, res) => {
 
     // Check if cropped_images exists and is not empty
     if (cropped_images) {
-      // Check if cropped_images is an object (which is what you are seeing in the log)
       if (
         typeof cropped_images === "object" &&
         !Array.isArray(cropped_images)
@@ -333,6 +334,7 @@ const addProduct = async (req, res) => {
     const newProduct = new Product({
       name,
       author,
+      language,
       category,
       price: parseFloat(price),
       brand: brand || null,

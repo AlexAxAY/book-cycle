@@ -77,7 +77,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             // Initialize cropper with the original image URL
             cropper = new Cropper(imgElement, {
-              aspectRatio: NaN,
+              aspectRatio: 2 / 3,
               viewMode: 1,
               autoCropArea: 1,
               responsive: true,
@@ -189,7 +189,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       // Initialize cropper with the original image URL
       cropper = new Cropper(imgElement, {
-        aspectRatio: NaN,
+        aspectRatio: 2 / 3,
         viewMode: 1,
         autoCropArea: 1,
         responsive: true,

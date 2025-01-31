@@ -11,6 +11,7 @@ const methodOverride = require("method-override");
 const path = require("path");
 const { createAdmin } = require("./controllers/admin/adminAuth");
 const adminRoutes = require("./routes/adminRoutes");
+const userRoutes = require("./routes/userRoutes");
 
 const PORT = process.env.PORT;
 
@@ -70,6 +71,7 @@ mongoose
 createAdmin();
 
 app.use("/admin", adminRoutes);
+app.use("/user", userRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server is running on ${PORT}`);

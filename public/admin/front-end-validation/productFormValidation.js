@@ -10,6 +10,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById("productForm");
   const requiredFields = [
     "name",
+    "language",
     "author",
     "category",
     "price",
@@ -138,10 +139,13 @@ document.addEventListener("DOMContentLoaded", () => {
         alertBox.classList.add("alert-success");
 
         setTimeout(() => {
-          window.location.href = "/admin/products";
+          alertBox.classList.add("d-none");
         }, 2000);
 
         form.reset();
+        const imagePreviewsContainer =
+          document.getElementById("image-previews");
+        imagePreviewsContainer.innerHTML = "";
       }
     } catch (error) {
       const alertText = document.getElementById("alert-text");

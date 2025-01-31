@@ -1,0 +1,38 @@
+body {
+  margin: 0 !important;
+  font-family: Arial, sans-serif !important;
+}
+
+/* must include in all other templates for the navbar */
+.navbar-logo {
+  margin-left: 30px;
+  border-radius: 50%;
+  transition: 0.2s ease-in-out;
+}
+
+.navbar-logo:hover {
+  box-shadow: 0 4px 8px 0 rgba(255, 255, 255, 0.1),
+    0 6px 20px 0 rgba(255, 255, 255, 0.1);
+  transform: scale(1.1);
+}
+
+.card-body {
+  max-height: 200px;
+  min-height: 200px;
+}
+
+.card {
+  border: none !important;
+}
+
+#search {
+  max-width: 500px;
+  border-radius: 20px;
+}
+
+#category,
+#min-price,
+#max-price,
+#rating {
+  max-width: 200px;
+}

@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Add Products</title>
+
+    <!-- css -->
+    <link rel="stylesheet" href="/admin/stylesheets/viewBanner.css" />
+
+    <!-- bootstrap -->
+    <%- include("../partials/admin/bootLink.ejs") %>
+
+    <!-- font link -->
+    <%- include("../partials/user/iconLink.ejs") %>
+
+    <!-- google fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Port+Lligat+Slab&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <header><%- include("../partials/admin/adminNavbar.ejs") %></header>
+
+    <!-- alert -->
+    <div class="d-flex alertBox" style="justify-content: center">
+      <div
+        class="alert alert-success alertText d-none"
+        style="width: fit-content"
+        role="alert"
+      >
+        <!-- Text content will be updated by JavaScript -->
+      </div>
+    </div>
+
+    <section class="main-section" style="min-height: calc(100vh - 146px)">
+      <div class="container py-5">
+        <h2 class="mb-4">All Banners</h2>
+
+        <% if (banners.length > 0) { %>
+        <div class="row g-4">
+          <% banners.forEach((banner) => { %>
+          <div class="hold col-12 col-md-6 col-lg-4">
+            <div class="banner-card position-relative shadow-sm">
+              <!-- Delete Button with data attribute -->
+              <button
+                class="btn btn-danger btn-sm position-absolute top-0 end-0 m-2 banner-delete"
+                data-banner-id="<%= banner._id %>"
+              >
+                <i class="fas fa-trash"></i>
+              </button>
+
+              <!-- Banner Image -->
+              <div class="banner-image-container">
+                <img
+                  src="<%= banner.image.url %>"
+                  alt="<%= banner.title %>"
+                  class="banner-image"
+                />
+              </div>
+
+              <!-- Banner Content -->
+              <div class="p-3">
+                <h5 class="mb-2"><%= banner.title %></h5>
+                <% if (banner.description) { %>
+                <p class="mb-0 text-muted small"><%= banner.description %></p>
+                <% } %>
+              </div>
+            </div>
+          </div>
+          <% }); %>
+        </div>
+        <% } else { %>
+        <h1>Banners are empty!</h1>
+        <% } %>
+      </div>
+    </section>
+
+    <!-- Include this in your main layout -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css"
+    />
+
+    <!-- footer -->
+    <%- include("../partials/admin/adminFooter.ejs") %>
+
+    <!-- bootstrap -->
+    <%- include("../partials/admin/bootScript.ejs") %>
+
+    <!-- axios -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+    <!-- banner dlete validation  -->
+    <script src="/admin/front-end-validation/bannerDeleteValidation.js"></script>
+
+    <!-- js logout validation file -->
+    <script src="/admin/front-end-validation/logoutValidation.js"></script>
+  </body>
+</html>

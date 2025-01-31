@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Home</title>
+
+    <!-- bootstrap -->
+    <%- include("../partials/admin/bootLink.ejs") %>
+
+    <!-- css -->
+    <link rel="stylesheet" href="/user/stylesheets/landingPage.css" />
+
+    <!-- icon link -->
+    <%- include("../partials/user/iconLink.ejs") %>
+  </head>
+  <body>
+    <header><%- include("../partials/user/userNavbar.ejs") %></header>
+
+    <!-- info section  -->
+    <section class="container-fluid p-0 mb-5">
+      <div class="info" style="height: 500px"></div>
+    </section>
+
+    <section class="container-fluid mb-5">
+      <!-- banners -->
+      <div class="banner">
+        <div id="offerCarousel" class="carousel slide" data-bs-ride="carousel">
+          <div class="carousel-inner p-0">
+            <% banners.forEach((banner, index) => { %>
+            <div class="carousel-item <%= index === 0 ? 'active' : '' %>">
+              <img
+                src="<%= banner.image.url %>"
+                class="d-block w-100 h-100 offer-banner-img"
+                alt="Offer Banner"
+                style="object-fit: cover"
+              />
+            </div>
+            <% }) %>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="container mt-4 mb-4">
+      <!-- main section  -->
+      <h2 class="text-center">Explore Categories</h2>
+      <div class="row text-center">
+        <div class="col-md-4">
+          <img
+            src="/images/old-vintage-cartoon-comic-books-collection-31771038.webp"
+            class="img-fluid"
+          />
+          <p>Comic</p>
+        </div>
+        <div class="col-md-4">
+          <img
+            src="/images/science-books-shelf-open-book-glasses-lettering-science-books-shelf-open-book-glasses-lettering-white-135179577.webp"
+            class="img-fluid"
+          />
+          <p>Science</p>
+        </div>
+        <div class="col-md-4">
+          <img
+            src="/images/istockphoto-503130452-612x612.webp"
+            class="img-fluid"
+          />
+          <p>Romance</p>
+        </div>
+        <div class="col-md-4">
+          <img
+            src="/images/best-mystery-books-slideshow-thumb-1684970205266.webp"
+            class="img-fluid"
+          />
+          <p>Mystery</p>
+        </div>
+        <div class="col-md-4">
+          <img src="/images/TABoriginal-1.webp" class="img-fluid" />
+          <p>Adventure</p>
+        </div>
+        <div class="col-md-4">
+          <img src="/images/1735392632316.webp" class="img-fluid" />
+          <p>Fiction</p>
+        </div>
+      </div>
+      <!-- new arrivals -->
+      <h2 class="text-center mt-5">New Arrivals</h2>
+      <div id="bookCarousel" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-inner">
+          <% products.filter(product => !product.is_deleted).forEach((product,
+          index, filteredProducts) => { %>
+          <div class="carousel-item <%= index === 0 ? 'active' : '' %>">
+            <div class="text-center">
+              <img
+                src="<%= product.images[0].cropped_url ? product.images[0].cropped_url : product.images[0].original_url %>"
+                class="d-block mx-auto"
+                style="height: 300px"
+              />
+              <h5><%= product.name %></h5>
+              <p>&#8377; <%= product.final_price %></p>
+              <button class="btn btn-dark">Add to Cart</button>
+            </div>
+          </div>
+          <% }) %>
+        </div>
+
+        <% if (products.filter(product => !product.is_deleted).length > 1) { %>
+        <button
+          class="carousel-control-prev"
+          type="button"
+          data-bs-target="#bookCarousel"
+          data-bs-slide="prev"
+        >
+          <span class="carousel-control-prev-icon"></span>
+        </button>
+        <button
+          class="carousel-control-next"
+          type="button"
+          data-bs-target="#bookCarousel"
+          data-bs-slide="next"
+        >
+          <span class="carousel-control-next-icon"></span>
+        </button>
+        <% } %>
+      </div>
+    </section>
+
+    <!-- footer partial -->
+    <footer><%- include("../partials/user/userFooter.ejs") %></footer>
+
+    <!-- bootstrap -->
+    <%- include("../partials/admin/bootScript.ejs") %>
+  </body>
+</html>
