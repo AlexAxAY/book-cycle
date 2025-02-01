@@ -18,8 +18,8 @@ const productSchema = new mongoose.Schema(
       },
     ],
     author: { type: String, required: true, trim: true },
-    avg_rating: { type: Number, trim: true },
-    rating_count: { type: Number, trim: true },
+    avg_rating: { type: Number, trim: true, default: null },
+    rating_count: { type: Number, trim: true, default: null },
     stock: {
       type: String,
       enum: ["In stock", "Out of stock", "Limited stock"],

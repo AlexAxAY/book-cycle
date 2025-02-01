@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Error</title>
+
+    <!-- bootstrap -->
+    <%- include("../partials/admin/bootLink.ejs") %>
+
+    <!-- css -->
+    <link rel="stylesheet" href="/admin/stylesheets/errorPage.css" />
+  </head>
+  <body>
+    <div class="error-container">
+      <div>
+        <div class="error-code"><%= statusCode %></div>
+        <div class="error-message"><%= message %></div>
+        <a class="btn-home btn btn-primary" href="/user/home">Go back</a>
+      </div>
+    </div>
+    <!-- bootsrtap -->
+    <%- include("../partials/admin/bootScript.ejs") %>
+  </body>
+</html>

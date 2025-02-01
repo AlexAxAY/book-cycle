@@ -12,6 +12,16 @@ document.addEventListener("DOMContentLoaded", () => {
   if (applyFiltersBtn) {
     applyFiltersBtn.addEventListener("click", handleFilters);
   }
+
+  // Event delegation for product click events
+  document.querySelector(".product-grid").addEventListener("click", (e) => {
+    if (e.target.closest(".to-product")) {
+      const button = e.target.closest(".to-product");
+      const id = button.getAttribute("data-id-info");
+      // Navigate directly to the product page
+      window.location.href = `/user/shop/product/${id}`;
+    }
+  });
 });
 
 // Search Handler
@@ -65,7 +75,7 @@ function updateProducts(products) {
     return;
   }
 
-  productsGrid.innerHTML = ""; // Clear current products
+  productsGrid.innerHTML = "";
 
   products.forEach((product) => {
     const productHtml = `
@@ -73,7 +83,9 @@ function updateProducts(products) {
         <div class="card">
           <div id="carousel${
             product._id
-          }" class="carousel slide" data-bs-ride="carousel">
+          }" class="carousel slide to-product" data-bs-ride="carousel" data-id-info="${
+      product._id
+    }">
             <div class="carousel-inner">
               ${product.images
                 .map(

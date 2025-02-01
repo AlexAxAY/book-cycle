@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login</title>
+
+    <!-- css -->
+    <link rel="stylesheet" href="/user/stylesheets/loginPage.css" />
+
+    <!-- icon link -->
+    <%- include("../partials/user/iconLink.ejs") %>
+
+    <!-- bootstrap link -->
+    <%- include("../partials/admin/bootLink.ejs") %>
+  </head>
+  <body>
+    <!-- navbar -->
+    <header><%- include("../partials/user/userNavbar.ejs") %></header>
+
+    <!-- main section -->
+    <section
+      class="container"
+      style="
+        min-height: calc(100vh - 212px);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      "
+    >
+      <!-- error alert -->
+      <div class="alert-bad d-none" style="position: fixed"></div>
+
+      <!-- success alert -->
+      <div class="alert-good d-none" style="position: fixed"></div>
+
+      <div class="row w-100 main-form">
+        <!-- left side  -->
+        <div class="col-6 left-side"></div>
+
+        <!-- right-side -->
+        <div class="col-6 right-side">
+          <h3 class="card-title text-center mb-4">Welcome Back!</h3>
+
+          <!-- form -->
+          <form
+            novalidate
+            id="login-form"
+            class="text-center form d-flex"
+            style="
+              flex-direction: column;
+              justify-content: center;
+              align-items: center;
+            "
+          >
+            <div class="form-floating mb-3">
+              <input
+                style="min-width: 300px"
+                type="email"
+                name="email"
+                class="form-control"
+                id="email"
+                placeholder="email"
+              />
+              <label for="email">Email address</label>
+            </div>
+            <div class="form-floating mb-3">
+              <input
+                style="min-width: 300px"
+                type="password"
+                class="form-control"
+                name="password"
+                id="password"
+                placeholder="Password"
+              />
+              <label for="password">Password</label>
+            </div>
+            <button
+              type="submit"
+              class="btn btn-outline-dark btn-small login"
+              style="border: none"
+            >
+              Login
+            </button>
+            <p class="text-center mt-3" style="font-size: 12px">
+              <a href="#">Forgot your password?</a>
+            </p>
+            <p class="text-center mt-3" style="font-size: 12px">
+              <strong>OR <br />Login with</strong>
+            </p>
+            <a href=""
+              ><img
+                style="width: 30px"
+                src="/images/search.png"
+                alt="google-logo"
+            /></a>
+            <p class="text-center mb-0 mt-5" style="font-size: 14px">
+              Don't have an account?
+              <a href="/user/register">Sign up here</a>
+            </p>
+          </form>
+        </div>
+      </div>
+    </section>
+    <!-- footer partial -->
+    <%- include("../partials/user/userFooter.ejs") %>
+
+    <!-- include Axios -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+    <!-- validation file -->
+    <script src="/user/validation/loginValidation.js"></script>
+
+    <!-- bootstrap -->
+    <%- include("../partials/admin/bootScript.ejs") %>
+  </body>
+</html>

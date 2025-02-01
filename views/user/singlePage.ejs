@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Product</title>
+
+    <!-- css -->
+    <link rel="stylesheet" href="/user/stylesheets/singlePage.css" />
+
+    <!-- icon link -->
+    <%- include("../partials/user/iconLink.ejs") %>
+
+    <!-- bootstrap link -->
+    <%- include("../partials/admin/bootLink.ejs") %>
+  </head>
+  <body>
+    <!-- navbar -->
+    <header><%- include("../partials/user/userNavbar.ejs") %></header>
+    <section class="container mt-4" style="min-height: calc(100vh - 212px)">
+      <!-- Breadcrumbs -->
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="/user/home">Home</a></li>
+          <li class="breadcrumb-item"><a href="/user/shop">Shop</a></li>
+          <li class="breadcrumb-item active" aria-current="page">Product</li>
+        </ol>
+      </nav>
+
+      <div class="row product-section">
+        <!-- Small Image Gallery Column -->
+        <div class="col-md-2">
+          <div class="row side-images">
+            <% if (product.images && product.images.length > 0) { %> <%
+            product.images.forEach(function(image, index) { let imgUrl =
+            image.cropped_url ? image.cropped_url : image.original_url; %>
+            <div class="col-12 mb-2">
+              <img
+                style="max-width: 150px"
+                src="<%= imgUrl %>"
+                alt="Thumbnail <%= index + 1 %>"
+                class="img-fluid thumbnail <%= index === 0 ? 'active' : '' %>"
+                data-index="<%= index %>"
+              />
+            </div>
+            <% }); %> <% } %>
+          </div>
+        </div>
+
+        <!-- Medium Image Column -->
+        <div class="col-md-4" style="position: relative">
+          <div class="mb-3 d-flex justify-content-center">
+            <% let firstImage = (product.images && product.images.length > 0) ?
+            product.images[0] : null; let mainImageUrl = firstImage ?
+            (firstImage.cropped_url ? firstImage.cropped_url :
+            firstImage.original_url) : 'https://via.placeholder.com/500'; %>
+            <img
+              id="mainImage"
+              src="<%= mainImageUrl %>"
+              alt="Product Image"
+              class="img-fluid main-image"
+            />
+            <!-- Zoomed Image Container -->
+            <div id="zoomedImage" class="zoomed-image"></div>
+          </div>
+        </div>
+
+        <!-- Product Details Column -->
+        <div class="col-md-6">
+          <h1><%= product.name %></h1>
+          <% if (product.author) { %>
+          <p class="text-muted"><small>by <%= product.author %></small></p>
+          <% } %> <% if (product.stock === "Limited stock") { %>
+          <p><strong style="color: #fb8500"><%= product.stock %></strong></p>
+          <% } else if (product.stock === "In stock") { %>
+          <p><strong style="color: green"><%= product.stock %></strong></p>
+          <% } else if (product.stock === "Out of stock") { %>
+          <p><strong style="color: red"><%= product.stock %></strong></p>
+          <% } %>
+          <!-- Rating Stars -->
+          <div class="d-flex align-items-center mb-3">
+            <% for (let i = 1; i <= 5; i++) { %>
+            <span class="rating-star empty">&#9733;</span>
+            <% } %>
+            <span class="ms-2">(0)</span>
+          </div>
+
+          <!-- Price and Final Price with Discount -->
+          <div class="price-container">
+            <% if (product.price) { %>
+            <span
+              class="text-muted text-decoration-line-through"
+              style="font-size: 16px"
+            >
+              <small>₹<%= product.price.toFixed(2) %></small>
+            </span>
+            <% } %> <% if (product.final_price) { %>
+            <span class="text-primary"
+              >₹<%= product.final_price.toFixed(2) %></span
+            >
+            <% if (product.discount_type === 'percentage') { %>
+            <span class="text-success">(<%= product.discount %>% off)</span>
+            <% } else if (product.discount_type === 'fixed') { %>
+            <span class="text-success">(<%= product.discount %>₹ off)</span>
+            <% } %> <% } %>
+          </div>
+
+          <!-- Description -->
+          <% if (product.description) { %>
+          <p><%= product.description %></p>
+          <% } %>
+
+          <!-- Additional Product Details -->
+          <div class="spec-container mt-3">
+            <% if (product.publisher) { %>
+            <p><strong>Publisher:</strong> <%= product.publisher %></p>
+            <% } %> <% if (product.publish_date) { %>
+            <p>
+              <strong>Published Year:</strong> <%= new
+              Date(product.publish_date).getFullYear() %>
+            </p>
+            <% } %> <% if (product.category) { %>
+            <p><strong>Category:</strong> <%= product.category %></p>
+            <% } %> <% if (product.used) { %>
+            <p><strong>Condition:</strong> Pre-used Book</p>
+            <% } %>
+          </div>
+
+          <!-- Add to Cart Button -->
+          <button class="btn btn-outline-dark mt-3">Add to Cart</button>
+        </div>
+      </div>
+
+      <!-- Reviews Section -->
+      <div class="row mt-4">
+        <div class="col-12">
+          <h5>Reviews (0)</h5>
+          <hr />
+          <p>No reviews yet</p>
+          <!-- Reviews content will be added here -->
+        </div>
+      </div>
+
+      <!-- carousal section -->
+      <div class="row mt-4 mb-4">
+        <h5>Related Products</h5>
+        <hr />
+        <% if (relatedProducts.length > 0) { %>
+        <div id="bookCarousel" class="carousel slide" data-bs-ride="carousel">
+          <div class="carousel-inner">
+            <% relatedProducts.filter(product =>
+            !product.is_deleted).forEach((product, index, filteredProducts) => {
+            %>
+            <div class="carousel-item <%= index === 0 ? 'active' : '' %>">
+              <div class="text-center">
+                <img
+                  src="<%= product.images[0].cropped_url ? product.images[0].cropped_url : product.images[0].original_url %>"
+                  class="d-block mx-auto"
+                  style="height: 300px"
+                />
+                <h5 class="mt-2"><%= product.name %></h5>
+                <button
+                  class="btn btn-outline-dark btn-sm view-product-button"
+                  data-id="<%= product._id %>"
+                >
+                  View
+                </button>
+              </div>
+            </div>
+            <% }) %>
+          </div>
+
+          <% if (relatedProducts.filter(product => !product.is_deleted).length >
+          1) { %>
+          <button
+            class="carousel-control-prev"
+            type="button"
+            data-bs-target="#bookCarousel"
+            data-bs-slide="prev"
+          >
+            <span class="carousel-control-prev-icon"></span>
+          </button>
+          <button
+            class="carousel-control-next"
+            type="button"
+            data-bs-target="#bookCarousel"
+            data-bs-slide="next"
+          >
+            <span class="carousel-control-next-icon"></span>
+          </button>
+          <% } %>
+        </div>
+        <% } else {%>
+        <p>No related products</p>
+        <% } %>
+      </div>
+    </section>
+
+    <!-- footer partial -->
+    <%- include("../partials/user/userFooter.ejs") %>
+
+    <!-- jQuery (for the image swap functionality) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- include Axios -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+    <!-- helper js file -->
+    <script src="/user/helper/singlePageHelper.js"></script>
+
+    <!-- logout -->
+    <script src="/user/helper/logoutHelper.js"></script>
+
+    <!-- bootstrap -->
+    <%- include("../partials/admin/bootScript.ejs") %>
+  </body>
+</html>

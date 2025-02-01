@@ -2,9 +2,10 @@ const Product = require("../../models/productSchema");
 const Banner = require("../../models/bannerSchema");
 const Category = require("../../models/categorySchema");
 
+// landing page get
 const landingPage = async (req, res) => {
   try {
-    const products = await Product.find();
+    const products = await Product.find({ is_deleted: false });
     const banners = await Banner.find();
     if (!products) {
       console.log("No products are there!");
@@ -20,6 +21,7 @@ const landingPage = async (req, res) => {
   }
 };
 
+// shopping page get
 const shoppingPage = async (req, res) => {
   try {
     const { search, category, minPrice, maxPrice, rating } = req.query;
@@ -42,13 +44,17 @@ const shoppingPage = async (req, res) => {
       if (maxPrice) query.final_price.$lte = Number(maxPrice);
     }
 
-    // Rating filter
     if (rating) {
-      query.avg_rating = { $gte: Number(rating) };
+      const ratingValue = Number(rating);
+      if (ratingValue === 0) {
+        query.avg_rating = null;
+      } else {
+        query.avg_rating = { $gte: ratingValue };
+      }
     }
 
     const products = await Product.find(query);
-    const categories = await Product.find();
+    const categories = await Category.find();
 
     if (req.headers.accept.includes("application/json")) {
       return res.json({ products });
@@ -65,4 +71,35 @@ const shoppingPage = async (req, res) => {
   }
 };
 
-module.exports = { landingPage, shoppingPage };
+// single product page get
+const singlePage = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const currentURL = req.originalUrl;
+    const product = await Product.findById(id);
+
+    if (!product) {
+      console.log("no product");
+      return res.render("utils/userErrorPage", {
+        statusCode: 404,
+        message: "Product not found!",
+      });
+    }
+
+    const relatedProducts = await Product.find({
+      $or: [{ category: product.category }, { author: product.author }],
+      _id: { $ne: id },
+    }).limit(10);
+
+    return res.status(200).render("user/singlePage", {
+      product,
+      relatedProducts,
+      currentURL,
+    });
+  } catch (err) {
+    console.log("Server error while fetching the product!", err);
+    return res.status(500).send("server error!");
+  }
+};
+
+module.exports = { landingPage, shoppingPage, singlePage };

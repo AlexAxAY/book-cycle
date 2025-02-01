@@ -34,6 +34,7 @@ h2 {
 
 .row.text-center img:hover {
   transform: scale(1.05);
+  cursor: pointer;
 }
 
 /* New Arrivals Carousel */
@@ -81,11 +82,34 @@ h2 {
 }
 
 .info {
-  background-image: url("../../images/bookcases-1869616_1280.jpg");
+  background-image: url("../../images/young-student-learning-library (1).webp");
   background-size: cover;
   background-position: center;
+  position: relative; /* Ensure the container is positioned relative */
 }
 
+.overlay-text {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; /* Space between top and bottom content */
+  align-items: center; /* Center content horizontally */
+  text-align: center;
+  padding: 20px;
+  color: #1a472a;
+}
+
+.top-content {
+  margin-top: 20px; /* Adjust spacing at the top */
+}
+
+.bottom-content {
+  margin-bottom: 20px; /* Adjust spacing at the bottom */
+}
 /* must include in all other templates for the navbar */
 .navbar-logo {
   margin-left: 30px;
@@ -97,4 +121,12 @@ h2 {
   box-shadow: 0 4px 8px 0 rgba(255, 255, 255, 0.1),
     0 6px 20px 0 rgba(255, 255, 255, 0.1);
   transform: scale(1.1);
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+a:hover {
+  opacity: 0.8;
 }

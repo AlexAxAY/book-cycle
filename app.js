@@ -29,6 +29,7 @@ app.use(methodOverride("_method"));
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 
+// session middlewares
 app.use(
   session({
     secret: process.env.SECRET_KEYS,
@@ -36,7 +37,7 @@ app.use(
     saveUninitialized: false,
     cookie: {
       secure: false,
-      maxAge: 3600000,
+      maxAge: 24 * 3600000,
       sameSite: "lax",
     },
     store:
@@ -48,8 +49,13 @@ app.use(
 
 app.use((req, res, next) => {
   if (req.session.user) {
+    // Assign the user to req.user
     req.user = req.session.user;
+    console.log(req.session.cookie);
   }
+
+  res.locals.user = req.session.user || null;
+
   next();
 });
 
@@ -57,7 +63,7 @@ app.use((req, res, next) => {
 app.use((req, res, next) => {
   res.setHeader(
     "Content-Security-Policy",
-    "script-src 'self' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com"
+    "script-src 'self' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://code.jquery.com"
   );
   next();
 });

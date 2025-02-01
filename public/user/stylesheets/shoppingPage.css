@@ -36,3 +36,12 @@ body {
 #rating {
   max-width: 200px;
 }
+
+.to-product {
+  transition: transform 0.2s ease;
+}
+
+.to-product:hover {
+  cursor: pointer;
+  transform: scale(1.1);
+}

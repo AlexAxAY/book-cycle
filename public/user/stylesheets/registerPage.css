@@ -1,0 +1,69 @@
+body {
+  margin: 0 !important;
+  font-family: Arial, sans-serif !important;
+  background: linear-gradient(135deg, #bdbdbd 0%, #ffffff 100%);
+}
+
+.navbar-logo {
+  margin-left: 30px;
+  border-radius: 50%;
+  transition: 0.2s ease-in-out;
+}
+
+.navbar-logo:hover {
+  box-shadow: 0 4px 8px 0 rgba(255, 255, 255, 0.1),
+    0 6px 20px 0 rgba(255, 255, 255, 0.1);
+  transform: scale(1.1);
+}
+
+.main-form {
+  border-radius: 10px;
+  transition: box-shadow 0.3s ease-in-out;
+  min-height: 500px;
+}
+
+.main-form:hover {
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+.right-side {
+  padding: 20px 10px 20px 10px !important ;
+  background-color: white;
+}
+
+.left-side {
+  background-image: url("../../images/old-books-436498_1280.jpg");
+  background-size: cover;
+  background-position: center;
+  padding: 0px !important ;
+}
+
+.login {
+  transition: box-shadow 0.3s ease-in-out;
+}
+
+.login:hover {
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+/* alert */
+.alert-bad,
+.alert-good {
+  padding: 20px;
+  width: fit-content;
+  border-radius: 5px !important;
+  color: white !important;
+  position: fixed;
+  top: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9999;
+}
+
+.alert-bad {
+  background-color: #f44336 !important;
+}
+
+.alert-good {
+  background-color: green !important;
+}

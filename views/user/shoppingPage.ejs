@@ -76,13 +76,14 @@
       </div>
 
       <!-- Products Grid -->
-      <div class="row mt-4">
+      <div class="row mt-4 product-grid">
         <% products.forEach(product => { %>
         <div class="col-12 col-sm-6 col-md-3 col-lg-3 col-xl-2 mb-4">
           <div class="card">
             <div
+              data-id-info="<%= product._id %>"
               id="carousel<%= product._id %>"
-              class="carousel slide"
+              class="carousel slide to-product"
               data-bs-ride="carousel"
             >
               <div class="carousel-inner">
@@ -143,6 +144,9 @@
 
     <!-- helper js file -->
     <script src="/user/helper/shoppingPageHelper.js"></script>
+
+    <!-- logout -->
+    <script src="/user/helper/logoutHelper.js"></script>
 
     <!-- Include Axios -->
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
