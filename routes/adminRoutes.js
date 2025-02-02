@@ -4,7 +4,11 @@ const multer = require("multer");
 const { storage } = require("../cloudinary/index.js");
 
 // middleware is yet to be applied please apply this before presenting.
-const { checkAdmin } = require("../middleware/admin/authMiddleware.js");
+const {
+  checkAdmin,
+  preventCache,
+  preventAuth,
+} = require("../middleware/admin/authMiddleware.js");
 
 // requiring banner controllers
 const {
@@ -47,7 +51,10 @@ const upload = multer({
 });
 
 // Admin auth route
-router.route("/login").get(viewAdminLoginPage).post(adminLogin);
+router
+  .route("/login")
+  .get(preventAuth, preventCache, viewAdminLoginPage)
+  .post(adminLogin);
 router.route("/logout").post(adminLogout);
 
 // Category management routes

@@ -14,7 +14,6 @@ const landingPage = async (req, res) => {
     return res.render("user/landingPage", {
       products,
       banners,
-      currentURL: req.originalUrl,
     });
   } catch (err) {
     console.log(err);
@@ -63,7 +62,6 @@ const shoppingPage = async (req, res) => {
     res.render("user/shoppingPage", {
       products,
       categories,
-      currentURL: req.originalUrl,
     });
   } catch (error) {
     console.error(error);
@@ -75,7 +73,6 @@ const shoppingPage = async (req, res) => {
 const singlePage = async (req, res) => {
   try {
     const { id } = req.params;
-    const currentURL = req.originalUrl;
     const product = await Product.findById(id);
 
     if (!product) {
@@ -94,7 +91,6 @@ const singlePage = async (req, res) => {
     return res.status(200).render("user/singlePage", {
       product,
       relatedProducts,
-      currentURL,
     });
   } catch (err) {
     console.log("Server error while fetching the product!", err);

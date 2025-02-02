@@ -1,74 +1,123 @@
+// Toggle filter options when clicking the filter button
 document.getElementById("filter-btn").addEventListener("click", () => {
   const filters = document.getElementById("filter-options");
-  if (filters.classList.contains("d-none")) {
-    filters.classList.remove("d-none");
+  filters.classList.toggle("d-none");
+});
+
+// ---- Input Validation ----
+
+// Get references for the new price inputs and the other filters
+const minPriceInput = document.getElementById("min-price");
+const maxPriceInput = document.getElementById("max-price");
+const discountInput = document.getElementById("discount");
+const ratingInput = document.getElementById("rating");
+
+// Validate min price
+minPriceInput.addEventListener("input", () => {
+  // Always non-negative
+  if (minPriceInput.value < 0) {
+    minPriceInput.classList.add("is-invalid");
   } else {
-    filters.classList.add("d-none");
+    minPriceInput.classList.remove("is-invalid");
+  }
+  // Also check relationship with maxPrice if provided
+  validatePriceRange();
+});
+
+// Validate max price
+maxPriceInput.addEventListener("input", () => {
+  // Always non-negative
+  if (maxPriceInput.value < 0) {
+    maxPriceInput.classList.add("is-invalid");
+  } else {
+    maxPriceInput.classList.remove("is-invalid");
+  }
+  // Also check relationship with minPrice if provided
+  validatePriceRange();
+});
+
+// Function to check that min price is not greater than max price
+function validatePriceRange() {
+  const minVal = parseFloat(minPriceInput.value);
+  const maxVal = parseFloat(maxPriceInput.value);
+  // Only validate if both have a value
+  if (!isNaN(minVal) && !isNaN(maxVal)) {
+    if (minVal > maxVal) {
+      minPriceInput.classList.add("is-invalid");
+      maxPriceInput.classList.add("is-invalid");
+    } else {
+      minPriceInput.classList.remove("is-invalid");
+      maxPriceInput.classList.remove("is-invalid");
+    }
+  }
+}
+
+// Validate discount (should be between 0 and 100)
+discountInput.addEventListener("input", () => {
+  const value = parseFloat(discountInput.value);
+  if (isNaN(value) || value < 0 || value > 100) {
+    discountInput.classList.add("is-invalid");
+  } else {
+    discountInput.classList.remove("is-invalid");
   }
 });
 
-// input validation
-const price = document.getElementById("price");
-const discount = document.getElementById("discount");
-const rating = document.getElementById("rating");
-
-price.addEventListener("input", () => {
-  if (price.value < 0) {
-    price.classList.add("is-invalid");
+// Validate rating (should be between 0 and 5)
+ratingInput.addEventListener("input", () => {
+  const value = parseFloat(ratingInput.value);
+  if (isNaN(value) || value < 0 || value > 5) {
+    ratingInput.classList.add("is-invalid");
   } else {
-    price.classList.remove("is-invalid");
+    ratingInput.classList.remove("is-invalid");
   }
 });
 
-discount.addEventListener("input", () => {
-  if (discount.value < 0 || discount.value > 100) {
-    discount.classList.add("is-invalid");
-  } else {
-    discount.classList.remove("is-invalid");
-  }
-});
+// ---- Form Submission Handling ----
 
-rating.addEventListener("input", () => {
-  if (rating.value < 0 || rating.value > 5) {
-    rating.classList.add("is-invalid");
-  } else {
-    rating.classList.remove("is-invalid");
-  }
-});
-
-// submit validation
+// Filter Form Submission
 document.getElementById("filterForm").addEventListener("submit", function (e) {
   let isValid = true;
 
-  // Price Validation
-  const price = document.getElementById("price");
-  if (price.value && price.value < 0) {
-    price.classList.add("is-invalid");
+  // Validate min and max price values (if provided)
+  const minVal = parseFloat(minPriceInput.value);
+  const maxVal = parseFloat(maxPriceInput.value);
+  if (minPriceInput.value && minVal < 0) {
+    minPriceInput.classList.add("is-invalid");
     isValid = false;
-  } else {
-    price.classList.remove("is-invalid");
+  }
+  if (maxPriceInput.value && maxVal < 0) {
+    maxPriceInput.classList.add("is-invalid");
+    isValid = false;
+  }
+  if (minPriceInput.value && maxPriceInput.value && minVal > maxVal) {
+    minPriceInput.classList.add("is-invalid");
+    maxPriceInput.classList.add("is-invalid");
+    isValid = false;
   }
 
-  // Discount Validation
-  const discount = document.getElementById("discount");
-  if (discount.value && (discount.value < 0 || discount.value > 100)) {
-    discount.classList.add("is-invalid");
+  // Validate discount again
+  const discVal = parseFloat(discountInput.value);
+  if (discountInput.value && (discVal < 0 || discVal > 100)) {
+    discountInput.classList.add("is-invalid");
     isValid = false;
-  } else {
-    discount.classList.remove("is-invalid");
   }
 
-  // Rating Validation
-  const rating = document.getElementById("rating");
-  if (rating.value && (rating.value < 0 || rating.value > 5)) {
-    rating.classList.add("is-invalid");
+  // Validate rating again
+  const rateVal = parseFloat(ratingInput.value);
+  if (ratingInput.value && (rateVal < 0 || rateVal > 5)) {
+    ratingInput.classList.add("is-invalid");
     isValid = false;
-  } else {
-    rating.classList.remove("is-invalid");
   }
 
-  // Prevent form submission if validation fails
   if (!isValid) {
+    // Prevent form submission if any validations fail
     e.preventDefault();
   }
+});
+
+// Search Form Submission (for product name search)
+// Assumes that the search input has a "name" attribute, e.g., name="search"
+document.getElementById("search-form").addEventListener("submit", function (e) {
+  // If needed, you could trim the value or check for emptiness.
+  // Here we let the form submit normally.
 });

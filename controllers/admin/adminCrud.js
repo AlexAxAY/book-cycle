@@ -116,52 +116,57 @@ const viewAllProductsPage = async (req, res) => {
   try {
     const perPage = 10;
     const page = parseInt(req.query.page) || 1;
+    const filter = { is_deleted: false };
 
-    // Capture filter fields from the query string
-    const { price, discount, rating, used, category, date } = req.query;
+    // Check if the search form was used (assume query parameter "search")
+    if (req.query.search) {
+      const searchTerm = req.query.search.trim();
 
-    // Construct the filter object dynamically
-    let filter = { is_deleted: false };
+      filter.name = { $regex: searchTerm, $options: "i" };
+    } else {
+      // Otherwise, apply the filter form fields
 
-    // Apply price filter if provided (Below price or exact match)
-    if (price) {
-      filter.price = { $lte: parseFloat(price) }; // For products with price less than or equal to the input price
-    }
+      // Date filter (products added on a specific day)
+      if (req.query.date) {
+        const selectedDate = new Date(req.query.date);
+        const selectedYear = selectedDate.getFullYear();
+        const selectedMonth = selectedDate.getMonth();
+        const selectedDay = selectedDate.getDate();
+        filter.createdAt = {
+          $gte: new Date(selectedYear, selectedMonth, selectedDay),
+          $lt: new Date(selectedYear, selectedMonth, selectedDay + 1),
+        };
+      }
 
-    // Apply discount filter if provided (Above discount)
-    if (discount) {
-      filter.discount = { $gte: parseFloat(discount) }; // For products with discount greater than or equal to the input discount
-    }
+      if (req.query["min-price"] || req.query["max-price"]) {
+        filter.price = {};
+        if (req.query["min-price"]) {
+          filter.price.$gte = parseFloat(req.query["min-price"]);
+        }
+        if (req.query["max-price"]) {
+          filter.price.$lte = parseFloat(req.query["max-price"]);
+        }
+      }
 
-    // Apply rating filter if provided (Above rating)
-    if (rating) {
-      filter.avg_rating = { $gte: parseFloat(rating) }; // For products with rating greater than or equal to the input rating
-    }
+      // Discount filter (products with discount >= given value)
+      if (req.query.discount) {
+        filter.discount = { $gte: parseFloat(req.query.discount) };
+      }
 
-    // Apply used filter if provided (Only used products or new products)
-    if (used !== undefined && used !== "") {
-      filter.used = used === "true"; // Convert string 'true'/'false' to boolean
-    }
+      // Rating filter (products with rating >= given value)
+      if (req.query.rating) {
+        filter.avg_rating = { $gte: parseFloat(req.query.rating) };
+      }
 
-    // Apply category filter if provided
-    if (category) {
-      filter.category = category; // Assuming 'category' is stored as a string or reference in the database
-    }
+      // Used filter (convert string "true"/"false" to boolean if provided)
+      if (req.query.used !== undefined && req.query.used !== "") {
+        filter.used = req.query.used === "true";
+      }
 
-    // Apply date filter if provided (Filtering products added on or after the selected date)
-    if (date) {
-      const selectedDate = new Date(date);
-
-      // Extract year, month, and day from the selected date
-      const selectedYear = selectedDate.getFullYear();
-      const selectedMonth = selectedDate.getMonth();
-      const selectedDay = selectedDate.getDate();
-
-      // Create a new Date object to compare only the year, month, and day
-      filter.createdAt = {
-        $gte: new Date(selectedYear, selectedMonth, selectedDay),
-        $lt: new Date(selectedYear, selectedMonth, selectedDay + 1),
-      };
+      // Category filter
+      if (req.query.category) {
+        filter.category = req.query.category;
+      }
     }
 
     // Fetch filtered products with pagination
@@ -171,19 +176,19 @@ const viewAllProductsPage = async (req, res) => {
 
     const categories = await Category.find();
 
-    // Count total filtered products for pagination
+    // Count total products (filtered) for pagination
     const totalProducts = await Product.countDocuments(filter);
     const totalPages = Math.ceil(totalProducts / perPage);
 
-    // Render the EJS template with filtered products and pagination data
+    // Render the template with products and pagination data
     return res.render("adminPanel/allProducts", {
-      products, // Pass the filtered products array
+      products,
       categories,
-      currentPage: page, // Pass current page
-      totalPages, // Pass total pages
+      currentPage: page,
+      totalPages,
     });
   } catch (err) {
-    console.log("Error fetching products:", err);
+    console.error("Error fetching products:", err);
     res.status(500).send("An error occurred while fetching products.");
   }
 };

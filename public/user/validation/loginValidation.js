@@ -19,16 +19,12 @@ document
     if (!email || !password) {
       alertBad.textContent = "Both email and password are required.";
       alertBad.classList.remove("d-none");
-
       if (!email) document.getElementById("email").classList.add("is-invalid");
       if (!password)
         document.getElementById("password").classList.add("is-invalid");
-
-      // Hide alert after 3 seconds
       window.alertTimeout = setTimeout(() => {
         alertBad.classList.add("d-none");
       }, 3000);
-
       return;
     }
 
@@ -38,12 +34,9 @@ document
         "Please enter a valid email address (e.g., example@gmail.com).";
       alertBad.classList.remove("d-none");
       document.getElementById("email").classList.add("is-invalid");
-
-      // Hide alert after 3 seconds
       window.alertTimeout = setTimeout(() => {
         alertBad.classList.add("d-none");
       }, 3000);
-
       return;
     }
 
@@ -54,22 +47,38 @@ document
       });
 
       if (response.data.success) {
-        alertGood.textContent = "Login successful! Redirecting...";
-        alertGood.classList.remove("d-none");
-
-        // Hide alert after 3 seconds and redirect to dashboard
-        window.alertTimeout = setTimeout(() => {
-          alertGood.classList.add("d-none");
-          window.location.href = "/user/home";
-        }, 3000);
+        if (
+          response.data.redirectTo &&
+          response.data.redirectTo === "/user/verify-otp"
+        ) {
+          // Store pendingUser details in localStorage including otpExpiresAt
+          localStorage.setItem(
+            "pendingUser",
+            JSON.stringify({
+              email,
+              otpExpiresAt: response.data.otpExpiresAt,
+            })
+          );
+          alertGood.textContent = "Please verify your OTP.";
+          alertGood.classList.remove("d-none");
+          window.alertTimeout = setTimeout(() => {
+            alertGood.classList.add("d-none");
+            window.location.href = response.data.redirectTo;
+          }, 3000);
+        } else {
+          alertGood.textContent = "Login successful! Redirecting...";
+          alertGood.classList.remove("d-none");
+          window.alertTimeout = setTimeout(() => {
+            alertGood.classList.add("d-none");
+            window.location.href = response.data.redirectTo || "/user/home";
+          }, 3000);
+        }
       } else {
         throw new Error(response.data.message || "Login failed.");
       }
     } catch (error) {
       alertBad.textContent = error.response?.data?.message || "Login failed.";
       alertBad.classList.remove("d-none");
-
-      // Hide alert after 3 seconds
       window.alertTimeout = setTimeout(() => {
         alertBad.classList.add("d-none");
       }, 3000);

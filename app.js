@@ -49,17 +49,17 @@ app.use(
 
 app.use((req, res, next) => {
   if (req.session.user) {
-    // Assign the user to req.user
     req.user = req.session.user;
-    console.log(req.session.cookie);
+    res.locals.user = req.user;
+  } else {
+    res.locals.user = null;
   }
-
-  res.locals.user = req.session.user || null;
+  res.locals.currentURL = req.originalUrl;
 
   next();
 });
 
-// permissions
+// permissions middleware
 app.use((req, res, next) => {
   res.setHeader(
     "Content-Security-Policy",

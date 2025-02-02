@@ -17,6 +17,13 @@
   <body>
     <!-- navbar -->
     <header><%- include("../partials/user/userNavbar.ejs") %></header>
+
+    <!-- error alert -->
+    <div class="alert-bad d-none text-center" style="position: fixed"></div>
+
+    <!-- success alert -->
+    <div class="alert-good d-none text-center" style="position: fixed"></div>
+
     <section class="container mt-4" style="min-height: calc(100vh - 212px)">
       <!-- Breadcrumbs -->
       <nav aria-label="breadcrumb">
@@ -210,6 +217,9 @@
 
     <!-- logout -->
     <script src="/user/helper/logoutHelper.js"></script>
+
+    <!-- pending user clear -->
+    <script src="/user/helper/removePendingUser.js"></script>
 
     <!-- bootstrap -->
     <%- include("../partials/admin/bootScript.ejs") %>

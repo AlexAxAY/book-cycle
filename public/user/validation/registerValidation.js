@@ -95,13 +95,21 @@ document
       });
 
       if (response.data.success) {
-        alertGood.textContent = "Registration successful! Redirecting...";
+        localStorage.setItem(
+          "pendingUser",
+          JSON.stringify({
+            email: response.data.email,
+            otpExpiresAt: response.data.otpExpiresAt,
+          })
+        );
+
+        alertGood.textContent =
+          "Registration successful! Please verify your email with the OTP sent.";
         alertGood.classList.remove("d-none");
 
-        // Hide alert after 3 seconds
-        window.alertTimeout = setTimeout(() => {
+        setTimeout(() => {
           alertGood.classList.add("d-none");
-          window.location.href = "/user/shop";
+          window.location.href = response.data.redirectTo || "/user/verify-otp";
         }, 3000);
       } else {
         throw new Error(response.data.message || "Registration failed.");

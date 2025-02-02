@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>OTP Verification</title>
+
+    <!-- css -->
+    <link rel="stylesheet" href="/user/stylesheets/otpVerify.css" />
+
+    <!-- icon link -->
+    <%- include("../partials/user/iconLink.ejs") %>
+
+    <!-- bootstrap link -->
+    <%- include("../partials/admin/bootLink.ejs") %>
+  </head>
+  <body>
+    <!-- navbar -->
+    <header><%- include("../partials/user/userNavbar.ejs") %></header>
+
+    <!-- main -->
+    <section
+      class="container d-flex"
+      style="
+        min-height: calc(100vh - 212px);
+        justify-content: center;
+        align-items: center;
+      "
+    >
+      <!-- error alert -->
+      <div class="alert-bad d-none" style="position: fixed"></div>
+
+      <!-- success alert -->
+      <div class="alert-good d-none" style="position: fixed"></div>
+
+      <div class="otp-container">
+        <h2 class="mt-2" style="text-align: center">Email Verification</h2>
+        <p class="otp-message">Enter the OTP sent to your email</p>
+        <input type="text" class="otp-input" placeholder="Enter OTP" />
+        <button class="otp-btn">Verify OTP</button>
+        <a style="text-decoration: none" class="mt-2 resend-btn" href=""
+          ><small>Resend it</small></a
+        >
+      </div>
+    </section>
+    <!-- footer partial -->
+    <%- include("../partials/user/userFooter.ejs") %>
+
+    <!-- include Axios -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+    <!-- bootstrap -->
+    <%- include("../partials/admin/bootScript.ejs") %>
+
+    <!-- otp validation -->
+    <script src="/user/validation/otpValidation.js"></script>
+
+    <!-- include Axios -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  </body>
+</html>

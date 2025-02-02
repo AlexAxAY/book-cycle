@@ -30,10 +30,10 @@
       "
     >
       <!-- error alert -->
-      <div class="alert-bad d-none" style="position: fixed"></div>
+      <div class="alert-bad d-none text-center" style="position: fixed"></div>
 
       <!-- success alert -->
-      <div class="alert-good d-none" style="position: fixed"></div>
+      <div class="alert-good d-none text-center" style="position: fixed"></div>
 
       <div class="row w-100 main-form">
         <!-- left side  -->
@@ -84,6 +84,9 @@
                 placeholder="Password"
               />
               <label for="password">Password</label>
+              <span id="passwordHelpInline" class="form-text">
+                Must be at least 10 characters long
+              </span>
             </div>
             <div class="form-floating mb-3">
               <input
@@ -128,6 +131,9 @@
 
     <!-- validation file -->
     <script src="/user/validation/registerValidation.js"></script>
+
+    <!-- pending user clear -->
+    <script src="/user/helper/removePendingUser.js"></script>
 
     <!-- bootstrap -->
     <%- include("../partials/admin/bootScript.ejs") %>
