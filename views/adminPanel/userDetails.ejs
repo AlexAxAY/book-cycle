@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>User Details</title>
+
+    <!-- css -->
+    <link rel="stylesheet" href="/admin/stylesheets/allUsers.css" />
+
+    <!-- bootstrap -->
+    <%- include("../partials/admin/bootLink.ejs") %>
+  </head>
+  <body>
+    <!-- navbar -->
+    <header><%- include("../partials/admin/adminNavbar.ejs") %></header>
+
+    <!-- error alert -->
+    <div
+      class="alert-bad d-none text-center"
+      style="
+        position: fixed;
+        top: 10px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 80%;
+      "
+    ></div>
+
+    <!-- success alert -->
+    <div
+      class="alert-good d-none text-center"
+      style="
+        position: fixed;
+        top: 10px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 80%;
+      "
+    ></div>
+
+    <!-- Modal -->
+    <div
+      class="modal fade"
+      id="block-model"
+      tabindex="-1"
+      aria-labelledby="block-model-Label"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="block-model-Label">
+              Confirmation
+            </h1>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            Are you sure you want to block <%= user.name %>?
+
+            <div id="reasonContainer" class="my-3">
+              <label for="blockReason" class="form-label"
+                >Reason for blocking<span class="text-danger">*</span></label
+              >
+              <textarea
+                class="form-control"
+                id="blockReason"
+                rows="2"
+                required
+              ></textarea>
+            </div>
+          </div>
+
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-outline-danger"
+              id="blockUserBtn"
+            >
+              Yes
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- main section -->
+    <section class="container mt-5" style="min-height: calc(100vh - 146px)">
+      <h2>User Details</h2>
+      <div class="row main-row mt-5" style="flex-direction: column">
+        <div class="col-12">
+          <p><strong>User name:</strong> <%= user.name %></p>
+          <p><strong>User ID:</strong> #<%= user._id %></p>
+          <p><strong>User email:</strong> <%= user.email || "null" %></p>
+          <p><strong>User phone:</strong> <%= user.phone || "null" %></p>
+          <p>
+            <strong>User status:</strong>
+            <% if (user.isBlocked === false) { %>
+            <span style="color: green">Active ⬤</span>
+            <% } else { %>
+            <span style="color: red">Blocked ⬤</span>
+            <% } %>
+          </p>
+          <p><strong>Date of register:</strong> <%= user.createdAt %></p>
+        </div>
+        <div class="col-12">
+          <% if (!user.isBlocked) { %>
+          <button
+            type="button"
+            class="btn btn-outline-danger"
+            data-bs-toggle="modal"
+            data-bs-target="#block-model"
+          >
+            Block
+          </button>
+          <% } else { %>
+          <button class="btn btn-outline-success" id="unblockUserBtn">
+            Un-block
+          </button>
+          <% } %>
+        </div>
+      </div>
+    </section>
+
+    <!-- footer -->
+    <%- include("../partials/admin/adminFooter.ejs") %>
+
+    <!-- js logout validation file -->
+    <script src="/admin/front-end-validation/logoutValidation.js"></script>
+
+    <!-- bootstrap -->
+    <%- include("../partials/admin/bootScript.ejs") %>
+
+    <!-- axios -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+    <!-- Custom JS -->
+    <script src="/admin/helper/blockUserHelper.js"></script>
+  </body>
+</html>

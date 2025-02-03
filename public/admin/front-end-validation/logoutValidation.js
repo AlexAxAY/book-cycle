@@ -6,21 +6,36 @@ document.querySelectorAll(".logout-btn").forEach((button) => {
   });
 });
 
+// Function to show custom alert
+function showAlert(type, message) {
+  const alertElement =
+    type === "success"
+      ? document.querySelector(".alert-good")
+      : document.querySelector(".alert-bad");
+
+  alertElement.textContent = message;
+  alertElement.classList.remove("d-none");
+
+  // Hide the alert after 3 seconds
+  setTimeout(() => {
+    alertElement.classList.add("d-none");
+  }, 3000);
+}
+
 async function logoutAdmin() {
   try {
     const response = await axios.post("/admin/logout");
     if (response.data.success) {
-      alert("Logged out successfully!");
+      showAlert("success", "Logged out successfully!");
       setTimeout(() => {
         window.location.href = "/admin/login";
       }, 1500);
     }
   } catch (error) {
-    let messages = [];
     if (error.response?.data?.message) {
-      alert(error.response.data.message);
+      showAlert("error", error.response.data.message);
     } else {
-      alert("Logout failed. Please try again.");
+      showAlert("error", "Logout failed. Please try again.");
     }
   }
 }

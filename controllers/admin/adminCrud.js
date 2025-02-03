@@ -98,13 +98,14 @@ const deleteCategory = async (req, res) => {
   const { id } = req.params;
   try {
     // Find the category by id and set is_deleted to true
-    await Category.findByIdAndUpdate(
+    const deleted = await Category.findByIdAndUpdate(
       id,
       { is_deleted: true },
       { new: true, runValidators: true }
     );
-
-    res.redirect("/admin/view-categories");
+    res
+      .status(200)
+      .json({ success: true, message: "Category deleted successfully!" });
   } catch (err) {
     console.error("Error in soft deleting!", err);
     return res.status(400).json({ message: "Error in deleting the category!" });

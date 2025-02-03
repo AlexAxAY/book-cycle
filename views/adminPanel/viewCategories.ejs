@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Add Products</title>
+    <title>Categories</title>
 
     <!-- css -->
     <link rel="stylesheet" href="/admin/stylesheets/viewCategories.css" />
@@ -21,6 +21,31 @@
   </head>
   <body>
     <header><%- include("../partials/admin/adminNavbar.ejs") %></header>
+
+    <!-- error alert -->
+    <div
+      class="alert-bad d-none text-center alert alert-danger"
+      style="
+        position: fixed;
+        top: 10px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 50%;
+      "
+    ></div>
+
+    <!-- success alert -->
+    <div
+      class="alert-good d-none text-center alert alert-success"
+      style="
+        position: fixed;
+        top: 10px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 50%;
+      "
+    ></div>
+
     <section class="container">
       <div
         class="main-section d-flex"
@@ -41,19 +66,63 @@
                   class="btn btn-outline-primary btn-sm"
                   >Update</a
                 >
-                <form
-                  action="/admin/manage-category/<%= data._id %>?_method=DELETE"
-                  method="POST"
-                  style="display: inline"
+
+                <button
+                  type="button"
+                  class="btn btn-outline-danger btn-sm delete-btn"
+                  data-id="<%= data._id %>"
+                  data-name="<%= data.category %>"
                 >
-                  <button type="submit" class="btn btn-outline-danger btn-sm">
-                    Delete
-                  </button>
-                </form>
+                  Delete
+                </button>
               </div>
             </div>
           </div>
           <% } %> <% }) %>
+        </div>
+
+        <!-- Delete Confirmation Modal -->
+        <div
+          class="modal fade"
+          id="deleteCategoryModal"
+          tabindex="-1"
+          aria-hidden="true"
+        >
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title">Confirm Deletion</h5>
+                <button
+                  type="button"
+                  class="btn-close"
+                  data-bs-dismiss="modal"
+                  aria-label="Close"
+                ></button>
+              </div>
+              <div class="modal-body">
+                Are you sure you want to delete the category "<span
+                  id="categoryNamePlaceholder"
+                ></span
+                >"?
+              </div>
+              <div class="modal-footer">
+                <button
+                  type="button"
+                  class="btn btn-secondary"
+                  data-bs-dismiss="modal"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-danger"
+                  id="confirmDeleteButton"
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -63,6 +132,9 @@
 
     <!-- js logout validation file -->
     <script src="/admin/front-end-validation/logoutValidation.js"></script>
+
+    <!-- delete validation file -->
+    <script src="/admin/front-end-validation/categoryDltValidation.js"></script>
 
     <!-- bootstrap -->
     <%- include("../partials/admin/bootScript.ejs") %>

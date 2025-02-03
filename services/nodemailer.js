@@ -40,9 +40,34 @@ function getOtpEmailTemplate({ name, otp, expiryMinutes }) {
     `;
 }
 
+function sendBlockEmail(user, reason) {
+  return `
+      <p>Dear ${user.name},</p>
+      <p>We regret to inform you that your account has been blocked.</p>
+      <p><strong>Reason:</strong> ${reason}</p>
+      <p>If you believe this is a mistake or wish to appeal, please contact our support team.</p>
+      <br/>
+      <p>Best regards,</p>
+      <p>Book Cycle</p>
+    `;
+}
+
+function sendUnblockMail(user) {
+  return `
+      <p>Dear ${user.name},</p>
+      <p>We are pleased to inform you that your account has been successfully unblocked and you can now access all the features and services available on our platform.</p>
+      <p>If you believe this is a mistake or wish to appeal, please contact our support team.</p>
+      <br/>
+      <p>Best regards,</p>
+      <p>Book Cycle</p>
+    `;
+}
+
 module.exports = {
   transporter,
   getOtpEmailTemplate,
+  sendBlockEmail,
+  sendUnblockMail,
   generateOtp,
   expiringTime,
 };

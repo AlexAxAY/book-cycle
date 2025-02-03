@@ -3,14 +3,14 @@ const router = express.Router();
 const multer = require("multer");
 const { storage } = require("../cloudinary/index.js");
 
-// middleware is yet to be applied please apply this before presenting.
+// Middleware is yet to be applied please apply this before presenting.
 const {
   checkAdmin,
   preventCache,
   preventAuth,
 } = require("../middleware/admin/authMiddleware.js");
 
-// requiring banner controllers
+// Requiring banner controllers
 const {
   viewBanner,
   addBanner,
@@ -18,14 +18,22 @@ const {
   deleteBanner,
 } = require("../controllers/admin/adminBanner.js");
 
-// requiring auth controllers
+// Requiring user controllers
+const {
+  allUsers,
+  blockUser,
+  unblockUser,
+  userDetailsPage,
+} = require("../controllers/admin/adminUserCtrl.js");
+
+// Requiring auth controllers
 const {
   viewAdminLoginPage,
   adminLogin,
   adminLogout,
 } = require("../controllers/admin/adminAuth.js");
 
-// requiring product controllers
+// Requiring product controllers
 const {
   viewAllProductsPage,
   viewAddProducts,
@@ -42,6 +50,7 @@ const {
   singleProductPage,
 } = require("../controllers/admin/adminCrud.js");
 
+// multer
 const upload = multer({
   storage,
   limits: {
@@ -84,7 +93,13 @@ router
   .route("/banner-management")
   .get(viewBanner)
   .post(upload.single("image"), addBanner);
-
 router.route("/all-banners").get(viewAllBanners);
 router.route("/all-banners/:id").delete(deleteBanner);
+
+// User management routes
+router.route("/users").get(allUsers);
+router.route("/users/block/:id").patch(blockUser);
+router.route("/users/unblock/:id").patch(unblockUser);
+router.route("/user/details/:id").get(userDetailsPage);
+
 module.exports = router;

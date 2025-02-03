@@ -16,7 +16,11 @@
       <div>
         <div class="error-code"><%= statusCode %></div>
         <div class="error-message"><%= message %></div>
-        <a class="btn-home btn btn-primary" href="/admin/login">Go back</a>
+        <a
+          class="btn-home btn btn-primary"
+          href="<%= user && user.isAdmin ? '/admin/products' : '/admin/login' %>"
+          >Go back</a
+        >
       </div>
     </div>
     <!-- bootsrtap -->

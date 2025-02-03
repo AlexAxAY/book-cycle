@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Add Products</title>
+    <title>Update Category</title>
 
     <!-- css -->
     <link rel="stylesheet" href="/admin/stylesheets/categoryManagement.css" />
@@ -21,6 +21,14 @@
   </head>
   <body>
     <header><%- include("../partials/admin/adminNavbar.ejs") %></header>
+
+    <!-- For logout -->
+    <!-- error alert -->
+    <div class="alert-bad d-none text-center" style="position: fixed"></div>
+
+    <!-- success alert -->
+    <div class="alert-good d-none text-center" style="position: fixed"></div>
+
     <section class="main-section">
       <div
         class="container d-flex justify-content-center align-items-center"

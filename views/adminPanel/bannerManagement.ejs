@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Add Products</title>
+    <title>Banner Management</title>
 
     <!-- css -->
     <link rel="stylesheet" href="/admin/stylesheets/bannerManagement.css" />
@@ -27,6 +27,19 @@
           <div class="col-md-8">
             <!-- Alert Container -->
             <div id="alertContainer" class="mb-4"></div>
+
+            <!-- For logout -->
+            <!-- error alert -->
+            <div
+              class="alert-bad d-none text-center"
+              style="position: fixed"
+            ></div>
+
+            <!-- success alert -->
+            <div
+              class="alert-good d-none text-center"
+              style="position: fixed"
+            ></div>
 
             <form id="bannerForm" enctype="multipart/form-data">
               <div class="card">
