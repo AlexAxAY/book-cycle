@@ -12,6 +12,8 @@ const path = require("path");
 const { createAdmin } = require("./controllers/admin/adminAuth");
 const adminRoutes = require("./routes/adminRoutes");
 const userRoutes = require("./routes/userRoutes");
+const googleAuthRoutes = require("./routes/googleAuthRoutes");
+const passport = require("passport");
 
 const PORT = process.env.PORT;
 
@@ -47,6 +49,9 @@ app.use(
   })
 );
 
+app.use(passport.initialize());
+app.use(passport.session());
+
 app.use((req, res, next) => {
   if (req.session.user) {
     req.user = req.session.user;
@@ -78,6 +83,9 @@ createAdmin();
 
 app.use("/admin", adminRoutes);
 app.use("/user", userRoutes);
+
+// G-auth routes
+app.use("/", googleAuthRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server is running on ${PORT}`);

@@ -13,11 +13,13 @@ const {
   loginForm,
   registerForm,
   register,
+  setPasswordPage,
   otpPage,
   verifyOtp,
   resendOtp,
   login,
   logout,
+  setPassword,
 } = require("../controllers/user/userAuth");
 
 // middlewares
@@ -26,7 +28,7 @@ const {
   preventAuthVisit,
 } = require("../middleware/user/authMiddlewares");
 
-// pages
+// main pages
 router.route("/home").get(landingPage);
 router.route("/shop").get(shoppingPage);
 router.route("/shop/product/:id").get(singlePage);
@@ -41,6 +43,10 @@ router
   .get(preventCache, preventAuthVisit, registerForm)
   .post(register);
 router.route("/logout").post(logout);
+router
+  .route("/set-password")
+  .get(preventCache, preventAuthVisit, setPasswordPage);
+router.route("/set-password/:id").patch(setPassword);
 
 // otp routes
 router.route("/verify-otp").get(preventCache, otpPage).post(verifyOtp);

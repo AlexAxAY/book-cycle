@@ -41,10 +41,7 @@ document
     }
 
     try {
-      const response = await axios.post("/user/login", {
-        email,
-        password,
-      });
+      const response = await axios.post("/user/login", { email, password });
 
       if (response.data.success) {
         if (
@@ -54,13 +51,27 @@ document
           // Store pendingUser details in localStorage including otpExpiresAt
           localStorage.setItem(
             "pendingUser",
-            JSON.stringify({
-              email,
-              otpExpiresAt: response.data.otpExpiresAt,
-            })
+            JSON.stringify({ email, otpExpiresAt: response.data.otpExpiresAt })
           );
-          alertGood.textContent = "Please verify your OTP.";
+          alertGood.textContent =
+            response.data.message || "Please verify your OTP.";
           alertGood.classList.remove("d-none");
+          window.alertTimeout = setTimeout(() => {
+            alertGood.classList.add("d-none");
+            window.location.href = response.data.redirectTo;
+          }, 3000);
+        } else if (
+          response.data.redirectTo &&
+          response.data.redirectTo === "/user/set-password"
+        ) {
+          localStorage.setItem(
+            "stayBack",
+            JSON.stringify({ stayBack: response.data.stayBack })
+          );
+          alertGood.textContent =
+            response.data.message || "Please set your password. Redirecting...";
+          alertGood.classList.remove("d-none");
+
           window.alertTimeout = setTimeout(() => {
             alertGood.classList.add("d-none");
             window.location.href = response.data.redirectTo;

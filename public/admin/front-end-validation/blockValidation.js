@@ -1,104 +1,50 @@
-// Function to show custom alerts
-const showBlockAlert = (message, type) => {
-  const alertElement =
-    type === "success"
-      ? document.querySelector(".alert-good")
-      : document.querySelector(".alert-bad");
+// Attach click event to all block buttons
+document.querySelectorAll(".block-btn").forEach(function (button) {
+  button.addEventListener("click", function () {
+    // Retrieve user data from data attributes
+    var userId = this.getAttribute("data-user-id");
+    var userName = this.getAttribute("data-user-name");
 
-  alertElement.textContent = message;
-  alertElement.classList.remove("d-none");
+    // Set the username in the modal text
+    document.getElementById("blockUserName").textContent = userName;
+    // Clear any previous reason text
+    document.getElementById("blockReason").value = "";
+    // Store the user ID in the confirm button for later use
+    document
+      .getElementById("confirmBlockButton")
+      .setAttribute("data-user-id", userId);
 
-  setTimeout(() => {
-    alertElement.classList.add("d-none");
-  }, 3000);
-};
-
-// Opens the modal with appropriate settings for block or unblock action
-const openModalForAction = (userId, userName, action) => {
-  const blockUserNameEl = document.getElementById("blockUserName");
-  blockUserNameEl.textContent = userName;
-
-  const modalTitle = document.getElementById("blockUserModalLabel");
-  const actionTypeText = document.getElementById("actionTypeText");
-  const confirmBlockButton = document.getElementById("confirmBlockButton");
-  const reasonContainer = document.getElementById("reasonContainer");
-  const blockReasonEl = document.getElementById("blockReason");
-
-  if (action === "block") {
-    modalTitle.textContent = "Confirm Block User";
-    actionTypeText.textContent = "block";
-    reasonContainer.style.display = "block";
-    confirmBlockButton.textContent = "Block";
-    blockReasonEl.value = "";
-  } else if (action === "unblock") {
-    modalTitle.textContent = "Confirm Unblock User";
-    actionTypeText.textContent = "unblock";
-    reasonContainer.style.display = "none";
-    confirmBlockButton.textContent = "Unblock";
-  }
-
-  confirmBlockButton.setAttribute("data-user-id", userId);
-  confirmBlockButton.setAttribute("data-action", action);
-
-  const modalEl = document.getElementById("blockUserModal");
-  const modal = new bootstrap.Modal(modalEl);
-  modal.show();
-};
-
-// Attach event listeners to block buttons
-document.querySelectorAll(".block-btn").forEach((button) => {
-  button.addEventListener("click", () => {
-    openModalForAction(
-      button.getAttribute("data-user-id"),
-      button.getAttribute("data-user-name"),
-      "block"
-    );
+    // Show the modal (using Bootstrap 5)
+    var modal = new bootstrap.Modal(document.getElementById("blockUserModal"));
+    modal.show();
   });
 });
 
-// Attach event listeners to unblock buttons
-document.querySelectorAll(".unblock-btn").forEach((button) => {
-  button.addEventListener("click", () => {
-    openModalForAction(
-      button.getAttribute("data-user-id"),
-      button.getAttribute("data-user-name"),
-      "unblock"
-    );
-  });
-});
+// When the confirm block button is clicked, send an AJAX request to block the user.
+document
+  .getElementById("confirmBlockButton")
+  .addEventListener("click", function () {
+    var userId = this.getAttribute("data-user-id");
+    var reason = document.getElementById("blockReason").value.trim();
 
-// When the confirm button is clicked, send the appropriate PATCH request.
-document.getElementById("confirmBlockButton").addEventListener("click", () => {
-  const userId = confirmBlockButton.getAttribute("data-user-id");
-  const action = confirmBlockButton.getAttribute("data-action");
-  let request;
-
-  if (action === "block") {
-    const reason = document.getElementById("blockReason").value.trim();
+    // Check that a reason is provided
     if (!reason) {
-      showBlockAlert("Please provide a reason for blocking the user.", "error");
+      alert("Please provide a reason for blocking the user.");
       return;
     }
-    request = axios.patch(`/admin/users/block/${userId}`, { reason });
-  } else if (action === "unblock") {
-    request = axios.patch(`/admin/users/unblock/${userId}`);
-  }
 
-  if (request) {
-    request
-      .then((response) => {
-        bootstrap.Modal.getInstance(
-          document.getElementById("blockUserModal")
-        ).hide();
-        showBlockAlert("Action completed successfully!", "success");
-        setTimeout(() => location.reload(), 1500);
+    // Send a POST request using Axios
+    axios
+      .post(`/admin/users/block/${userId}`, { reason: reason })
+      .then(function (response) {
+        // On success, hide the modal and reload the page or update the UI accordingly.
+        var modalEl = document.getElementById("blockUserModal");
+        var modalInstance = bootstrap.Modal.getInstance(modalEl);
+        modalInstance.hide();
+        location.reload();
       })
-      .catch((error) => {
+      .catch(function (error) {
         console.error(error);
-        showBlockAlert(
-          "An error occurred while processing the request.",
-          "error"
-        );
+        alert("An error occurred while processing the block request.");
       });
-  }
-});
+  });

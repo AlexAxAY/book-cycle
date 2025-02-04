@@ -12,12 +12,56 @@ const bcrypt = require("bcrypt");
 
 // login page
 const loginForm = async (req, res) => {
-  return res.render("user/loginPage", { currentURL: req.originalUrl });
+  return res.render("user/loginPage");
 };
 
 // register page
 const registerForm = async (req, res) => {
-  return res.render("user/registerPage", { currentURL: req.originalUrl });
+  return res.render("user/registerPage");
+};
+
+// set-password page
+const setPasswordPage = async (req, res) => {
+  return res.render("user/setPassword");
+};
+
+// setting-password (for user who logged in first using g-auth then switching to normal way)
+const setPassword = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { password } = req.body;
+
+    if (!password || password.length < 10) {
+      return res.status(400).json({
+        success: false,
+        message: "Password must be at least 10 characters long.",
+      });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 12);
+
+    const user = await User.findByIdAndUpdate(
+      id,
+      { password: hashedPassword },
+      { new: true }
+    );
+
+    if (!user) {
+      return res.status(404).render("utils/userErrorPage", {
+        statusCode: 404,
+        message: "User not found!",
+      });
+    }
+
+    req.session.user = { email: user.email, isVerified: user.isVerified };
+
+    res.status(200).json({
+      success: true,
+      message: "Password updated successfully.",
+    });
+  } catch (err) {
+    console.log("Internal error in fetching password!", err);
+  }
 };
 
 // register user
@@ -100,7 +144,7 @@ const register = async (req, res) => {
 
 // otp verify page
 const otpPage = async (req, res) => {
-  return res.render("user/otpVerify", { currentURL: req.originalUrl });
+  return res.render("user/otpVerify");
 };
 
 // verifying otp
@@ -230,6 +274,16 @@ const login = async (req, res) => {
       });
     }
 
+    if (user.password === null) {
+      return res.status(200).json({
+        success: true,
+        stayBack: user._id,
+        message:
+          "You are already registered, but your password is missing. Please set a new password. Redirecting!!..",
+        redirectTo: "/user/set-password",
+      });
+    }
+
     // Compare the entered password with the stored hashed password
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
@@ -274,7 +328,8 @@ const login = async (req, res) => {
 
       return res.status(200).json({
         success: true,
-        message: "Your email is not verified. Please verify your OTP.",
+        message:
+          "You have an account but your email is not verified. Please verify your OTP.",
         email: user.email,
         otpExpiresAt: expiresAt,
         redirectTo: "/user/verify-otp",
@@ -302,25 +357,36 @@ const login = async (req, res) => {
 };
 
 // logout route
-const logout = async (req, res) => {
-  req.session.destroy((err) => {
+const logout = async (req, res, next) => {
+  req.logout((err) => {
     if (err) {
-      return res
-        .status(500)
-        .json({ success: false, message: "Sorry! Error in logging out!" });
+      return next(err);
     }
-    res.clearCookie("connect.sid", { path: "/" });
-    return res.status(200).json({ success: true, message: "Logged out! " });
+    req.session.destroy((err) => {
+      if (err) {
+        return res
+          .status(500)
+          .json({ success: false, message: "Error in logging out!" });
+      }
+      res.clearCookie("connect.sid", { path: "/" });
+      return res
+        .status(200)
+        .json({ success: true, message: "Logged out successfully!" });
+    });
   });
 };
+
+module.exports = { logout };
 
 module.exports = {
   loginForm,
   registerForm,
+  setPasswordPage,
   register,
   otpPage,
   verifyOtp,
   resendOtp,
   login,
   logout,
+  setPassword,
 };
