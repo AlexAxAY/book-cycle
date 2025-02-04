@@ -100,6 +100,7 @@ document
           JSON.stringify({
             email: response.data.email,
             otpExpiresAt: response.data.otpExpiresAt,
+            token: response.data.token,
           })
         );
 

@@ -1,3 +1,5 @@
+const jwt = require("jsonwebtoken");
+
 const preventCache = (req, res, next) => {
   res.setHeader(
     "Cache-Control",
@@ -16,4 +18,24 @@ const preventAuthVisit = (req, res, next) => {
   next();
 };
 
-module.exports = { preventCache, preventAuthVisit };
+const ensureValidToken = (req, res, next) => {
+  const { token } = req.body;
+  if (!token) {
+    return res.status(403).json({
+      success: false,
+      message: "Missing authentication token. Please register again.",
+    });
+  }
+
+  jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+    if (err) {
+      return res.status(403).json({
+        success: false,
+        message: "Invalid or expired token. Please register again.",
+      });
+    }
+    next();
+  });
+};
+
+module.exports = { preventCache, preventAuthVisit, ensureValidToken };

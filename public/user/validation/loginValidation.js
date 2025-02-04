@@ -51,7 +51,11 @@ document
           // Store pendingUser details in localStorage including otpExpiresAt
           localStorage.setItem(
             "pendingUser",
-            JSON.stringify({ email, otpExpiresAt: response.data.otpExpiresAt })
+            JSON.stringify({
+              email,
+              otpExpiresAt: response.data.otpExpiresAt,
+              token: response.data.token,
+            })
           );
           alertGood.textContent =
             response.data.message || "Please verify your OTP.";

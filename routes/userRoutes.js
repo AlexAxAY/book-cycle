@@ -26,6 +26,7 @@ const {
 const {
   preventCache,
   preventAuthVisit,
+  ensureValidToken,
 } = require("../middleware/user/authMiddlewares");
 
 // main pages
@@ -49,7 +50,10 @@ router
 router.route("/set-password/:id").patch(setPassword);
 
 // otp routes
-router.route("/verify-otp").get(preventCache, otpPage).post(verifyOtp);
+router
+  .route("/verify-otp")
+  .get(preventCache, otpPage)
+  .post(ensureValidToken, verifyOtp);
 router.route("/resend-otp").post(resendOtp);
 
 module.exports = router;

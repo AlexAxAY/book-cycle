@@ -7,6 +7,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Retrieve pending user from localStorage
   let pendingUser = JSON.parse(localStorage.getItem("pendingUser"));
+  const token = pendingUser?.token;
   // Convert otpExpiresAt to a timestamp (number) if it exists
   let otpExpiresAt = pendingUser?.otpExpiresAt
     ? new Date(pendingUser.otpExpiresAt).getTime()
@@ -77,6 +78,7 @@ document.addEventListener("DOMContentLoaded", function () {
       const response = await axios.post("/user/verify-otp", {
         email: pendingUser.email,
         otp,
+        token,
       });
 
       if (response.data.success) {

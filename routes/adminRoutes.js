@@ -67,39 +67,42 @@ router
 router.route("/logout").post(adminLogout);
 
 // Category management routes
-router.route("/manage-category").get(catManagePage).post(createCat);
+router
+  .route("/manage-category")
+  .get(checkAdmin, catManagePage)
+  .post(checkAdmin, createCat);
 router
   .route("/manage-category/:id")
-  .get(catUpdatePage)
-  .put(updateCategory)
-  .delete(deleteCategory);
-router.route("/view-categories").get(catViewPage);
+  .get(checkAdmin, catUpdatePage)
+  .put(checkAdmin, updateCategory)
+  .delete(checkAdmin, deleteCategory);
+router.route("/view-categories").get(checkAdmin, catViewPage);
 
 // Product routes
-router.route("/products").get(viewAllProductsPage);
-router.route("/product-view/:id").get(singleProductPage);
+router.route("/products").get(checkAdmin, viewAllProductsPage);
+router.route("/product-view/:id").get(checkAdmin, singleProductPage);
 router
   .route("/product/:id")
-  .get(updateProductPage)
-  .put(upload.array("images"), updateProduct)
-  .delete(deleteProduct);
+  .get(checkAdmin, updateProductPage)
+  .put(checkAdmin, upload.array("images"), updateProduct)
+  .delete(checkAdmin, deleteProduct);
 router
   .route("/add-products")
-  .get(viewAddProducts)
-  .post(upload.array("images"), addProduct);
+  .get(checkAdmin, viewAddProducts)
+  .post(checkAdmin, upload.array("images"), addProduct);
 
 // Banner management routes
 router
   .route("/banner-management")
-  .get(viewBanner)
-  .post(upload.single("image"), addBanner);
-router.route("/all-banners").get(viewAllBanners);
-router.route("/all-banners/:id").delete(deleteBanner);
+  .get(checkAdmin, viewBanner)
+  .post(checkAdmin, upload.single("image"), addBanner);
+router.route("/all-banners").get(checkAdmin, viewAllBanners);
+router.route("/all-banners/:id").delete(checkAdmin, deleteBanner);
 
 // User management routes
-router.route("/users").get(allUsers);
-router.route("/users/block/:id").patch(blockUser);
-router.route("/users/unblock/:id").patch(unblockUser);
-router.route("/user/details/:id").get(userDetailsPage);
+router.route("/users").get(checkAdmin, allUsers);
+router.route("/users/block/:id").patch(checkAdmin, blockUser);
+router.route("/users/unblock/:id").patch(checkAdmin, unblockUser);
+router.route("/user/details/:id").get(checkAdmin, userDetailsPage);
 
 module.exports = router;

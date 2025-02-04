@@ -143,10 +143,12 @@
           </a>
           <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
             <li><a class="dropdown-item" href="#">Change Password</a></li>
+            <% if(user && user.isAdmin) {%>
             <li>
               <hr class="dropdown-divider" />
             </li>
             <li><button class="dropdown-item logout-btn">Logout</button></li>
+            <% } %>
           </ul>
         </li>
       </ul>

@@ -1,5 +1,6 @@
 const User = require("../../models/userSchema");
 const Otp = require("../../models/otpSchema");
+const jwt = require("jsonwebtoken");
 
 const {
   transporter,
@@ -129,10 +130,17 @@ const register = async (req, res) => {
       }
     });
 
+    const tokenPayload = {
+      id: newUser._id,
+    };
+
+    const token = jwt.sign(tokenPayload, process.env.JWT_SECRET);
+
     res.json({
       success: true,
       message: "Registration successful! Please verify your OTP.",
       email: newUser.email,
+      token,
       otpExpiresAt: expiresAt,
       redirectTo: "/user/verify-otp",
     });
@@ -326,12 +334,19 @@ const login = async (req, res) => {
         }
       });
 
+      const tokenPayload = {
+        id: user._id,
+      };
+
+      const token = jwt.sign(tokenPayload, process.env.JWT_SECRET);
+
       return res.status(200).json({
         success: true,
         message:
           "You have an account but your email is not verified. Please verify your OTP.",
         email: user.email,
         otpExpiresAt: expiresAt,
+        token,
         redirectTo: "/user/verify-otp",
       });
     }
