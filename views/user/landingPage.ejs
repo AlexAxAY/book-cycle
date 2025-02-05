@@ -8,11 +8,11 @@
     <!-- bootstrap -->
     <%- include("../partials/admin/bootLink.ejs") %>
 
-    <!-- css -->
-    <link rel="stylesheet" href="/user/stylesheets/landingPage.css" />
-
     <!-- icon link -->
     <%- include("../partials/user/iconLink.ejs") %>
+
+    <!-- css -->
+    <link rel="stylesheet" href="/user/stylesheets/landingPage.css" />
   </head>
   <body>
     <header><%- include("../partials/user/userNavbar.ejs") %></header>
@@ -73,7 +73,7 @@
                 src="<%= banner.image.url %>"
                 class="d-block w-100 h-100 offer-banner-img"
                 alt="Offer Banner"
-                style="object-fit: crop"
+                style="object-fit: cover"
               />
             </div>
             <% }) %>

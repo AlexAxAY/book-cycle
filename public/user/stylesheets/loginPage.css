@@ -69,3 +69,54 @@ body {
 .alert-good {
   background-color: green !important;
 }
+
+/* apply this on every user template */
+@media (max-width: 767px) {
+  #contact-us {
+    font-size: 1rem !important;
+  }
+
+  #footer-mail {
+    font-size: 0.6rem !important;
+  }
+
+  .right h5 {
+    font-size: 1rem !important;
+  }
+
+  .right ul {
+    font-size: 0.6rem !important;
+  }
+
+  .cycle-logo {
+    height: 60px !important;
+  }
+  .all-rights {
+    font-size: 0.5rem !important;
+  }
+}
+
+@media (max-width: 375px) {
+  #contact-us {
+    font-size: 0.8rem !important;
+  }
+
+  #footer-mail {
+    font-size: 0.4rem !important;
+  }
+
+  .right h5 {
+    font-size: 0.8rem !important;
+  }
+
+  .right ul {
+    font-size: 0.4rem !important;
+  }
+
+  .cycle-logo {
+    height: 40px !important;
+  }
+  .all-rights {
+    font-size: 0.3rem !important;
+  }
+}
