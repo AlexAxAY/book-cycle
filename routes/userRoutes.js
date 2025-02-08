@@ -17,6 +17,8 @@ const {
   changePassword,
   setPasswordPage,
   setPassword,
+  forgotPassPage,
+  forgotPassword,
 } = require("../controllers/user/changePassword");
 
 // user auth
@@ -66,8 +68,18 @@ router.route("/resend-otp").post(resendOtp);
 router.route("/cart").get(cartPage);
 
 // change password routes
-// add checking auth middleware her edit is removed for editing purpose
-router.route("/change-password").get(changePasswordPage).patch(changePassword);
-router.route("/set-password").get(setPasswordPage).patch(setPassword);
+// add checking auth middleware, it is removed because for development
+router
+  .route("/change-password")
+  .get(checkingAuth, changePasswordPage)
+  .patch(checkingAuth, changePassword);
+router
+  .route("/set-password")
+  .get(checkingAuth, setPasswordPage)
+  .patch(checkingAuth, setPassword);
+router
+  .route("/forgot-password")
+  .get(preventCache, forgotPassPage)
+  .post(forgotPassword);
 
 module.exports = router;

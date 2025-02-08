@@ -5,6 +5,7 @@ const jwt = require("jsonwebtoken");
 const {
   transporter,
   getOtpEmailTemplate,
+  getForgotOtpTemplate,
   expiringTime,
   generateOtp,
 } = require("../../services/nodemailer");
@@ -114,7 +115,7 @@ const otpPage = async (req, res) => {
 // verifying otp
 const verifyOtp = async (req, res) => {
   try {
-    const { email, otp: userOtp } = req.body;
+    const { email, otp: userOtp, purpose } = req.body;
 
     if (!email || !userOtp) {
       return res
@@ -143,23 +144,46 @@ const verifyOtp = async (req, res) => {
         .json({ success: false, message: "Invalid OTP. Please try again." });
     }
 
-    // OTP is valid. Mark user as verified.
-    await User.findOneAndUpdate({ email }, { isVerified: true });
-    const newUser = await User.findOne({ email });
-    // Delete the OTP record after successful verification
+    // OTP is valid. Delete the OTP record.
     await Otp.deleteOne({ email });
 
-    req.session.user = {
-      id: newUser._id,
-      email: newUser.email,
-      isVerified: newUser.isVerified,
-    };
+    // If purpose exists and equals "forgot-password", do not update isVerified.
+    if (purpose && purpose === "forgot-password") {
+      const user = await User.findOne({ email });
+      if (!user) {
+        return res
+          .status(404)
+          .json({ success: false, message: "User not found." });
+      }
 
-    return res.json({
-      success: true,
-      message: "Email verified successfully!",
-      redirectTo: "/user/home",
-    });
+      req.session.user = {
+        id: user._id,
+        email: user.email,
+        isVerified: user.isVerified,
+      };
+
+      return res.json({
+        success: true,
+        message: "OTP verified successfully",
+        redirectTo: "/user/change-password",
+      });
+    } else {
+      // For registration: update isVerified and set session data.
+      await User.findOneAndUpdate({ email }, { isVerified: true });
+      const newUser = await User.findOne({ email });
+
+      req.session.user = {
+        id: newUser._id,
+        email: newUser.email,
+        isVerified: newUser.isVerified,
+      };
+
+      return res.json({
+        success: true,
+        message: "Email verified successfully!",
+        redirectTo: "/user/home",
+      });
+    }
   } catch (error) {
     console.error("Error verifying OTP:", error);
     return res
@@ -168,10 +192,12 @@ const verifyOtp = async (req, res) => {
   }
 };
 
+module.exports = { verifyOtp };
+
 // Resend otp
 const resendOtp = async (req, res) => {
   try {
-    const { email, name } = req.body;
+    const { email, name, purpose } = req.body;
     if (!email) {
       return res
         .status(400)
@@ -188,17 +214,18 @@ const resendOtp = async (req, res) => {
       { upsert: true, new: true }
     );
 
-    // Send OTP email
-    const mailOptions = {
+    // Declare mailOptions before the condition
+    let mailOptions = {
       from: '"Book Cycle®" <alexaxay10619@gmail.com>',
       to: email,
       subject: "Your New OTP for Email Verification",
-      html: getOtpEmailTemplate({
-        name,
-        otp,
-        expiryMinutes: 2,
-      }),
+      html: getOtpEmailTemplate({ name, otp, expiryMinutes: 2 }),
     };
+
+    if (purpose && purpose === "forgot-password") {
+      mailOptions.subject = "Your New OTP for Password Reset";
+      mailOptions.html = getForgotOtpTemplate({ name, otp, expiryMinutes: 2 });
+    }
 
     transporter.sendMail(mailOptions, (err, info) => {
       if (err) {
@@ -239,6 +266,14 @@ const login = async (req, res) => {
         success: false,
         message:
           "We regret to inform you that your account has been temporarily restricted. Please contact support for assistance.",
+      });
+    }
+
+    if (user.password === null) {
+      return res.status(403).json({
+        success: false,
+        message:
+          'If you registered through Google, please log in using Google to set your password from your profile, or use the "Forgot Password" option to create a new one.',
       });
     }
 

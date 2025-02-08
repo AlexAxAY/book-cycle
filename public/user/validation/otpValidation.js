@@ -8,6 +8,7 @@ document.addEventListener("DOMContentLoaded", function () {
   // Retrieve pending user from localStorage
   let pendingUser = JSON.parse(localStorage.getItem("pendingUser"));
   const token = pendingUser?.token;
+  const purpose = pendingUser?.purpose;
   // Convert otpExpiresAt to a timestamp (number) if it exists
   let otpExpiresAt = pendingUser?.otpExpiresAt
     ? new Date(pendingUser.otpExpiresAt).getTime()
@@ -79,6 +80,7 @@ document.addEventListener("DOMContentLoaded", function () {
         email: pendingUser.email,
         otp,
         token,
+        purpose,
       });
 
       if (response.data.success) {
@@ -87,7 +89,14 @@ document.addEventListener("DOMContentLoaded", function () {
         localStorage.removeItem("pendingUser");
 
         setTimeout(() => {
-          window.location.href = response.data.redirectTo || "/home";
+          // Check the returned redirectTo value and navigate accordingly.
+          const redirectTo = response.data.redirectTo;
+          if (redirectTo === "/user/change-password") {
+            window.location.href = "/user/change-password";
+          } else {
+            // Default (for registration or other cases)
+            window.location.href = redirectTo || "/user/home";
+          }
         }, 2000);
       }
     } catch (error) {
@@ -111,6 +120,7 @@ document.addEventListener("DOMContentLoaded", function () {
       const response = await axios.post("/user/resend-otp", {
         email: pendingUser.email,
         name: pendingUser.name,
+        purpose,
       });
 
       if (response.data.success) {

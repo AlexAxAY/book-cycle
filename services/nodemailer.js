@@ -40,6 +40,28 @@ function getOtpEmailTemplate({ name, otp, expiryMinutes }) {
     `;
 }
 
+function getForgotOtpTemplate({ name, otp, expiryMinutes }) {
+  return `
+    <section style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #e0e0e0;">
+      <header style="text-align: center; padding-bottom: 10px;">
+        <h2 style="color: #333;">Forgot Password</h2>
+      </header>
+      <p>Hello ${name || "User"},</p>
+      <p>Please use the following One-Time Password (OTP) to reset your password:</p>
+      <div style="text-align: center; margin: 20px 0;">
+        <span style="font-size: 24px; font-weight: bold; background-color: #f0f0f0; padding: 10px 20px; border-radius: 4px;">
+          ${otp}
+        </span>
+      </div>
+      <p>This OTP is valid for <strong>${expiryMinutes}</strong> minute(s).</p>
+      <p>If you did not initiate this request, please ignore this email.</p>
+      <footer style="text-align: center; margin-top: 20px; font-size: 12px; color: #777;">
+        &copy; ${new Date().getFullYear()} Bookcycle. All rights reserved.
+      </footer>
+    </section>
+    `;
+}
+
 function sendBlockEmail(user, reason) {
   return `
       <p>Dear ${user.name},</p>
@@ -69,4 +91,5 @@ module.exports = {
   sendUnblockMail,
   generateOtp,
   expiringTime,
+  getForgotOtpTemplate,
 };

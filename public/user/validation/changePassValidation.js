@@ -23,14 +23,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Form submission
   form.addEventListener("submit", async (event) => {
-    event.preventDefault(); // Prevent page reload
+    event.preventDefault();
 
-    // Get input values
     const currentPass = currentPassword.value.trim();
     const newPass = newPassword.value.trim();
     const confirmPass = confirmNewPassword.value.trim();
 
-    // Check if all fields are filled
     if (!currentPass || !newPass || !confirmPass) {
       [currentPassword, newPassword, confirmNewPassword].forEach((input) => {
         if (!input.value.trim()) input.classList.add("is-invalid");
@@ -45,7 +43,6 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    // Check if new password matches confirm password
     if (newPass !== confirmPass) {
       confirmNewPassword.classList.add("is-invalid");
       showvalAlert("New password and confirm password do not match.", "bad");
@@ -58,17 +55,19 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    // If valid, send request
     try {
       const response = await axios.patch("/user/change-password", {
         currentPassword: currentPass,
         newPassword: newPass,
-        confirmPass: confirmPass, // Matching the backend key name
+        confirmPass: confirmPass,
       });
 
       if (response.data.success) {
         showvalAlert(response.data.message, "good");
-        form.reset(); // Clear the form on success
+        form.reset();
+        setTimeout(() => {
+          window.location.href = "/user/home";
+        }, 1500);
       } else {
         showvalAlert(response.data.message, "bad");
       }

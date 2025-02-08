@@ -52,7 +52,6 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    // If validations pass, send a PATCH request to the server
     try {
       const response = await axios.patch("/user/set-password", {
         newPassword: newPass,
@@ -62,6 +61,9 @@ document.addEventListener("DOMContentLoaded", () => {
       if (response.data.success) {
         showAlert(response.data.message, "good");
         form.reset();
+        setTimeout(() => {
+          window.location.href = "/user/home";
+        }, 1500);
       } else {
         showAlert(response.data.message, "bad");
       }
