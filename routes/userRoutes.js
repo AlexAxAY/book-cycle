@@ -8,18 +8,27 @@ const {
   singlePage,
 } = require("../controllers/user/userPages");
 
+// carts
+const { cartPage } = require("../controllers/user/cart");
+
+// change password
+const {
+  changePasswordPage,
+  changePassword,
+  setPasswordPage,
+  setPassword,
+} = require("../controllers/user/changePassword");
+
 // user auth
 const {
   loginForm,
   registerForm,
   register,
-  setPasswordPage,
   otpPage,
   verifyOtp,
   resendOtp,
   login,
   logout,
-  setPassword,
 } = require("../controllers/user/userAuth");
 
 // middlewares
@@ -27,6 +36,7 @@ const {
   preventCache,
   preventAuthVisit,
   ensureValidToken,
+  checkingAuth,
 } = require("../middleware/user/authMiddlewares");
 
 // main pages
@@ -44,10 +54,6 @@ router
   .get(preventCache, preventAuthVisit, registerForm)
   .post(register);
 router.route("/logout").post(logout);
-router
-  .route("/set-password")
-  .get(preventCache, preventAuthVisit, setPasswordPage);
-router.route("/set-password/:id").patch(setPassword);
 
 // otp routes
 router
@@ -55,5 +61,13 @@ router
   .get(preventCache, otpPage)
   .post(ensureValidToken, verifyOtp);
 router.route("/resend-otp").post(resendOtp);
+
+// cart routes
+router.route("/cart").get(cartPage);
+
+// change password routes
+// add checking auth middleware her edit is removed for editing purpose
+router.route("/change-password").get(changePasswordPage).patch(changePassword);
+router.route("/set-password").get(setPasswordPage).patch(setPassword);
 
 module.exports = router;

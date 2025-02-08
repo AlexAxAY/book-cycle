@@ -23,7 +23,10 @@
     />
   </head>
   <body>
-    <header><%- include("../partials/admin/adminNavbar.ejs") %></header>
+    <!-- sidebar -->
+    <div style="width: 200px; position: fixed">
+      <%- include("../partials/admin/adminNavbar.ejs") %>
+    </div>
 
     <!-- alert -->
     <div class="d-flex alertBox" style="justify-content: center">
@@ -41,7 +44,14 @@
     <!-- success alert -->
     <div class="alert-good d-none text-center" style="position: fixed"></div>
 
-    <section class="main-section" style="min-height: calc(100vh - 146px)">
+    <section
+      class="main-section d-flex"
+      style="
+        min-height: calc(100vh - 60px);
+        justify-content: center;
+        margin-left: 200px;
+      "
+    >
       <div class="container py-5">
         <h2 class="mb-4">All Banners</h2>
 

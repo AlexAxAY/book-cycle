@@ -1,308 +1,99 @@
-<nav class="navbar navbar-expand-lg bg-body-white">
-  <div class="container-fluid">
-    <a class="navbar-brand" href="#"
-      ><img
+<nav id="sidebar">
+  <div class="sidebar-header text-center py-4">
+    <a href="#">
+      <img
         src="/images/—Pngtree—cycling logo design vector icon_5149980-Photoroom.png"
         alt="logo"
-        style="width: 60px; margin: 0px 50px 0px 50px"
-    /></a>
-    <button
-      class="navbar-toggler d-lg-none"
-      type="button"
-      data-bs-toggle="offcanvas"
-      data-bs-target="#offcanvasNavbar"
-      aria-controls="offcanvasNavbar"
-      aria-label="Toggle navigation"
-    >
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarNav">
-      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-        <li class="nav-item">
-          <a class="nav-link" aria-current="page" href="#">Dashboard</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/admin/users">Customers</a>
-        </li>
-        <li class="nav-item dropdown">
-          <a
-            class="nav-link dropdown-toggle"
-            href="#"
-            id="navbarDropdown"
-            role="button"
-            data-bs-toggle="dropdown"
-            aria-expanded="false"
-          >
-            Products
-          </a>
-          <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-            <li>
-              <a class="dropdown-item" href="/admin/products">All Products</a>
-            </li>
-            <li>
-              <hr class="dropdown-divider" />
-            </li>
-            <li>
-              <a class="dropdown-item" href="/admin/add-products"
-                >Add Products</a
-              >
-            </li>
-            <hr class="dropdown-divider" />
-            <li>
-              <a class="dropdown-item" href="/admin/manage-category"
-                >Manage Category</a
-              >
-            </li>
-            <hr class="dropdown-divider" />
-            <li>
-              <a class="dropdown-item" href="/admin/view-categories"
-                >View Categories</a
-              >
-            </li>
-          </ul>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#">Order History</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#">Reviews</a>
-        </li>
-        <li class="nav-item dropdown">
-          <a
-            class="nav-link dropdown-toggle"
-            href="#"
-            id="navbarDropdown"
-            role="button"
-            data-bs-toggle="dropdown"
-            aria-expanded="false"
-          >
-            Coupons
-          </a>
-          <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-            <li><a class="dropdown-item" href="#">All Coupons</a></li>
-            <li>
-              <hr class="dropdown-divider" />
-            </li>
-            <li><a class="dropdown-item" href="#">Add Coupon</a></li>
-          </ul>
-        </li>
-        <li class="nav-item dropdown">
-          <a
-            class="nav-link dropdown-toggle"
-            href="#"
-            id="navbarDropdown"
-            role="button"
-            data-bs-toggle="dropdown"
-            aria-expanded="false"
-          >
-            Banners
-          </a>
-          <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-            <li>
-              <a class="dropdown-item" href="/admin/all-banners">All Banners</a>
-            </li>
-            <li>
-              <hr class="dropdown-divider" />
-            </li>
-            <li>
-              <a class="dropdown-item" href="/admin/banner-management"
-                >Add Banner</a
-              >
-            </li>
-          </ul>
-        </li>
-        <li class="nav-item dropdown">
-          <a
-            class="nav-link dropdown-toggle"
-            href="#"
-            id="navbarDropdown"
-            role="button"
-            data-bs-toggle="dropdown"
-            aria-expanded="false"
-          >
-            Promotions
-          </a>
-          <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-            <li><a class="dropdown-item" href="#">Promotion Details</a></li>
-            <li>
-              <hr class="dropdown-divider" />
-            </li>
-            <li><a class="dropdown-item" href="#">Add Promo</a></li>
-          </ul>
-        </li>
-        <li class="nav-item dropdown">
-          <a
-            class="nav-link dropdown-toggle"
-            href="#"
-            id="navbarDropdown"
-            role="button"
-            data-bs-toggle="dropdown"
-            aria-expanded="false"
-          >
-            Admin
-          </a>
-          <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-            <li><a class="dropdown-item" href="#">Change Password</a></li>
-            <% if(user && user.isAdmin) {%>
-            <li>
-              <hr class="dropdown-divider" />
-            </li>
-            <li><button class="dropdown-item logout-btn">Logout</button></li>
-            <% } %>
-          </ul>
-        </li>
-      </ul>
-    </div>
-    <div
-      class="offcanvas offcanvas-end d-lg-none"
-      style="max-width: 200px"
-      tabindex="-1"
-      id="offcanvasNavbar"
-      aria-labelledby="offcanvasNavbarLabel"
-    >
-      <div class="offcanvas-header">
-        <h5 class="offcanvas-title" id="offcanvasNavbarLabel">Offcanvas</h5>
-        <button
-          type="button"
-          class="btn-close"
-          data-bs-dismiss="offcanvas"
-          aria-label="Close"
-        ></button>
-      </div>
-      <div class="offcanvas-body">
-        <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
-          <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="#"
-              >Dashboard</a
-            >
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="/admin/users">Customers</a>
-          </li>
-          <li class="nav-item dropdown">
-            <a
-              class="nav-link dropdown-toggle"
-              href="#"
-              role="button"
-              data-bs-toggle="dropdown"
-              aria-expanded="false"
-            >
-              Products
-            </a>
-            <ul class="dropdown-menu">
-              <li>
-                <a class="dropdown-item" href="/admin/products">All Products</a>
-              </li>
-              <li>
-                <hr class="dropdown-divider" />
-              </li>
-              <li>
-                <a class="dropdown-item" href="/admin/add-products"
-                  >Add Products</a
-                >
-              </li>
-              <hr class="dropdown-divider" />
-              <li>
-                <a class="dropdown-item" href="/admin/manage-category"
-                  >Manage Category</a
-                >
-              </li>
-              <hr class="dropdown-divider" />
-              <li>
-                <a class="dropdown-item" href="/admin/view-categories"
-                  >View Categories</a
-                >
-              </li>
-            </ul>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">Order History</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">Reviews</a>
-          </li>
-          <li class="nav-item dropdown">
-            <a
-              class="nav-link dropdown-toggle"
-              href="#"
-              role="button"
-              data-bs-toggle="dropdown"
-              aria-expanded="false"
-            >
-              Coupons
-            </a>
-            <ul class="dropdown-menu">
-              <li><a class="dropdown-item" href="#">All Coupons</a></li>
-              <li>
-                <hr class="dropdown-divider" />
-              </li>
-              <li><a class="dropdown-item" href="#">Add Coupon</a></li>
-            </ul>
-          </li>
-          <li class="nav-item dropdown">
-            <a
-              class="nav-link dropdown-toggle"
-              href="#"
-              role="button"
-              data-bs-toggle="dropdown"
-              aria-expanded="false"
-            >
-              Banners
-            </a>
-            <ul class="dropdown-menu">
-              <li>
-                <a class="dropdown-item" href="/admin/all-banners"
-                  >All Banners</a
-                >
-              </li>
-              <li>
-                <hr class="dropdown-divider" />
-              </li>
-              <li>
-                <a class="dropdown-item" href="/admin/banner-management"
-                  >Add Banner</a
-                >
-              </li>
-            </ul>
-          </li>
-          <li class="nav-item dropdown">
-            <a
-              class="nav-link dropdown-toggle"
-              href="#"
-              role="button"
-              data-bs-toggle="dropdown"
-              aria-expanded="false"
-            >
-              Promotions
-            </a>
-            <ul class="dropdown-menu">
-              <li><a class="dropdown-item" href="#">Promotion Details</a></li>
-              <li>
-                <hr class="dropdown-divider" />
-              </li>
-              <li><a class="dropdown-item" href="#">Add Promo</a></li>
-            </ul>
-          </li>
-          <li class="nav-item dropdown">
-            <a
-              class="nav-link dropdown-toggle"
-              href="#"
-              role="button"
-              data-bs-toggle="dropdown"
-              aria-expanded="false"
-            >
-              Admin
-            </a>
-            <ul class="dropdown-menu">
-              <li><a class="dropdown-item" href="#">Change Password</a></li>
-              <li>
-                <hr class="dropdown-divider" />
-              </li>
-              <li><button class="dropdown-item logout-btn">Logout</button></li>
-            </ul>
-          </li>
-        </ul>
-      </div>
-    </div>
+        style="width: 60px"
+      />
+    </a>
   </div>
+  <ul class="components">
+    <li>
+      <a href="#">Dashboard</a>
+    </li>
+    <li>
+      <a href="/admin/users">Customers</a>
+    </li>
+    <li>
+      <a
+        href="#productsSubmenu"
+        data-bs-toggle="collapse"
+        aria-expanded="false"
+        class="dropdown-toggle"
+      >
+        Products
+      </a>
+      <ul class="collapse list-unstyled" id="productsSubmenu">
+        <li><a href="/admin/products">All Products</a></li>
+        <li><a href="/admin/add-products">Add Products</a></li>
+        <li><a href="/admin/manage-category">Manage Category</a></li>
+        <li><a href="/admin/view-categories">View Categories</a></li>
+      </ul>
+    </li>
+    <li>
+      <a href="#">Order History</a>
+    </li>
+    <li>
+      <a href="#">Reviews</a>
+    </li>
+    <li>
+      <a
+        href="#couponsSubmenu"
+        data-bs-toggle="collapse"
+        aria-expanded="false"
+        class="dropdown-toggle"
+      >
+        Coupons
+      </a>
+      <ul class="collapse list-unstyled" id="couponsSubmenu">
+        <li><a href="#">All Coupons</a></li>
+        <li><a href="#">Add Coupon</a></li>
+      </ul>
+    </li>
+    <li>
+      <a
+        href="#bannersSubmenu"
+        data-bs-toggle="collapse"
+        aria-expanded="false"
+        class="dropdown-toggle"
+      >
+        Banners
+      </a>
+      <ul class="collapse list-unstyled" id="bannersSubmenu">
+        <li><a href="/admin/all-banners">All Banners</a></li>
+        <li><a href="/admin/banner-management">Add Banner</a></li>
+      </ul>
+    </li>
+    <li>
+      <a
+        href="#promotionsSubmenu"
+        data-bs-toggle="collapse"
+        aria-expanded="false"
+        class="dropdown-toggle"
+      >
+        Promotions
+      </a>
+      <ul class="collapse list-unstyled" id="promotionsSubmenu">
+        <li><a href="#">Promotion Details</a></li>
+        <li><a href="#">Add Promo</a></li>
+      </ul>
+    </li>
+    <li>
+      <a
+        href="#adminSubmenu"
+        data-bs-toggle="collapse"
+        aria-expanded="false"
+        class="dropdown-toggle"
+      >
+        Admin
+      </a>
+      <ul class="collapse list-unstyled" id="adminSubmenu">
+        <li><a href="#">Change Password</a></li>
+        <% if(user && user.isAdmin) { %>
+        <li><button class="dropdown-item logout-btn">Logout</button></li>
+        <% } %>
+      </ul>
+    </li>
+  </ul>
 </nav>

@@ -20,7 +20,10 @@
     />
   </head>
   <body>
-    <header><%- include("../partials/admin/adminNavbar.ejs") %></header>
+    <!-- sidebar -->
+    <div style="width: 200px; position: fixed">
+      <%- include("../partials/admin/adminNavbar.ejs") %>
+    </div>
 
     <!-- For logout -->
     <!-- error alert -->
@@ -30,10 +33,17 @@
     <div class="alert-good d-none text-center" style="position: fixed"></div>
 
     <!-- main section -->
-    <section class="main-section">
+    <section
+      class="main-section d-flex"
+      style="
+        min-height: calc(100vh - 60px);
+        margin-left: 210px;
+        justify-content: center;
+      "
+    >
       <div
-        class="container d-flex justify-content-center align-items-center"
-        style="min-height: calc(100vh - 146px); flex-direction: column"
+        class="container d-flex align-items-center"
+        style="flex-direction: column"
       >
         <h1 class="mb-5 mt-5">Manage Category</h1>
         <div
@@ -49,7 +59,7 @@
             id="close-button"
           ></button>
         </div>
-        <form class="w-50 text-center mb-auto" id="form">
+        <form class="w-50 text-center" id="form">
           <div class="mb-3">
             <label for="category" class="form-label"
               >Category<span style="color: red">*</span></label

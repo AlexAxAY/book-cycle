@@ -18,6 +18,13 @@ const preventAuthVisit = (req, res, next) => {
   next();
 };
 
+const checkingAuth = (req, res, next) => {
+  if (!req.user && !req.user?.isVerified) {
+    return res.redirect("/user/home");
+  }
+  next();
+};
+
 const ensureValidToken = (req, res, next) => {
   const { token } = req.body;
   if (!token) {
@@ -38,4 +45,9 @@ const ensureValidToken = (req, res, next) => {
   });
 };
 
-module.exports = { preventCache, preventAuthVisit, ensureValidToken };
+module.exports = {
+  preventCache,
+  preventAuthVisit,
+  ensureValidToken,
+  checkingAuth,
+};

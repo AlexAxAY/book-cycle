@@ -12,8 +12,10 @@
     <%- include("../partials/admin/bootLink.ejs") %>
   </head>
   <body>
-    <!-- navbar -->
-    <header><%- include("../partials/admin/adminNavbar.ejs") %></header>
+    <!-- sidebar -->
+    <div style="width: 200px; position: fixed">
+      <%- include("../partials/admin/adminNavbar.ejs") %>
+    </div>
 
     <!-- error alert -->
     <div
@@ -90,9 +92,18 @@
     </div>
 
     <!-- main section -->
-    <section class="container mt-5" style="min-height: calc(100vh - 146px)">
-      <h2>User Details</h2>
-      <div class="row main-row mt-5" style="flex-direction: column">
+    <section class="container mt-5">
+      <div
+        class="d-flex main-row mt-5"
+        style="
+          flex-direction: column;
+          min-height: calc(100vh - 60px);
+          margin-left: 200px;
+          margin-right: 0;
+          justify-content: start;
+        "
+      >
+        <h2>User Details</h2>
         <div class="col-12">
           <p><strong>User name:</strong> <%= user.name %></p>
           <p><strong>User ID:</strong> #<%= user._id %></p>

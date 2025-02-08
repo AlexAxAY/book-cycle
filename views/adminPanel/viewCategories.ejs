@@ -20,7 +20,10 @@
     />
   </head>
   <body>
-    <header><%- include("../partials/admin/adminNavbar.ejs") %></header>
+    <!-- sidebar -->
+    <div style="width: 200px; position: fixed">
+      <%- include("../partials/admin/adminNavbar.ejs") %>
+    </div>
 
     <!-- error alert -->
     <div
@@ -46,12 +49,17 @@
       "
     ></div>
 
-    <section class="container">
+    <section class="container mt-5">
       <div
         class="main-section d-flex"
-        style="min-height: calc(100vh - 146px); flex-direction: column"
+        style="
+          min-height: calc(100vh - 60px);
+          margin-left: 210px;
+          justify-content: center;
+        "
       >
         <div class="row">
+          <h4 class="mb-5">All Categories</h4>
           <% datas.forEach((data) => { %> <% if (!data.is_deleted) { %>
           <!-- Check if is_deleted is false -->
           <div class="col-12 col-md-6 col-lg-4 col-xl-3 mb-3">

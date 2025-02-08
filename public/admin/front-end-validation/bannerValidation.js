@@ -97,8 +97,9 @@ document.addEventListener("DOMContentLoaded", () => {
         showAlert(response.data.message || "Error uploading banner");
       }
     } catch (error) {
-      const message = error.response?.data?.message || "Server error";
+      const message = error.response?.data?.message || "Something went wrong!";
       showAlert(message);
+      console.log("erriririrr:", error);
     }
   });
 });

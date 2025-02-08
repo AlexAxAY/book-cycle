@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cart</title>
+
+    <!-- bootstrap -->
+    <%- include("../partials/admin/bootLink.ejs") %>
+
+    <!-- icon link -->
+    <%- include("../partials/user/iconLink.ejs") %>
+
+    <!-- css -->
+    <link rel="stylesheet" href="/user/stylesheets/cartPage.css" />
+  </head>
+
+  <body>
+    <!-- navbar -->
+    <header><%- include("../partials/user/userNavbar.ejs") %></header>
+
+    <!-- error alert -->
+    <div class="alert-bad d-none text-center" style="position: fixed"></div>
+
+    <!-- success alert -->
+    <div class="alert-good d-none text-center" style="position: fixed"></div>
+
+    <!-- main section -->
+    <section class="container mt-5" style="min-height: calc(100vh - 212px)">
+      <h4>Your items (5)</h4>
+      <div class="row carts mt-4">
+        <div class="col-8 main-cart">
+          <div class="row inner-cart">
+            <div class="col-auto img-sec">
+              <img
+                src="/images/0301c24109115a432480cddf67d840ea.png"
+                alt="book-cover"
+              />
+            </div>
+            <div class="col info-sec">
+              <div class="row info-sec-sub text-center">
+                <div class="col-3">
+                  <div class="row h-100" style="align-items: center">
+                    <p class="m-0">
+                      The Batman <br /><small class="text-muted">Horror</small>
+                    </p>
+                  </div>
+                </div>
+                <div class="col-3">
+                  <div class="row h-100" style="align-items: center">
+                    <p class="m-0">₹ 200</p>
+                  </div>
+                </div>
+                <div class="col-3">
+                  <div
+                    class="row h-100 w-100"
+                    style="align-items: center; justify-content: center"
+                  >
+                    <div class="col-auto"><button class="plus">+</button></div>
+                    <div class="col-auto">
+                      <input
+                        type="text"
+                        class="form-control quantity-input"
+                        value="1"
+                        readonly
+                      />
+                    </div>
+
+                    <div class="col-auto"><button class="minus">─</button></div>
+                  </div>
+                </div>
+                <div class="col-3">
+                  <div
+                    class="row h-100"
+                    style="align-items: center; justify-content: center"
+                  >
+                    <button class="rm-button">Remove</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- price details section -->
+        <div class="col-3 price-details">hi</div>
+      </div>
+    </section>
+
+    <!-- footer partial -->
+    <footer><%- include("../partials/user/userFooter.ejs") %></footer>
+
+    <!-- logout -->
+    <script src="/user/helper/logoutHelper.js"></script>
+
+    <!-- cart validation -->
+    <script src="/user/validation/cartValidation.js"></script>
+
+    <!-- pending user clear -->
+    <script src="/user/helper/removePendingUser.js"></script>
+
+    <!-- Include Axios -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+    <!-- bootstrap -->
+    <%- include("../partials/admin/bootScript.ejs") %>
+  </body>
+</html>

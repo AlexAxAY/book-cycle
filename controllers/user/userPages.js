@@ -85,6 +85,7 @@ const singlePage = async (req, res) => {
 
     const relatedProducts = await Product.find({
       $or: [{ category: product.category }, { author: product.author }],
+      final_price: { $gte: 10, $lte: 2000 },
       _id: { $ne: id },
     }).limit(10);
 
@@ -98,4 +99,8 @@ const singlePage = async (req, res) => {
   }
 };
 
-module.exports = { landingPage, shoppingPage, singlePage };
+module.exports = {
+  landingPage,
+  shoppingPage,
+  singlePage,
+};

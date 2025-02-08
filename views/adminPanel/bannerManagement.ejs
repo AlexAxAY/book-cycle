@@ -20,8 +20,19 @@
     />
   </head>
   <body>
-    <header><%- include("../partials/admin/adminNavbar.ejs") %></header>
-    <section class="main-section" style="min-height: calc(100vh - 146px)">
+    <!-- sidebar -->
+    <div class="col-3" style="width: 200px; position: fixed">
+      <%- include("../partials/admin/adminNavbar.ejs") %>
+    </div>
+    <section
+      class="main-section d-flex"
+      style="
+        min-height: calc(100vh - 60px);
+        justify-content: center;
+        align-items: center;
+        margin-left: 210px;
+      "
+    >
       <div class="container py-5">
         <div class="row justify-content-center">
           <div class="col-md-8">

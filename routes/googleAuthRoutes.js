@@ -15,6 +15,7 @@ router.get(
   passport.authenticate("google", { failureRedirect: "/user/login" }),
   (req, res) => {
     req.session.user = {
+      id: req.user._id,
       email: req.user.email,
       isVerified: req.user.isVerified,
     };

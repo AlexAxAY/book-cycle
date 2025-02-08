@@ -42,10 +42,19 @@ document
       return;
     }
 
-    // Email validation (must end with @gmail.com)
-    if (!email.endsWith("@gmail.com")) {
-      alertBad.textContent =
-        "Please enter a valid email address (e.g., example@gmail.com).";
+    // Email validation (allowing multiple domains)
+    const allowedDomains = [
+      "gmail.com",
+      "yahoo.com",
+      "outlook.com",
+      "hotmail.com",
+    ];
+    const emailRegex = new RegExp(
+      `^[a-zA-Z0-9._%+-]+@(${allowedDomains.join("|")})$`
+    );
+
+    if (!emailRegex.test(email)) {
+      alertBad.textContent = `Please enter a valid email address (e.g., example@gmail.com, example@yahoo.com).`;
       alertBad.classList.remove("d-none");
       document.getElementById("email").classList.add("is-invalid");
 

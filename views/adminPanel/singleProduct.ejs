@@ -12,8 +12,10 @@
     <%- include("../partials/admin/bootLink.ejs") %>
   </head>
   <body>
-    <!-- navbar -->
-    <header><%- include("../partials/admin/adminNavbar.ejs") %></header>
+    <!-- sidebar -->
+    <div style="width: 200px; position: fixed">
+      <%- include("../partials/admin/adminNavbar.ejs") %>
+    </div>
 
     <!-- alert -->
     <div
@@ -38,8 +40,15 @@
     <div class="alert-good d-none text-center" style="position: fixed"></div>
 
     <!-- main section -->
-    <section>
-      <div class="container py-5" style="min-height: calc(100vh - 146px)">
+    <section
+      class="d-flex"
+      style="
+        min-height: calc(100vh - 60px);
+        margin-left: 200px;
+        justify-content: center;
+      "
+    >
+      <div class="container py-5">
         <div class="row">
           <div class="col-md-6">
             <!-- Carousel for Product Images -->
@@ -53,6 +62,7 @@
                 <% product.images.forEach((image, index) => { %>
                 <div class="carousel-item <%= index === 0 ? 'active' : '' %>">
                   <img
+                    style="height: 500px"
                     src="<%= image.cropped_url || image.original_url %>"
                     class="d-block w-100"
                     alt="<%= product.name %> image <%= index + 1 %>"

@@ -64,22 +64,6 @@ document
             alertGood.classList.add("d-none");
             window.location.href = response.data.redirectTo;
           }, 3000);
-        } else if (
-          response.data.redirectTo &&
-          response.data.redirectTo === "/user/set-password"
-        ) {
-          localStorage.setItem(
-            "stayBack",
-            JSON.stringify({ stayBack: response.data.stayBack })
-          );
-          alertGood.textContent =
-            response.data.message || "Please set your password. Redirecting...";
-          alertGood.classList.remove("d-none");
-
-          window.alertTimeout = setTimeout(() => {
-            alertGood.classList.add("d-none");
-            window.location.href = response.data.redirectTo;
-          }, 3000);
         } else {
           alertGood.textContent = "Login successful! Redirecting...";
           alertGood.classList.remove("d-none");

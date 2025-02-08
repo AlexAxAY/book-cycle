@@ -16,8 +16,10 @@
   </head>
 
   <body>
-    <!-- navbar -->
-    <header><%- include("../partials/admin/adminNavbar.ejs") %></header>
+    <!-- sidebar -->
+    <div class="col-3" style="width: 200px; position: fixed">
+      <%- include("../partials/admin/adminNavbar.ejs") %>
+    </div>
 
     <!-- error alert -->
     <div class="alert-bad d-none text-center" style="position: fixed"></div>
@@ -25,163 +27,179 @@
     <div class="alert-good d-none text-center" style="position: fixed"></div>
 
     <!-- main section -->
-    <section class="container mt-5" style="min-height: calc(100vh - 146px)">
-      <h2>User Management</h2>
-
-      <!-- Filter Section -->
-      <div class="mb-3 mt-5">
-        <button class="btn btn-primary filter-btn">Filters</button>
-        <div
-          id="filterSection"
-          class="d-none mt-3 text-center d-flex justify-content-center"
-        >
-          <form
-            action="/admin/users"
-            method="GET"
-            class="d-flex flex-wrap align-items-center"
-          >
-            <!-- Status Filter -->
-            <div class="form-group mx-2 d-flex align-items-center">
-              <label for="statusFilter" class="mr-2">Status</label>
-              <select name="status" id="statusFilter" class="form-control">
-                <option value="all">All</option>
-                <option value="active">Active</option>
-                <option value="blocked">Blocked</option>
-              </select>
-            </div>
-            <!-- Name Search -->
-            <div class="form-group mx-2 d-flex align-items-center">
-              <label for="nameSearch" class="mr-2"></label>
-              <input
-                type="text"
-                name="name"
-                id="nameSearch"
-                class="form-control"
-                style="border-radius: 20px"
-                placeholder="Search for a user"
-              />
-            </div>
-            <!-- Submit Button -->
-            <div class="form-group mx-2 d-flex align-items-center">
-              <button type="submit" class="btn btn-outline-dark btn-sm search">
-                Search
-              </button>
-            </div>
-          </form>
-        </div>
-      </div>
-
-      <!-- User Table -->
-      <table class="table table-bordered">
-        <thead>
-          <tr>
-            <th>User Name</th>
-            <th>Status</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          <% users.forEach(function(user) { %>
-          <tr>
-            <td>
-              <%= user.name %>
-              <span class="text-muted">(#<%= user._id %>)</span>
-            </td>
-            <td
-              class="<%= user.isBlocked ? 'status-blocked' : 'status-active' %>"
-            >
-              <%= user.isBlocked ? 'Blocked' : 'Active' %>
-            </td>
-            <td>
-              <!-- If user is not blocked, show block button -->
-              <% if (!user.isBlocked) { %>
-              <button
-                class="btn btn-sm btn-danger block-btn"
-                data-user-id="<%= user._id %>"
-                data-user-name="<%= user.name %>"
-                title="Block"
-              >
-                <i class="fa-solid fa-ban"></i>
-              </button>
-              <% } else { %>
-              <!-- If user is blocked, show unblock button -->
-              <button
-                class="btn btn-sm btn-success unblock-btn"
-                data-user-id="<%= user._id %>"
-                data-user-name="<%= user.name %>"
-                title="Unblock"
-              >
-                <i class="fa-solid fa-lock-open"></i>
-              </button>
-              <% } %>
-              <!-- More Details Icon Button -->
-              <a
-                class="btn btn-sm btn-info"
-                title="More Details"
-                href="/admin/user/details/<%= user._id %>"
-              >
-                <i class="fa-solid fa-circle-info"></i>
-              </a>
-            </td>
-          </tr>
-          <% }) %>
-        </tbody>
-      </table>
-
-      <!-- Block/Unblock User Modal -->
+    <section class="container mt-5">
       <div
-        class="modal fade"
-        id="blockUserModal"
-        tabindex="-1"
-        aria-labelledby="blockUserModalLabel"
-        aria-hidden="true"
+        class="d-flex"
+        style="
+          min-height: calc(100vh - 60px);
+          margin-left: 210px;
+          flex-direction: column;
+          align-items: center;
+        "
       >
-        <div class="modal-dialog modal-lg">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="blockUserModalLabel">
-                Confirm Block User
-              </h5>
-              <button
-                type="button"
-                class="btn-close"
-                data-bs-dismiss="modal"
-                aria-label="Close"
-              ></button>
-            </div>
-            <div class="modal-body">
-              <p>
-                Are you sure you want to <span id="actionTypeText">block</span>
-                <strong><span id="blockUserName"></span></strong>?
-              </p>
-              <!-- This container wraps the reason field. It will be hidden when unblocking -->
-              <div id="reasonContainer" class="mb-3">
-                <label for="blockReason" class="form-label"
-                  >Reason for blocking<span class="text-danger">*</span></label
-                >
-                <textarea
-                  class="form-control"
-                  id="blockReason"
-                  rows="3"
-                  required
-                ></textarea>
+        <h2>User Management</h2>
+
+        <!-- Filter Section -->
+        <div class="mb-3 mt-5">
+          <button class="btn btn-primary filter-btn">Filters</button>
+          <div
+            id="filterSection"
+            class="d-none mt-3 text-center d-flex justify-content-center"
+          >
+            <form
+              action="/admin/users"
+              method="GET"
+              class="d-flex flex-wrap align-items-center"
+            >
+              <!-- Status Filter -->
+              <div class="form-group mx-2 d-flex align-items-center">
+                <label for="statusFilter" class="mr-2"></label>
+                <select name="status" id="statusFilter" class="form-control">
+                  <option value="all">All</option>
+                  <option value="active">Active</option>
+                  <option value="blocked">Blocked</option>
+                </select>
               </div>
-            </div>
-            <div class="modal-footer">
-              <button
-                type="button"
-                class="btn btn-secondary"
-                data-bs-dismiss="modal"
+              <!-- Name Search -->
+              <div class="form-group mx-2 d-flex align-items-center">
+                <label for="nameSearch" class="mr-2"></label>
+                <input
+                  type="text"
+                  name="name"
+                  id="nameSearch"
+                  class="form-control"
+                  style="border-radius: 20px"
+                  placeholder="Search for a user"
+                />
+              </div>
+              <!-- Submit Button -->
+              <div class="form-group mx-2 d-flex align-items-center">
+                <button
+                  type="submit"
+                  class="btn btn-outline-dark btn-sm search"
+                >
+                  Search
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <!-- User Table -->
+        <table class="table table-bordered" style="max-width: 1200px">
+          <thead>
+            <tr>
+              <th>User Name</th>
+              <th>Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% users.forEach(function(user) { %>
+            <tr>
+              <td>
+                <%= user.name %>
+                <span class="text-muted">(#<%= user._id %>)</span>
+              </td>
+              <td
+                class="<%= user.isBlocked ? 'status-blocked' : 'status-active' %>"
               >
-                Cancel
-              </button>
-              <button
-                type="button"
-                class="btn btn-danger"
-                id="confirmBlockButton"
-              >
-                Block
-              </button>
+                <%= user.isBlocked ? 'Blocked' : 'Active' %>
+              </td>
+              <td>
+                <!-- If user is not blocked, show block button -->
+                <% if (!user.isBlocked) { %>
+                <button
+                  class="btn btn-sm btn-danger block-btn"
+                  data-user-id="<%= user._id %>"
+                  data-user-name="<%= user.name %>"
+                  title="Block"
+                >
+                  <i class="fa-solid fa-ban"></i>
+                </button>
+                <% } else { %>
+                <!-- If user is blocked, show unblock button -->
+                <button
+                  class="btn btn-sm btn-success unblock-btn"
+                  data-user-id="<%= user._id %>"
+                  data-user-name="<%= user.name %>"
+                  title="Unblock"
+                >
+                  <i class="fa-solid fa-lock-open"></i>
+                </button>
+                <% } %>
+                <!-- More Details Icon Button -->
+                <a
+                  class="btn btn-sm btn-info"
+                  title="More Details"
+                  href="/admin/user/details/<%= user._id %>"
+                >
+                  <i class="fa-solid fa-circle-info"></i>
+                </a>
+              </td>
+            </tr>
+            <% }) %>
+          </tbody>
+        </table>
+
+        <!-- Block/Unblock User Modal -->
+        <div
+          class="modal fade"
+          id="blockUserModal"
+          tabindex="-1"
+          aria-labelledby="blockUserModalLabel"
+          aria-hidden="true"
+        >
+          <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="blockUserModalLabel">
+                  Confirm Block User
+                </h5>
+                <button
+                  type="button"
+                  class="btn-close"
+                  data-bs-dismiss="modal"
+                  aria-label="Close"
+                ></button>
+              </div>
+              <div class="modal-body">
+                <p>
+                  Are you sure you want to
+                  <span id="actionTypeText">block</span>
+                  <strong><span id="blockUserName"></span></strong>?
+                </p>
+                <!-- This container wraps the reason field. It will be hidden when unblocking -->
+                <div id="reasonContainer" class="mb-3">
+                  <label for="blockReason" class="form-label"
+                    >Reason for blocking<span class="text-danger"
+                      >*</span
+                    ></label
+                  >
+                  <textarea
+                    class="form-control"
+                    id="blockReason"
+                    rows="3"
+                    required
+                  ></textarea>
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button
+                  type="button"
+                  class="btn btn-secondary"
+                  data-bs-dismiss="modal"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-danger"
+                  id="confirmBlockButton"
+                >
+                  Block
+                </button>
+              </div>
             </div>
           </div>
         </div>

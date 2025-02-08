@@ -31,7 +31,7 @@ const addBanner = async (req, res) => {
       .status(201)
       .json({ success: true, message: "Banner uploaded successfully" });
   } catch (error) {
-    console.error("Error uploading banner:", error);
+    console.log("Error uploading banner:", error);
     res.status(500).json({ success: false, message: "Server error" });
   }
 };

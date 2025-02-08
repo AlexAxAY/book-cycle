@@ -34,7 +34,7 @@ function getOtpEmailTemplate({ name, otp, expiryMinutes }) {
       <p>This OTP is valid for <strong>${expiryMinutes}</strong> minute(s).</p>
       <p>If you did not initiate this request, please ignore this email.</p>
       <footer style="text-align: center; margin-top: 20px; font-size: 12px; color: #777;">
-        &copy; ${new Date().getFullYear()} Your Company Name. All rights reserved.
+        &copy; ${new Date().getFullYear()} Bookcycle. All rights reserved.
       </footer>
     </section>
     `;
@@ -55,8 +55,7 @@ function sendBlockEmail(user, reason) {
 function sendUnblockMail(user) {
   return `
       <p>Dear ${user.name},</p>
-      <p>We are pleased to inform you that your account has been successfully unblocked and you can now access all the features and services available on our platform.</p>
-      <p>If you believe this is a mistake or wish to appeal, please contact our support team.</p>
+      <p>We are pleased to inform you that your account has been successfully unblocked and you can now access all the features and services available on our platform.</p>ath sc
       <br/>
       <p>Best regards,</p>
       <p>Book Cycle</p>

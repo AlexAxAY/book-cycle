@@ -27,7 +27,10 @@
       />
     </head>
     <body>
-      <header><%- include("../partials/admin/adminNavbar.ejs") %></header>
+      <!-- sidebar -->
+    <div class="col-3" style="width: 200px; position: fixed">
+      <%- include("../partials/admin/adminNavbar.ejs") %>
+    </div>
 
       <!-- For logout -->
           <!-- error alert -->
@@ -43,16 +46,16 @@
           ></div>
 
           <!-- main section -->
-      <section class="main-section">
+      <section class="main-section d-flex mt-5" style="margin-left: 210px;min-height: calc(100vh - 60px); justify-content: center; align-items: center;">
         <div
           class="container"
           style="
-            min-height: calc(100vh - 146px);
+            
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1),
               0 1px 3px rgba(0, 0, 0, 0.08);
           "
         >
-          <div class="container p-5">
+          <div class="p-5">
             <h2 class="text-center mb-4">Update Product</h2>
             <!-- alert message -->
             <div
