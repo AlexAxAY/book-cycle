@@ -149,6 +149,7 @@ const verifyOtp = async (req, res) => {
 
     // If purpose exists and equals "forgot-password", do not update isVerified.
     if (purpose && purpose === "forgot-password") {
+      await User.findOneAndUpdate({ email }, { isVerified: true });
       const user = await User.findOne({ email });
       if (!user) {
         return res

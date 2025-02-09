@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Profile</title>
+
+    <!-- css -->
+    <link rel="stylesheet" href="/user/stylesheets/profilePage.css" />
+
+    <!-- icon link -->
+    <%- include("../partials/user/iconLink.ejs") %>
+
+    <!-- bootstrap link -->
+    <%- include("../partials/admin/bootLink.ejs") %>
+  </head>
+  <body>
+    <!-- navbar -->
+    <header><%- include("../partials/user/userNavbar.ejs") %></header>
+
+    <!-- error alert -->
+    <div class="alert-bad d-none text-center" style="position: fixed"></div>
+
+    <!-- success alert -->
+    <div class="alert-good d-none text-center" style="position: fixed"></div>
+
+    <section class="container-main">
+      <!-- Sidebar -->
+      <div class="sidebar">
+        <h5>Hello, <%= user.name %></h5>
+        <a href="/profile" class="active">Profile</a>
+        <a href="/manage-address">Manage Address</a>
+        <a href="/orders">My Orders</a>
+        <a href="/coupons">My Coupons</a>
+        <a href="/ratings-reviews">My Ratings & Reviews</a>
+        <a href="/user/change-password">Change Password</a>
+      </div>
+
+      <!-- Profile Section -->
+      <div class="content">
+        <h2 class="mb-4">Profile</h2>
+        <form novalidate>
+          <div class="mb-3">
+            <label for="name" class="form-label">Name</label>
+            <input
+              type="text"
+              class="form-control"
+              id="name"
+              name="name"
+              value="<%= user.name || '' %>"
+              required
+            />
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Gender</label><br />
+            <input type="radio" id="male" name="gender" value="male" <%=
+            user.gender === 'male' ? 'checked' : '' %> required>
+            <label for="male"><small>Male</small></label>
+            <input type="radio" id="female" name="gender" value="female" <%=
+            user.gender === 'female' ? 'checked' : '' %> required>
+            <label for="female"><small>Female</small></label>
+          </div>
+
+          <div class="mb-3">
+            <label for="email" class="form-label">Email Address</label>
+            <input
+              type="email"
+              class="form-control"
+              id="email"
+              name="email"
+              value="<%= user.email || '' %>"
+              required
+            />
+          </div>
+
+          <button type="submit" class="btn btn-primary">Save</button>
+        </form>
+
+        <br />
+        <a href="/delete-account" class="delete-account">Delete Account</a>
+      </div>
+    </section>
+    <!-- footer partial -->
+    <footer><%- include("../partials/user/userFooter.ejs") %></footer>
+
+    <!-- logout -->
+    <script src="/user/helper/logoutHelper.js"></script>
+
+    <!-- pending user clear -->
+    <script src="/user/helper/removePendingUser.js"></script>
+
+    <!-- pending user clear -->
+    <script src="/user/validation/profileValidation.js"></script>
+
+    <!-- Include Axios -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+    <!-- bootstrap -->
+    <%- include("../partials/admin/bootScript.ejs") %>
+  </body>
+</html>

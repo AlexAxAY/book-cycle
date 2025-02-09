@@ -17,6 +17,9 @@ const {
   updateCartItem,
 } = require("../controllers/user/cart");
 
+// user profile
+const { getProfile, updateProfile } = require("../controllers/user/profile");
+
 // change password
 const {
   changePasswordPage,
@@ -80,7 +83,6 @@ router
   .put(checkingAuth, updateCartItem);
 
 // change password routes
-// add checking auth middleware, it is removed because for development
 router
   .route("/change-password")
   .get(checkingAuth, changePasswordPage)
@@ -93,5 +95,11 @@ router
   .route("/forgot-password")
   .get(preventCache, forgotPassPage)
   .post(forgotPassword);
+
+// user profile management routes
+router
+  .route("/profile")
+  .get(checkingAuth, getProfile)
+  .patch(checkingAuth, updateProfile);
 
 module.exports = router;

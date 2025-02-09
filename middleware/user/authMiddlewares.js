@@ -21,10 +21,7 @@ const preventAuthVisit = (req, res, next) => {
 const checkingAuth = (req, res, next) => {
   if (!req.user || !req.user.isVerified) {
     console.log("User is not authenticated and verified");
-    return res.status(403).json({
-      success: false,
-      message: "Please login",
-    });
+    return res.redirect("/user/login");
   }
   console.log("User authenticated and verified");
   next();
