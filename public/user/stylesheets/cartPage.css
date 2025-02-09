@@ -52,8 +52,9 @@ body {
 }
 
 .price-details {
-  background-color: aquamarine;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
 }
+
 .img-sec {
   padding: 10px;
 }
@@ -73,6 +74,14 @@ body {
   width: fit-content;
   color: white;
   border-radius: 20px;
+}
+
+.low-button {
+  transition: transform 0.3s ease-in-out;
+}
+
+.low-button:hover {
+  transform: scale(1.1);
 }
 
 /* quantity button */

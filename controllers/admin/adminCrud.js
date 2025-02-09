@@ -274,10 +274,11 @@ const addProduct = async (req, res) => {
     }
 
     // Determine stock status based on the count value
+    const numCount = parseInt(count, 10);
     let stockStatus = "In stock";
-    if (count === 0) {
+    if (numCount === 0) {
       stockStatus = "Out of stock";
-    } else if (count <= 5) {
+    } else if (numCount <= 5) {
       stockStatus = "Limited stock";
     }
 
@@ -348,7 +349,7 @@ const addProduct = async (req, res) => {
       discount: parseFloat(discount),
       discount_type,
       stock: stockStatus,
-      count: parseInt(count, 10),
+      count: numCount,
       final_price: finalPrice,
       publish_date: publish_date || null,
       used: used === "true",
@@ -499,9 +500,13 @@ const updateProduct = async (req, res) => {
         : numericPrice - numericDiscount;
 
     // Stock status calculation
+    const numCount = parseInt(count, 10);
     let stockStatus = "In stock";
-    if (count === 0) stockStatus = "Out of stock";
-    else if (count <= 5) stockStatus = "Limited stock";
+    if (numCount === 0) {
+      stockStatus = "Out of stock";
+    } else if (numCount <= 5) {
+      stockStatus = "Limited stock";
+    }
 
     // Update product
     const updatedProduct = await Product.findByIdAndUpdate(
@@ -516,7 +521,7 @@ const updateProduct = async (req, res) => {
         discount: numericDiscount,
         discount_type,
         stock: stockStatus,
-        count: parseInt(count, 10),
+        count: numCount,
         final_price: finalPrice,
         publish_date: publish_date || null,
         used: used === "true",

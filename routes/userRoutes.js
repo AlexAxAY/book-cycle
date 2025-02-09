@@ -9,7 +9,13 @@ const {
 } = require("../controllers/user/userPages");
 
 // carts
-const { cartPage } = require("../controllers/user/cart");
+const {
+  cartPage,
+  addToCart,
+  removeFromCart,
+  getCartDetails,
+  updateCartItem,
+} = require("../controllers/user/cart");
 
 // change password
 const {
@@ -65,7 +71,13 @@ router
 router.route("/resend-otp").post(resendOtp);
 
 // cart routes
-router.route("/cart").get(cartPage);
+router.route("/cart").get(checkingAuth, cartPage);
+router.route("/cart-details").get(checkingAuth, getCartDetails);
+router
+  .route("/cart/:productId")
+  .post(checkingAuth, addToCart)
+  .delete(checkingAuth, removeFromCart)
+  .put(checkingAuth, updateCartItem);
 
 // change password routes
 // add checking auth middleware, it is removed because for development

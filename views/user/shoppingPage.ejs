@@ -135,9 +135,12 @@
                 <strong style="color: red"><%= product.stock %></strong>
                 <% } %>
               </p>
-              <a href="/product/<%= product._id %>" class="btn btn-dark btn-sm"
-                >Add to cart</a
+              <button
+                class="btn btn-dark btn-sm add-to-cart-btn"
+                data-product-id="<%= product._id %>"
               >
+                Add to cart
+              </button>
             </div>
           </div>
         </div>
@@ -159,6 +162,9 @@
 
     <!-- pending user clear -->
     <script src="/user/helper/removePendingUser.js"></script>
+
+    <!-- Add to cart helper -->
+    <script src="/user/helper/addToCartHelper.js"></script>
 
     <!-- bootstrap -->
     <%- include("../partials/admin/bootScript.ejs") %>

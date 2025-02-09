@@ -152,7 +152,12 @@
 
               <h5><%= product.name %></h5>
               <p>&#8377; <%= product.final_price %></p>
-              <button class="btn btn-dark">Add to Cart</button>
+              <button
+                class="btn btn-outline-dark mt-3 add-to-cart-btn"
+                data-product-id="<%= product._id %>"
+              >
+                Add to Cart
+              </button>
             </div>
           </div>
           <% }) %>
@@ -187,6 +192,9 @@
 
     <!-- pending user clear -->
     <script src="/user/helper/removePendingUser.js"></script>
+
+    <!-- Add to cart helper -->
+    <script src="/user/helper/addToCartHelper.js"></script>
 
     <!-- Include Axios -->
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>

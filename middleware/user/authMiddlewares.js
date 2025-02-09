@@ -13,7 +13,7 @@ const preventCache = (req, res, next) => {
 
 const preventAuthVisit = (req, res, next) => {
   if (req.user && req.user.isVerified) {
-    return res.redirect("/user/home").status(403);
+    return res.redirect("/user/home");
   }
   next();
 };
@@ -21,7 +21,10 @@ const preventAuthVisit = (req, res, next) => {
 const checkingAuth = (req, res, next) => {
   if (!req.user || !req.user.isVerified) {
     console.log("User is not authenticated and verified");
-    return res.status(403).redirect("/user/login");
+    return res.status(403).json({
+      success: false,
+      message: "Please login",
+    });
   }
   console.log("User authenticated and verified");
   next();

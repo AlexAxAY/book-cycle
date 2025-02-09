@@ -192,8 +192,6 @@ const verifyOtp = async (req, res) => {
   }
 };
 
-module.exports = { verifyOtp };
-
 // Resend otp
 const resendOtp = async (req, res) => {
   try {

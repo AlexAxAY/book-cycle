@@ -134,7 +134,12 @@
           </div>
 
           <!-- Add to Cart Button -->
-          <button class="btn btn-outline-dark mt-3">Add to Cart</button>
+          <button
+            class="btn btn-outline-dark mt-3 add-to-cart-btn"
+            data-product-id="<%= product._id %>"
+          >
+            Add to Cart
+          </button>
         </div>
       </div>
 
@@ -217,6 +222,9 @@
 
     <!-- logout -->
     <script src="/user/helper/logoutHelper.js"></script>
+
+    <!-- Add to cart helper -->
+    <script src="/user/helper/addToCartHelper.js"></script>
 
     <!-- pending user clear -->
     <script src="/user/helper/removePendingUser.js"></script>

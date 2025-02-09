@@ -27,13 +27,22 @@
 
     <!-- main section -->
     <section class="container mt-5" style="min-height: calc(100vh - 212px)">
-      <h4>Your items (5)</h4>
+      <% if (cartItems.length === 0) { %>
+      <div class="text-center">
+        <h4>No items in the cart</h4>
+        <a href="/user/shop" class="btn btn-primary mt-3">Continue Shopping</a>
+      </div>
+      <% } else { %>
+      <h4>Your items (<%= cartItems.length %>)</h4>
       <div class="row carts mt-4">
+        <!-- Main cart items -->
         <div class="col-8 main-cart">
-          <div class="row inner-cart">
+          <% cartItems.forEach(function(item) { %>
+          <div class="row inner-cart mb-3">
             <div class="col-auto img-sec">
+              <!-- Display the product image from the first image in the array -->
               <img
-                src="/images/0301c24109115a432480cddf67d840ea.png"
+                src="<%= item.productId.images[0].cropped_url || item.productId.images[0].original_url %>"
                 alt="book-cover"
               />
             </div>
@@ -42,13 +51,19 @@
                 <div class="col-3">
                   <div class="row h-100" style="align-items: center">
                     <p class="m-0">
-                      The Batman <br /><small class="text-muted">Horror</small>
+                      <%= item.productId.name %> <br />
+                      <small class="text-muted"
+                        ><%= item.productId.category %></small
+                      >
                     </p>
                   </div>
                 </div>
                 <div class="col-3">
                   <div class="row h-100" style="align-items: center">
-                    <p class="m-0">₹ 200</p>
+                    <!-- Display final_price for the individual item -->
+                    <p class="m-0">
+                      ₹ <%= item.productId.final_price.toFixed(2) %>
+                    </p>
                   </div>
                 </div>
                 <div class="col-3">
@@ -56,17 +71,20 @@
                     class="row h-100 w-100"
                     style="align-items: center; justify-content: center"
                   >
-                    <div class="col-auto"><button class="plus">+</button></div>
+                    <div class="col-auto">
+                      <button class="plus" data-id="<%= item._id %>">+</button>
+                    </div>
                     <div class="col-auto">
                       <input
                         type="text"
                         class="form-control quantity-input"
-                        value="1"
+                        value="<%= item.quantity %>"
                         readonly
                       />
                     </div>
-
-                    <div class="col-auto"><button class="minus">─</button></div>
+                    <div class="col-auto">
+                      <button class="minus" data-id="<%= item._id %>">─</button>
+                    </div>
                   </div>
                 </div>
                 <div class="col-3">
@@ -74,17 +92,99 @@
                     class="row h-100"
                     style="align-items: center; justify-content: center"
                   >
-                    <button class="rm-button">Remove</button>
+                    <button class="rm-button" data-id="<%= item._id %>">
+                      Remove
+                    </button>
                   </div>
                 </div>
               </div>
             </div>
           </div>
+          <% }); %>
         </div>
 
-        <!-- price details section -->
-        <div class="col-3 price-details">hi</div>
+        <!-- Price details section -->
+        <div class="col-3 price-details" style="max-height: 300px">
+          <div class="row h-100" style="flex-direction: column">
+            <div class="col-auto my-2 text-center">
+              <h5>Product details</h5>
+            </div>
+            <div class="col">
+              <div class="d-flex h-100 w-100" style="align-items: center">
+                <div class="col-6 text-start">
+                  <!-- Total items: sum of quantities -->
+                  <p>
+                    Price (<%= cartItems.reduce((acc, item) => acc +
+                    item.quantity, 0) %> items)
+                  </p>
+                  <p>Discount</p>
+                  <p>Delivery charges</p>
+                  <p><strong>Total amount</strong></p>
+                </div>
+                <div class="col-6 text-end">
+                  <% let totalOriginalPrice = 0; let totalDiscountAmount = 0;
+                  cartItems.forEach(item => { let price = item.productId.price;
+                  let quantity = item.quantity; totalOriginalPrice += price *
+                  quantity; if (item.productId.discount_type === 'percentage') {
+                  totalDiscountAmount += (price * (item.productId.discount /
+                  100)) * quantity; } else if (item.productId.discount_type ===
+                  'fixed') { totalDiscountAmount += item.productId.discount *
+                  quantity; } }); let overallDiscountPercentage =
+                  totalOriginalPrice ? (totalDiscountAmount /
+                  totalOriginalPrice) * 100 : 0; let totalAfterDiscount =
+                  totalOriginalPrice - totalDiscountAmount; %>
+                  <p><small>₹ <%= totalOriginalPrice.toFixed(2) %></small></p>
+                  <p>
+                    <small
+                      >₹ <%= totalDiscountAmount.toFixed(2) %> off (<%=
+                      overallDiscountPercentage.toFixed(2) %>% off)</small
+                    >
+                  </p>
+                  <% if (totalAfterDiscount.toFixed(2) > 500) {%>
+                  <p><small style="color: green">Free</small></p>
+                  <% } else {%>
+                  <p><small>₹ 50</small></p>
+                  <% } %>
+                  <p>₹ <%= totalAfterDiscount.toFixed(2) %></p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col mt-3">
+              <div class="row my-2">
+                <button
+                  class="low-button"
+                  style="
+                    border-radius: 10px;
+                    background-color: green;
+                    border: none;
+                    color: white;
+                  "
+                >
+                  Proceed to buy
+                </button>
+              </div>
+              <div class="row my-2">
+                <a
+                  href="/user/shop"
+                  class="text-center low-button"
+                  style="
+                    border-radius: 10px;
+                    text-decoration: none;
+                    background-color: yellow;
+                    border: none;
+                    color: black;
+                  "
+                >
+                  Continue Shopping
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
+      <% } %>
     </section>
 
     <!-- footer partial -->
@@ -98,6 +198,9 @@
 
     <!-- pending user clear -->
     <script src="/user/helper/removePendingUser.js"></script>
+
+    <!-- Remove from cart helper -->
+    <script src="/user/helper/removeCartHelper.js"></script>
 
     <!-- Include Axios -->
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
