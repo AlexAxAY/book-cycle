@@ -1,0 +1,187 @@
+body {
+  margin: 0 !important;
+  font-family: Arial, sans-serif !important;
+  background: linear-gradient(135deg, #bdbdbd 0%, #ffffff 100%);
+}
+
+.navbar-logo {
+  margin-left: 30px;
+  border-radius: 50%;
+  transition: 0.2s ease-in-out;
+}
+
+.navbar-logo:hover {
+  box-shadow: 0 4px 8px 0 rgba(255, 255, 255, 0.1),
+    0 6px 20px 0 rgba(255, 255, 255, 0.1);
+  transform: scale(1.1);
+}
+
+/* alert */
+.alert-bad,
+.alert-good {
+  padding: 20px;
+  width: fit-content;
+  border-radius: 5px !important;
+  color: white !important;
+  position: fixed;
+  top: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9999;
+}
+
+.alert-bad {
+  background-color: #f44336 !important;
+}
+
+.alert-good {
+  background-color: green !important;
+}
+
+/* main container */
+.container-main {
+  min-height: calc(100vh - 212px);
+  display: flex;
+}
+
+/* sidebar */
+.sidebar {
+  width: 250px;
+  background: #f8f9fa;
+  padding: 20px;
+  border-right: 1px solid #ddd;
+}
+.sidebar a {
+  display: block;
+  padding: 10px;
+  color: #333;
+  text-decoration: none;
+  border-radius: 5px;
+  margin-bottom: 5px;
+}
+.sidebar a:hover,
+.sidebar a.active {
+  background: #007bff;
+  color: white;
+}
+.content {
+  flex-grow: 1;
+  padding: 30px;
+  background-color: white;
+}
+
+/* address list styling */
+.address-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.address-card {
+  border: 1px solid #ccc;
+  padding: 15px;
+  border-radius: 5px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  transition: box-shadow 0.3s;
+}
+
+.address-card:hover {
+  border: 2px solid blue;
+}
+
+.address-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.address-name {
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+
+.address-type {
+  font-size: 0.9rem;
+  color: gray;
+}
+
+.address-text {
+  margin: 5px 0;
+}
+
+.address-actions {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  display: flex;
+  gap: 10px;
+}
+
+.edit-icon,
+.delete-icon {
+  cursor: pointer;
+  font-size: 16px;
+  color: gray;
+  transition: color 0.2s;
+}
+
+.edit-icon:hover {
+  color: blue;
+}
+
+.delete-icon:hover {
+  color: red;
+}
+
+/* apply this on every user template */
+@media (max-width: 767px) {
+  #contact-us {
+    font-size: 1rem !important;
+  }
+
+  #footer-mail {
+    font-size: 0.6rem !important;
+  }
+
+  .right h5 {
+    font-size: 1rem !important;
+  }
+
+  .right ul {
+    font-size: 0.6rem !important;
+  }
+
+  .cycle-logo {
+    height: 60px !important;
+  }
+  .all-rights {
+    font-size: 0.5rem !important;
+  }
+}
+
+@media (max-width: 375px) {
+  #contact-us {
+    font-size: 0.8rem !important;
+  }
+
+  #footer-mail {
+    font-size: 0.4rem !important;
+  }
+
+  .right h5 {
+    font-size: 0.8rem !important;
+  }
+
+  .right ul {
+    font-size: 0.4rem !important;
+  }
+
+  .cycle-logo {
+    height: 40px !important;
+  }
+  .all-rights {
+    font-size: 0.3rem !important;
+  }
+}

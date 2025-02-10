@@ -26,15 +26,7 @@
 
     <section class="container-main">
       <!-- Sidebar -->
-      <div class="sidebar">
-        <h5>Hello, <%= user.name %></h5>
-        <a href="/profile" class="active">Profile</a>
-        <a href="/manage-address">Manage Address</a>
-        <a href="/orders">My Orders</a>
-        <a href="/coupons">My Coupons</a>
-        <a href="/ratings-reviews">My Ratings & Reviews</a>
-        <a href="/user/change-password">Change Password</a>
-      </div>
+      <%- include("../partials/user/sideBar.ejs") %>
 
       <!-- Profile Section -->
       <div class="content">
@@ -90,7 +82,7 @@
     <!-- pending user clear -->
     <script src="/user/helper/removePendingUser.js"></script>
 
-    <!-- pending user clear -->
+    <!-- profile validation -->
     <script src="/user/validation/profileValidation.js"></script>
 
     <!-- Include Axios -->

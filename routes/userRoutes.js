@@ -20,6 +20,16 @@ const {
 // user profile
 const { getProfile, updateProfile } = require("../controllers/user/profile");
 
+// user address
+const {
+  getAddressPage,
+  addAddress,
+  viewAllAddress,
+  deleteAddress,
+  updateAddress,
+  addressUpdatePage,
+} = require("../controllers/user/address");
+
 // change password
 const {
   changePasswordPage,
@@ -101,5 +111,18 @@ router
   .route("/profile")
   .get(checkingAuth, getProfile)
   .patch(checkingAuth, updateProfile);
+
+//  user address management routes
+router
+  .route("/manage-address")
+  .get(checkingAuth, getAddressPage)
+  .post(checkingAuth, addAddress);
+
+router
+  .route("/manage-address/:id")
+  .get(checkingAuth, addressUpdatePage)
+  .delete(checkingAuth, deleteAddress)
+  .put(checkingAuth, updateAddress);
+router.route("/view-address").get(checkingAuth, viewAllAddress);
 
 module.exports = router;

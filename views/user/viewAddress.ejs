@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Address Management</title>
+
+    <!-- css -->
+    <link rel="stylesheet" href="/user/stylesheets/viewAddress.css" />
+
+    <!-- icon link -->
+    <%- include("../partials/user/iconLink.ejs") %>
+
+    <!-- bootstrap link -->
+    <%- include("../partials/admin/bootLink.ejs") %>
+  </head>
+  <body>
+    <!-- navbar -->
+    <header><%- include("../partials/user/userNavbar.ejs") %></header>
+
+    <!-- error alert -->
+    <div class="alert-bad d-none text-center" style="position: fixed"></div>
+
+    <!-- success alert -->
+    <div class="alert-good d-none text-center" style="position: fixed"></div>
+
+    <section class="container-main">
+      <!-- Sidebar -->
+      <%- include("../partials/user/sideBar.ejs") %>
+
+      <!-- Profile Section -->
+      <div class="content">
+        <% if (addresses.length > 0) { %>
+        <h2 class="mb-4">All Address</h2>
+
+        <!-- Address List -->
+        <div class="address-list">
+          <!-- Address Card Example -->
+          <% addresses.forEach((address)=> { %>
+          <div class="address-card">
+            <div class="address-header">
+              <h4 class="address-name"><%= address.name %></h4>
+              <span class="address-type"><%= address.address_type %></span>
+            </div>
+            <p class="address-text">
+              <%= address.address_line %><%= address.landmark ? `,
+              ${address.landmark}` : '' %>, <%= address.city %>, <%=
+              address.state %> - <%= address.pincode %>
+            </p>
+
+            <div class="address-actions">
+              <a href="/user/manage-address/<%= address._id %>">
+                <i
+                  data-id="<%= address._id %>"
+                  class="fas fa-pencil-alt edit-icon"
+                ></i>
+              </a>
+              <a
+                ><i
+                  data-id="<%= address._id %>"
+                  class="fas fa-trash delete-icon"
+                ></i
+              ></a>
+            </div>
+          </div>
+          <% }) %>
+        </div>
+        <% } else { %>
+        <div
+          class="d-flex text-center"
+          style="justify-content: center; flex-direction: column"
+        >
+          <div class="col"><p>No address has been added yet</p></div>
+          <div class="col">
+            <a
+              class="btn btn-primary"
+              style="width: fit-content"
+              href="/user/manage-address"
+              >Add address</a
+            >
+          </div>
+        </div>
+        <% } %>
+      </div>
+    </section>
+
+    <!-- Delete Confirmation Modal -->
+    <div
+      class="modal fade"
+      id="deleteModal"
+      tabindex="-1"
+      aria-labelledby="deleteModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="deleteModalLabel">Confirm Deletion</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            Are you sure you want to delete this address?
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Cancel
+            </button>
+            <button
+              data-bs-dismiss="modal"
+              type="button"
+              id="confirmDeleteBtn"
+              class="btn btn-danger"
+            >
+              Delete
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- footer partial -->
+    <footer><%- include("../partials/user/userFooter.ejs") %></footer>
+
+    <!-- logout -->
+    <script src="/user/helper/logoutHelper.js"></script>
+
+    <!-- pending user clear -->
+    <script src="/user/helper/removePendingUser.js"></script>
+
+    <!-- edit delete helper -->
+    <script src="/user/helper/viewAddressHelper.js"></script>
+
+    <!-- Include Axios -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+    <!-- bootstrap -->
+    <%- include("../partials/admin/bootScript.ejs") %>
+  </body>
+</html>

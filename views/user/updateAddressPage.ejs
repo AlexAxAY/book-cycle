@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Address Management</title>
+
+    <!-- css -->
+    <link rel="stylesheet" href="/user/stylesheets/userAddressPage.css" />
+
+    <!-- icon link -->
+    <%- include("../partials/user/iconLink.ejs") %>
+
+    <!-- bootstrap link -->
+    <%- include("../partials/admin/bootLink.ejs") %>
+  </head>
+  <body>
+    <!-- navbar -->
+    <header><%- include("../partials/user/userNavbar.ejs") %></header>
+
+    <!-- error alert -->
+    <div class="alert-bad d-none text-center" style="position: fixed"></div>
+
+    <!-- success alert -->
+    <div class="alert-good d-none text-center" style="position: fixed"></div>
+
+    <section class="container-main">
+      <!-- Sidebar -->
+      <%- include("../partials/user/sideBar.ejs") %>
+
+      <!-- Profile Section -->
+      <div class="content">
+        <h2 class="mb-4">Manage Address</h2>
+        <div class="card shadow-sm">
+          <div class="card-body">
+            <form id="addressForm" novalidate>
+              <!-- Name & Phone Number -->
+              <div class="row mb-3">
+                <div class="col-md-6">
+                  <label for="name" class="form-label">Name</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="name"
+                    value="<%= address.name %>"
+                    placeholder="Enter name"
+                  />
+                </div>
+                <div class="col-md-6">
+                  <label for="phone" class="form-label">Phone Number</label>
+                  <input
+                    type="tel"
+                    class="form-control"
+                    id="phone"
+                    value="<%= address.phone %>"
+                    placeholder="Enter phone number"
+                  />
+                </div>
+              </div>
+
+              <!-- Address Line -->
+              <div class="mb-3">
+                <label for="addressLine" class="form-label">Address Line</label>
+                <textarea
+                  class="form-control"
+                  id="addressLine"
+                  rows="2"
+                  placeholder="Enter address"
+                >
+<%= address.address_line %></textarea
+                >
+              </div>
+
+              <!-- Landmark & Alternate Phone Number (Optional) -->
+              <div class="row mb-3">
+                <div class="col-md-6">
+                  <label for="landmark" class="form-label"
+                    >Landmark (Optional)</label
+                  >
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="landmark"
+                    value="<%= address.landmark %>"
+                    placeholder="Enter landmark"
+                  />
+                </div>
+                <div class="col-md-6">
+                  <label for="altPhone" class="form-label"
+                    >Alternate Phone Number (Optional)</label
+                  >
+                  <input
+                    type="tel"
+                    class="form-control"
+                    value="<%= address.alt_phone %>"
+                    id="altPhone"
+                    placeholder="Enter alternate phone number"
+                  />
+                </div>
+              </div>
+
+              <!-- City, State & Pincode -->
+              <div class="row mb-3">
+                <div class="col-md-4">
+                  <label for="city" class="form-label">City</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="city"
+                    value="<%= address.city %>"
+                    placeholder="Enter city"
+                  />
+                </div>
+                <div class="col-md-4">
+                    <label for="state" class="form-label">State</label>
+                    <select class="form-select" id="state" name="state">
+                      <% states.forEach((state) => { %>
+                        <option value="<%= state.name %>" 
+                          <%= address.state === state.name ? 'selected' : '' %>>
+                          <%= state.name %>
+                        </option>
+                      <% }) %>
+                    </select>
+                  </div>
+                  
+                <div class="col-md-4">
+                  <label for="pincode" class="form-label">Pincode</label>
+                  <input
+                    type="number"
+                    class="form-control"
+                    id="pincode"
+                    value="<%= address.pincode %>"
+                    placeholder="Enter pincode"
+                  />
+                </div>
+              </div>
+
+              <!-- Address Type -->
+              <div class="mb-3">
+                <label class="form-label">Address Type</label>
+                <div>
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio"
+                    name="addressType" id="home" value="home" <%=
+                    address.address_type === 'home' ? 'checked' : '' %> />
+                    <label class="form-check-label" for="home">Home</label>
+                  </div>
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio"
+                    name="addressType" id="work" value="work" <%=
+                    address.address_type === 'work' ? 'checked' : '' %> />
+                    <label class="form-check-label" for="work">Work</label>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Submit Button -->
+              <div class="mb-3">
+                <button type="submit" class="btn btn-primary">
+                  Save Address
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- footer partial -->
+    <footer><%- include("../partials/user/userFooter.ejs") %></footer>
+
+    <!-- logout -->
+    <script src="/user/helper/logoutHelper.js"></script>
+
+    <!-- pending user clear -->
+    <script src="/user/helper/removePendingUser.js"></script>
+
+    <!-- address validation file -->
+    <script src="/user/validation/addressUpdateValidation.js"></script>
+
+    <!-- Include Axios -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+    <!-- bootstrap -->
+    <%- include("../partials/admin/bootScript.ejs") %>
+  </body>
+</html>
