@@ -1,0 +1,6 @@
+<% if (error && error.length > 0) { %> <% error.forEach(function(msg) { %>
+<div class="alert alert-bad"><%= msg %></div>
+<% }); %> <% } %> <% if (success && success.length > 0) { %> <%
+success.forEach(function(msg) { %>
+<div class="alert alert-good"><%= msg %></div>
+<% }); %> <% } %>

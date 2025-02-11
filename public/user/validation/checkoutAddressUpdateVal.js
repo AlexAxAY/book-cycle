@@ -74,7 +74,7 @@ document.addEventListener("DOMContentLoaded", function () {
     };
 
     try {
-      const response = await axios.put(`/user/manage-address/${id}`, data);
+      const response = await axios.put(`/user/checkout/address/${id}`, data);
 
       if (response.data.success) {
         showAlert(".alert-good", response.data.message);
@@ -90,7 +90,7 @@ document.addEventListener("DOMContentLoaded", function () {
           altPhone,
         ]);
         setTimeout(() => {
-          window.location.href = "/user/view-address";
+          window.location.href = "/user/checkout";
         }, 1000);
       } else {
         showAlert(".alert-bad", response.data.message);

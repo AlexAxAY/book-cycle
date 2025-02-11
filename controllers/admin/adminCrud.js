@@ -239,14 +239,13 @@ const addProduct = async (req, res) => {
       description,
       publish_date,
       used,
-      cropped_images, // Extract cropped_images from the request body
+      cropped_images,
     } = req.body;
 
     console.log("request body:", req.body);
 
     console.log("before parsing :", cropped_images);
 
-    // Validate required fields and ensure price, discount, and count are numbers
     if (
       !name ||
       !author ||
@@ -309,10 +308,6 @@ const addProduct = async (req, res) => {
       }
     }
 
-    console.log("Parsed cropped images:", croppedImagesArray);
-
-    console.log("after parsing :", cropped_images);
-
     // Process image uploads from req.files and include cropped URLs
     const images = [];
 
@@ -328,8 +323,6 @@ const addProduct = async (req, res) => {
         });
       }
     }
-
-    console.log("Processed images array:", images);
 
     // Calculate final price based on discount type
     const finalPrice =
@@ -412,9 +405,6 @@ const updateProduct = async (req, res) => {
       publish_date,
       used,
     } = req.body;
-
-    console.log("Request body:", req.body);
-    console.log("Request files:", req.files);
 
     // Validation checks
     if (

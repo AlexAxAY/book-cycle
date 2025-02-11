@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", function () {
-  const addressForm = document.getElementById("addressForm");
+  const addressForm = document.querySelector("#addressForm form");
 
   addressForm.addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -8,29 +8,28 @@ document.addEventListener("DOMContentLoaded", function () {
     hideAlert(".alert-good");
 
     const name = document.getElementById("name");
-    const id = window.location.pathname.split("/").pop();
-    const phone = document.getElementById("phone");
     const addressLine = document.getElementById("addressLine");
     const landmark = document.getElementById("landmark");
-    const altPhone = document.getElementById("altPhone");
     const city = document.getElementById("city");
     const state = document.getElementById("state");
     const pincode = document.getElementById("pincode");
+    const phone = document.getElementById("phone");
+    const altPhone = document.getElementById("altPhone");
     const addressType = document.querySelector(
       'input[name="addressType"]:checked'
     );
 
-    // Validate required fields (landmark & alternate phone are optional)
     if (
       !name.value.trim() ||
-      !phone.value.trim() ||
       !addressLine.value.trim() ||
       !city.value.trim() ||
       !state.value.trim() ||
-      !pincode.value.trim()
+      !pincode.value.trim() ||
+      !phone.value.trim() ||
+      !addressType
     ) {
       showAlert(".alert-bad", "Please fill in all required fields.");
-      validateFields([name, phone, addressLine, city, state, pincode]);
+      validateFields([name, addressLine, city, state, pincode, phone]);
       return;
     }
 
@@ -42,7 +41,7 @@ document.addEventListener("DOMContentLoaded", function () {
       return;
     }
 
-    // Validate alternate phone number (if provided, must be 10 digits)
+    // Validate alternate phone number if provided (must be 10 digits)
     if (altPhone.value.trim() && !phoneRegex.test(altPhone.value.trim())) {
       showAlert(
         ".alert-bad",
@@ -63,48 +62,74 @@ document.addEventListener("DOMContentLoaded", function () {
     // Prepare data for submission
     const data = {
       name: name.value.trim(),
-      phone: phone.value.trim(),
       address_line: addressLine.value.trim(),
       landmark: landmark.value.trim(),
-      alt_phone: altPhone.value.trim(),
       city: city.value.trim(),
       state: state.value.trim(),
       pincode: pincode.value.trim(),
+      phone: phone.value.trim(),
+      alt_phone: altPhone.value.trim(),
       address_type: addressType ? addressType.value : "",
     };
 
     try {
-      const response = await axios.put(`/user/manage-address/${id}`, data);
+      const response = await axios.post("/user/checkout/address", data);
 
       if (response.data.success) {
-        showAlert(".alert-good", response.data.message);
-
+        addressForm.reset();
         resetValidation([
           name,
-          phone,
-          landmark,
           addressLine,
+          landmark,
           city,
           state,
           pincode,
+          phone,
           altPhone,
         ]);
-        setTimeout(() => {
-          window.location.href = "/user/view-address";
-        }, 1000);
+        window.location.reload();
       } else {
         showAlert(".alert-bad", response.data.message);
       }
     } catch (error) {
-      console.error("Error:", error);
-      showAlert(
-        ".alert-bad",
-        error.response.data.message || "An error occurred. Please try again."
-      );
+      console.error("Error adding address:", error.response || error);
+      const errorMessage =
+        error.response?.data?.message || "An error occurred. Please try again.";
+      showAlert(".alert-bad", errorMessage);
     }
   });
 
-  // Function to validate empty fields
+  // Utility function to show alert messages using your custom alert boxes
+  function showAlert(selector, message) {
+    const alertEl = document.querySelector(selector);
+    alertEl.textContent = message;
+    alertEl.classList.remove("d-none");
+    setTimeout(() => {
+      alertEl.classList.add("d-none");
+    }, 1000);
+  }
+
+  // Add event listeners for real-time validation
+  document
+    .querySelectorAll(
+      "#addressForm input, #addressForm textarea, #addressForm select"
+    )
+    .forEach((input) => {
+      input.addEventListener("input", function () {
+        this.classList.toggle("is-invalid", !this.value.trim());
+        this.classList.toggle("is-valid", !!this.value.trim());
+      });
+    });
+
+  // Utility function to hide alert messages immediately
+  function hideAlert(selector) {
+    const el = document.querySelector(selector);
+    if (el) {
+      el.classList.add("d-none");
+    }
+  }
+
+  // Function to add "is-invalid" style to empty required fields
   function validateFields(fields) {
     fields.forEach((field) => {
       if (!field.value.trim()) {
@@ -118,34 +143,5 @@ document.addEventListener("DOMContentLoaded", function () {
     fields.forEach((field) => {
       field.classList.remove("is-invalid", "is-valid");
     });
-  }
-
-  // Add event listeners for real-time validation
-  document.querySelectorAll("input").forEach((input) => {
-    input.addEventListener("input", function () {
-      if (this.value.trim()) {
-        this.classList.remove("is-invalid");
-        this.classList.add("is-valid");
-      } else {
-        this.classList.remove("is-valid");
-        this.classList.add("is-invalid");
-      }
-    });
-  });
-
-  // Utility function to show alert messages
-  function showAlert(selector, message) {
-    const alertEl = document.querySelector(selector);
-    alertEl.textContent = message;
-    alertEl.classList.remove("d-none");
-
-    setTimeout(() => {
-      alertEl.classList.add("d-none");
-    }, 3000);
-  }
-
-  // Utility function to hide alert messages
-  function hideAlert(selector) {
-    document.querySelector(selector).classList.add("d-none");
   }
 });

@@ -18,11 +18,8 @@
     <!-- navbar -->
     <header><%- include("../partials/user/userNavbar.ejs") %></header>
 
-    <!-- error alert -->
-    <div class="alert-bad d-none text-center" style="position: fixed"></div>
-
-    <!-- success alert -->
-    <div class="alert-good d-none text-center" style="position: fixed"></div>
+    <!-- alert -->
+    <%- include("../partials/user/alertMessage.ejs") %>
 
     <section class="container mt-4" style="min-height: calc(100vh - 212px)">
       <!-- Breadcrumbs -->

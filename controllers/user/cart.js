@@ -33,6 +33,7 @@ const addToCart = async (req, res) => {
     const userId = req.user ? req.user.id : null;
 
     if (!userId) {
+      console.log("user not logged in!");
       return res
         .status(401)
         .json({ success: false, message: "User not logged in" });
@@ -151,7 +152,7 @@ const getCartDetails = async (req, res) => {
       ? (totalDiscountAmount / totalOriginalPrice) * 100
       : 0;
     let totalAfterDiscount = totalOriginalPrice - totalDiscountAmount;
-    let deliveryCharge = totalAfterDiscount >= 500 ? 0 : 40;
+    let deliveryCharge = totalAfterDiscount >= 500 ? 0 : 50;
     let finalTotal = totalAfterDiscount + deliveryCharge;
 
     return res.json({

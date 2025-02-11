@@ -14,6 +14,7 @@ const adminRoutes = require("./routes/adminRoutes");
 const userRoutes = require("./routes/userRoutes");
 const googleAuthRoutes = require("./routes/googleAuthRoutes");
 const passport = require("passport");
+const flash = require("connect-flash");
 
 const PORT = process.env.PORT;
 
@@ -49,6 +50,9 @@ app.use(
   })
 );
 
+// initialize flash messages (must come after session middleware)
+app.use(flash());
+
 app.use(passport.initialize());
 app.use(passport.session());
 
@@ -60,6 +64,9 @@ app.use((req, res, next) => {
     res.locals.user = null;
   }
   res.locals.currentURL = req.originalUrl;
+
+  res.locals.error = req.flash("error");
+  res.locals.success = req.flash("success");
 
   next();
 });

@@ -26,11 +26,8 @@
         align-items: center;
       "
     >
-      <!-- error alert -->
-      <div class="alert-bad d-none" style="position: fixed"></div>
-
-      <!-- success alert -->
-      <div class="alert-good d-none" style="position: fixed"></div>
+      <!-- alert -->
+      <%- include("../partials/user/alertMessage.ejs") %>
 
       <div class="otp-container">
         <h2 class="mt-2" style="text-align: center">Verify OTP</h2>

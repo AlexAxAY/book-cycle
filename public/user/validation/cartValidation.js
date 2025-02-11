@@ -82,7 +82,7 @@ document.addEventListener("DOMContentLoaded", () => {
                   <p>${
                     data.deliveryCharge === 0
                       ? '<small style="color: green">Free</small>'
-                      : `<small>₹ ${data.deliveryCharge.toFixed(2)}</small>`
+                      : `<small>₹ ${data.deliveryCharge}</small>`
                   }</p>
                   <p>₹ ${data.finalTotal.toFixed(2)}</p>
                 </div>
@@ -92,7 +92,7 @@ document.addEventListener("DOMContentLoaded", () => {
           <div class="row">
             <div class="col mt-3">
               <div class="row my-2">
-                <button class="low-button" style="border-radius: 10px; background-color: green; border: none; color: white;">Proceed to buy</button>
+                <a href="/user/checkout" class="low-button" style="border-radius: 10px; background-color: green; border: none; color: white; text-decoration: none; display: inline-block; text-align: center;">Proceed to buy</a>
               </div>
               <div class="row my-2">
                 <a href="/user/shop" class="text-center low-button" style="border-radius: 10px; text-decoration: none; background-color: yellow; border: none; color: black;">Continue Shopping</a>

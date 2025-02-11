@@ -37,48 +37,77 @@
       <!-- Filter Button -->
       <button class="btn btn-primary" id="filter-btn">Filter</button>
       <div
+        class="d-flex d-none"
         id="filter-section"
-        class="mt-3 d-none d-flex"
-        style="align-items: center; flex-direction: column"
+        style="justify-content: space-between"
       >
-        <select id="category" class="form-control mb-2">
-          <option value="">Select Category</option>
-          <% categories.forEach(category => { %>
-          <option value="<%= category.category %>">
-            <%= category.category %>
-          </option>
-          <% }) %>
-        </select>
+        <div
+          class="mt-3 d-flex"
+          style="align-items: start; flex-direction: column; width: fit-content"
+        >
+          <select id="category" class="form-control mb-2">
+            <option value="">Select Category</option>
+            <% categories.forEach(category => { %>
+            <option value="<%= category.category %>">
+              <%= category.category %>
+            </option>
+            <% }) %>
+          </select>
 
-        <input
-          type="number"
-          id="min-price"
-          class="form-control mb-2"
-          placeholder="Min Price"
-          min="0"
-        />
+          <input
+            type="number"
+            id="min-price"
+            class="form-control mb-2"
+            placeholder="Min Price"
+            min="0"
+          />
 
-        <input
-          type="number"
-          id="max-price"
-          class="form-control mb-2"
-          placeholder="Max Price"
-          min="0"
-          max="5000"
-        />
+          <input
+            type="number"
+            id="max-price"
+            class="form-control mb-2"
+            placeholder="Max Price"
+            min="0"
+            max="5000"
+          />
 
-        <input
-          type="number"
-          id="rating"
-          class="form-control mb-2"
-          placeholder="Rating (1-5)"
-          min="0"
-          max="5"
-        />
+          <input
+            type="number"
+            id="rating"
+            class="form-control mb-2"
+            placeholder="Rating (1-5)"
+            min="0"
+            max="5"
+          />
 
-        <button class="btn btn-success mt-2" id="apply-filters">
-          Apply Filters
-        </button>
+          <button class="btn btn-success mt-2" id="apply-filters">
+            Apply Filters
+          </button>
+        </div>
+        <!-- Sorting Radio Buttons Section -->
+        <div class="d-flex flex-column" style="gap: 0.5rem; margin-top: 1rem">
+          <strong>Sort By:</strong>
+          <label>
+            <input type="radio" name="sort" value="priceLowToHigh" /> Price: Low
+            to High
+          </label>
+          <label>
+            <input type="radio" name="sort" value="priceHighToLow" /> Price:
+            High to Low
+          </label>
+          <label>
+            <input type="radio" name="sort" value="rating" /> Average Ratings
+          </label>
+          <label>
+            <input type="radio" name="sort" value="newArrivals" /> New Arrivals
+          </label>
+          <label>
+            <input type="radio" name="sort" value="nameAsc" /> A to Z
+          </label>
+          <label>
+            <input type="radio" name="sort" value="nameDesc" /> Z to A
+          </label>
+        </div>
       </div>
 
       <!-- Products Grid -->

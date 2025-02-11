@@ -66,6 +66,13 @@ body {
   background-color: green !important;
 }
 
+/* make the number input field up and down button disappear */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
 #sidebar .sidebar-header {
   padding: 1rem;
   background: #fff;

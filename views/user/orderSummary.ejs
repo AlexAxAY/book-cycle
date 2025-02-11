@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Order summary</title>
+  </head>
+  <!-- bootstrap -->
+  <%- include("../partials/admin/bootLink.ejs") %>
+
+  <!-- icon link -->
+  <%- include("../partials/user/iconLink.ejs") %>
+
+  <!-- css -->
+  <link rel="stylesheet" href="/user/stylesheets/orderSummary.css" />
+  <body>
+    <!-- navbar -->
+    <header><%- include("../partials/user/userNavbar.ejs") %></header>
+
+    <div class="container mt-4" style="min-height: calc(100vh - 212px)">
+      <h1>Order Summary</h1>
+      <div class="row my-5">
+        <!-- Left Column -->
+        <div class="col-lg-8">
+          <div class="card p-4">
+            <div class="d-flex justify-content-between">
+              <div>
+                <h4>The Adventures of Sherlock Holmes</h4>
+                <p class="text-muted">Publisher: Xian Yang & Co.</p>
+                <h5><strong>₹2000</strong></h5>
+              </div>
+              <img src="https://via.placeholder.com/60" alt="Book Cover" />
+            </div>
+            <hr />
+            <div class="order-status">
+              <p>
+                <i class="fas fa-check-circle"></i> Order confirmed, 12 Oct,
+                2024
+              </p>
+              <p>
+                <i class="fas fa-check-circle"></i> Order delivered, 20 Oct,
+                2024
+              </p>
+            </div>
+            <a href="#" class="text-primary">See All Details</a>
+            <hr />
+            <h5 class="mt-3">Rate The Product</h5>
+            <div class="rating">
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Column -->
+        <div class="col-lg-4">
+          <div class="invoice-btn mb-3">
+            <i class="fas fa-file-download"></i> Download Invoice
+          </div>
+          <div class="card p-3 mb-3">
+            <h6 class="text-muted">Shipping details</h6>
+            <h5>Alex Axay</h5>
+            <p>
+              Harvard Enclave, Street No. 12, Hi-Tech City, Hyderabad - 630768
+            </p>
+            <p><strong>Phone number:</strong> 7034476572, 9876654765</p>
+          </div>
+          <div class="card p-3">
+            <h6 class="text-muted">Price details</h6>
+            <p>Selling price <span>₹2300</span></p>
+            <p>Discount <span class="text-success">13%</span></p>
+            <p>Coupon applied <span>Yes</span></p>
+            <p>Delivery charge <span class="text-success">Free</span></p>
+            <hr />
+            <h5>Total Amount <span>₹2300</span></h5>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- footer partial -->
+    <footer><%- include("../partials/user/userFooter.ejs") %></footer>
+
+    <!-- logout -->
+    <script src="/user/helper/logoutHelper.js"></script>
+
+    <!-- pending user clear -->
+    <script src="/user/helper/removePendingUser.js"></script>
+
+    <!-- Include Axios -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+    <!-- bootstrap -->
+    <%- include("../partials/admin/bootScript.ejs") %>
+  </body>
+</html>

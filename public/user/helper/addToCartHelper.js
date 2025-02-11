@@ -10,7 +10,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
       try {
         const response = await axios.post(`/user/cart/${productId}`);
-
         if (response.data.success) {
           showAlert(successAlert, response.data.message, "good");
         } else {
@@ -28,7 +27,7 @@ document.addEventListener("DOMContentLoaded", () => {
           showAlert(errorAlert, errorMessage, "bad");
           setTimeout(() => {
             window.location.href = "/user/login";
-          }, 1200);
+          }, 500);
         } else {
           const errorMessage =
             error.response?.data?.message || "Failed to add product to cart";
@@ -44,6 +43,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     setTimeout(() => {
       element.classList.add("d-none");
-    }, 3000);
+    }, 2000);
   }
 });

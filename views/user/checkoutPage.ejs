@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Checkout</title>
+
+    <!-- bootstrap -->
+    <%- include("../partials/admin/bootLink.ejs") %>
+
+    <!-- icon link -->
+    <%- include("../partials/user/iconLink.ejs") %>
+
+    <!-- css -->
+    <link rel="stylesheet" href="/user/stylesheets/checkoutPage.css" />
+  </head>
+
+  <body>
+    <!-- navbar -->
+    <header><%- include("../partials/user/userNavbar.ejs") %></header>
+
+    <!-- alert -->
+    <%- include("../partials/user/alertMessage.ejs") %>
+
+    <!-- out of stock message -->
+    <% if (outOfStockMessage) { %>
+    <div class="alert alert-good"><%= outOfStockMessage %></div>
+    <% } %>
+
+    <!-- Main Content -->
+    <div class="container my-5" style="min-height: calc(100vh - 212px)">
+      <div class="row">
+        <!-- Shipping & Payment Section -->
+        <div class="col-md-8">
+          <h2 class="mb-5">Shipping Address</h2>
+          <!-- Toggle button to display/hide new address form -->
+          <button class="btn btn-primary mb-3" id="toggleAddressForm">
+            Add New Address
+          </button>
+
+          <!-- Shipping Address Form (toggleable) -->
+          <div id="addressForm" class="card p-3 mb-3" style="display: none">
+            <form>
+              <div class="form-group my-2">
+                <label for="name">Full Name</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="name"
+                  placeholder="John Doe"
+                />
+              </div>
+              <div class="form-group my-2">
+                <label for="addressLine" class="form-label">Address Line</label>
+                <textarea
+                  class="form-control"
+                  id="addressLine"
+                  rows="1 "
+                  placeholder="123 street, ..."
+                ></textarea>
+              </div>
+              <div class="form-group my-2">
+                <label for="landmark" class="form-label"
+                  >Landmark (Optional)</label
+                >
+                <input
+                  type="text"
+                  class="form-control"
+                  id="landmark"
+                  placeholder="Enter landmark"
+                />
+              </div>
+
+              <div class="row">
+                <div class="form-group my-2 col">
+                  <label for="city">City</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="city"
+                    placeholder="City"
+                  />
+                </div>
+                <div class="form-group my-2 col">
+                  <label for="state" class="form-label">State</label>
+                  <select class="form-select" id="state">
+                    <% states.forEach((state) => { %>
+                    <option value="<%= state.name %>"><%= state.name %></option>
+                    <% }) %>
+                  </select>
+                </div>
+                <div class="form-group my-2 col">
+                  <label for="pincode">Pincode</label>
+                  <input
+                    type="number"
+                    class="form-control"
+                    id="pincode"
+                    placeholder="Pincode"
+                  />
+                </div>
+              </div>
+              <div class="row">
+                <div class="form-group my-2 col-4">
+                  <label for="phone">Phone Number</label>
+                  <input
+                    type="tel"
+                    class="form-control"
+                    id="phone"
+                    placeholder="Phone Number"
+                  />
+                </div>
+                <div class="form-group my-2 col-4">
+                  <label for="altPhone">Alternate Number (optional)</label>
+                  <input
+                    type="tel"
+                    class="form-control"
+                    id="altPhone"
+                    placeholder="Phone Number"
+                  />
+                </div>
+                <div class="form-group my-2 col-4">
+                  <label class="form-label">Address Type</label>
+                  <div>
+                    <div class="form-check form-check-inline">
+                      <input
+                        class="form-check-input"
+                        type="radio"
+                        name="addressType"
+                        id="home"
+                        value="home"
+                        checked
+                      />
+                      <label class="form-check-label" for="home">Home</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                      <input
+                        class="form-check-input"
+                        type="radio"
+                        name="addressType"
+                        id="work"
+                        value="work"
+                      />
+                      <label class="form-check-label" for="work">Work</label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <button type="submit" class="btn btn-success btn-sm mt-2">
+                Save Address
+              </button>
+            </form>
+          </div>
+
+          <!-- Existing Address Display -->
+          <% if (addresses.length > 0) { %>
+          <div class="card p-3 mb-3">
+            <h5>Addresses</h5>
+            <% addresses.forEach((address) => { %>
+            <div
+              class="sub-card d-flex p-2 my-2 align-items-center"
+              style="border: 1px solid rgba(0, 0, 0, 0.3); border-radius: 5px"
+            >
+              <!-- Radio Button for Selecting the Address -->
+              <div class="col-auto me-5">
+                <input
+                  class="radio-check"
+                  type="radio"
+                  name="selectedAddress"
+                  id="address-<%= address._id %>"
+                  value="<%= address._id %>"
+                />
+              </div>
+              <div class="col">
+                <label for="address-<%= address._id %>" style="cursor: pointer">
+                  <p class="m-0"><strong><%= address.name %></strong></p>
+                  <p class="m-0">
+                    <%= address.address_line %><%= address.landmark ? `,
+                    ${address.landmark}` : '' %>, <%= address.city %>, <%=
+                    address.state %> - <%= address.pincode %>
+                  </p>
+                  <p class="m-0">
+                    Phone: <%= address.phone %> <% if (address.alt_phone) { %>
+                    (Alt Phone: <%= address.alt_phone %>) <% } %>
+                  </p>
+                </label>
+              </div>
+              <div class="col-auto">
+                <!-- Edit Icon (kept as is) -->
+                <a
+                  class="ms-4"
+                  href="/user/checkout/address/<%= address._id %>"
+                >
+                  <i
+                    data-id="<%= address._id %>"
+                    class="fas fa-pencil-alt edit-icon"
+                  ></i>
+                </a>
+              </div>
+            </div>
+            <% }) %>
+          </div>
+          <% } %>
+
+          <!-- Payment Method Section -->
+          <div class="card p-3">
+            <h2>Payment Method</h2>
+            <div class="form-check">
+              <input
+                class="form-check-input"
+                type="radio"
+                name="paymentMethod"
+                id="cod"
+                checked
+              />
+              <label class="form-check-label" for="cod">
+                Cash on Delivery
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Order Summary Section -->
+        <div class="col-md-4">
+          <div
+            class="card p-3 mb-3"
+            style="
+              border: none;
+              box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1),
+                0 6px 20px rgba(0, 0, 0, 0.1);
+            "
+          >
+            <h2 class="text-center mb-5">Order Summary</h2>
+
+            <div class="row">
+              <div class="col text-start">
+                <p>Total items</p>
+                <p>Sub total</p>
+                <p>Shipping fee</p>
+              </div>
+              <div class="col text-end">
+                <p><%= checkoutData.totalItems%></p>
+                <p>₹ <%= checkoutData.totalAfterDiscount %></p>
+                <p>₹ <%= checkoutData.deliveryCharge %></p>
+              </div>
+            </div>
+            <hr />
+            <div class="row">
+              <div class="col text-start">
+                <p>Estimated total</p>
+              </div>
+              <div class="col text-end">
+                <p>₹ <%= checkoutData.finalTotal %></p>
+              </div>
+            </div>
+          </div>
+          <div class="text-center">
+            <p>🔒<small>Safe & secure payment</small></p>
+          </div>
+          <div class="d-flex" style="flex-direction: column">
+            <a href="/user/cart" class="btn btn-warning my-2">Back to cart</a>
+            <button class="btn btn-success my-2" id="proceedToBuyBtn">
+              Proceed to buy
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Confirmation (hidden by default) -->
+    <div
+      class="modal fade"
+      id="confirmModal"
+      tabindex="-1"
+      aria-labelledby="confirmModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="confirmModalLabel">
+              Out of Stock Items
+            </h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            Some items in your order are out of stock. Do you wish to proceed
+            with the available items?
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              id="cancelProceed"
+              data-bs-dismiss="modal"
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              class="btn btn-primary"
+              id="confirmProceed"
+              data-bs-dismiss="modal"
+            >
+              Yes, Proceed
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- footer partial -->
+    <footer><%- include("../partials/user/userFooter.ejs") %></footer>
+
+    <!-- logout -->
+    <script src="/user/helper/logoutHelper.js"></script>
+
+    <!-- pending user clear -->
+    <script src="/user/helper/removePendingUser.js"></script>
+
+    <!-- checkout address validation -->
+    <script src="/user/validation/checkoutPageAddressVal.js"></script>
+
+    <!-- checkout page -->
+    <script src="/user/helper/checkoutPageHelper.js"></script>
+    <script src="/user/helper/proceedHelper.js"></script>
+
+    <!-- remove the flash -->
+    <script src="/user/helper/removeFlash.js"></script>
+
+    <!-- Include Axios -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+    <!-- bootstrap -->
+    <%- include("../partials/admin/bootScript.ejs") %>
+  </body>
+</html>

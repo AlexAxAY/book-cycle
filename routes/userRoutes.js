@@ -20,6 +20,17 @@ const {
 // user profile
 const { getProfile, updateProfile } = require("../controllers/user/profile");
 
+// user orders
+const { orderSummary, proceedToBuy } = require("../controllers/user/order");
+
+// checkout
+const {
+  checkoutPage,
+  addCheckoutAddress,
+  checkoutAddressUpdatePage,
+  checkoutAddressUpdate,
+} = require("../controllers/user/checkout");
+
 // user address
 const {
   getAddressPage,
@@ -125,4 +136,17 @@ router
   .put(checkingAuth, updateAddress);
 router.route("/view-address").get(checkingAuth, viewAllAddress);
 
+// checkout routes
+router
+  .route("/checkout")
+  .get(checkingAuth, checkoutPage)
+  .post(checkingAuth, proceedToBuy);
+router.route("/checkout/address").post(checkingAuth, addCheckoutAddress);
+router
+  .route("/checkout/address/:id")
+  .get(checkingAuth, checkoutAddressUpdatePage)
+  .put(checkingAuth, checkoutAddressUpdate);
+
+// order routes
+router.route("/orders/:id").get(orderSummary);
 module.exports = router;

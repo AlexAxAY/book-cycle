@@ -23,7 +23,7 @@ const landingPage = async (req, res) => {
 // shopping page get
 const shoppingPage = async (req, res) => {
   try {
-    const { search, category, minPrice, maxPrice, rating } = req.query;
+    const { search, category, minPrice, maxPrice, rating, sort } = req.query;
     const query = { is_deleted: false };
 
     // Search filter
@@ -43,6 +43,7 @@ const shoppingPage = async (req, res) => {
       if (maxPrice) query.final_price.$lte = Number(maxPrice);
     }
 
+    // Rating filter
     if (rating) {
       const ratingValue = Number(rating);
       if (ratingValue === 0) {
@@ -52,7 +53,31 @@ const shoppingPage = async (req, res) => {
       }
     }
 
-    const products = await Product.find(query);
+    // Build sorting options based on the sort parameter
+    let sortQuery = {};
+    if (sort === "priceLowToHigh") {
+      sortQuery.final_price = 1;
+    } else if (sort === "priceHighToLow") {
+      sortQuery.final_price = -1;
+    } else if (sort === "rating") {
+      // Assuming you want higher ratings first
+      sortQuery.avg_rating = -1;
+    } else if (sort === "newArrivals") {
+      // Assuming you have updatedAt field tracking product updates
+      sortQuery.updatedAt = -1;
+    } else if (sort === "nameAsc") {
+      sortQuery.name = 1;
+    } else if (sort === "nameDesc") {
+      sortQuery.name = -1;
+    }
+
+    // Apply sorting to the query
+    let productsQuery = Product.find(query);
+    if (Object.keys(sortQuery).length) {
+      productsQuery = productsQuery.sort(sortQuery);
+    }
+    const products = await productsQuery;
+
     const categories = await Category.find();
 
     if (req.headers.accept.includes("application/json")) {
