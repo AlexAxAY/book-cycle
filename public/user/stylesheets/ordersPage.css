@@ -38,48 +38,37 @@ body {
   background-color: green !important;
 }
 
-.order-status i {
-  color: green;
-  margin-right: 8px;
-}
-.rating i {
-  font-size: 24px;
-  cursor: pointer;
-  color: #ddd;
-}
-.rating i:hover,
-.rating i.active {
-  color: gold;
-}
-.invoice-btn {
-  background: #f5f5f5;
+/* main */
+.order-container {
+  border: 1px solid #ccc;
   border-radius: 8px;
-  padding: 10px;
-  display: flex;
+  padding: 15px;
   align-items: center;
-  cursor: pointer;
+  background-color: #fff;
 }
-.invoice-btn i {
-  margin-right: 10px;
+.order-image {
+  width: 80px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 5px;
 }
-.price-details span {
-  float: right;
+.order-details {
+  flex-grow: 1;
+  padding-left: 15px;
 }
-
-/* modal */
-.timeline {
-  position: relative;
-  list-style: none;
-  padding-left: 20px;
-}
-.timeline li {
-  position: relative;
-  padding: 10px 0;
-}
-
-.modal-header {
-  background-color: #f8f9fa;
+.order-details h6 {
+  margin-bottom: 5px;
   font-weight: bold;
+}
+.track-btn {
+  background-color: #28a745;
+  color: white;
+  border: none;
+  padding: 5px 12px;
+  border-radius: 5px;
+}
+.track-btn:hover {
+  background-color: #218838;
 }
 
 /* apply this on every user template */

@@ -21,7 +21,11 @@ const {
 const { getProfile, updateProfile } = require("../controllers/user/profile");
 
 // user orders
-const { orderSummary, proceedToBuy } = require("../controllers/user/order");
+const {
+  orderSummary,
+  proceedToBuy,
+  orders,
+} = require("../controllers/user/order");
 
 // checkout
 const {
@@ -95,7 +99,7 @@ router
 router.route("/resend-otp").post(resendOtp);
 
 // cart routes
-router.route("/cart").get(checkingAuth, cartPage);
+router.route("/cart").get(preventCache, checkingAuth, cartPage);
 router.route("/cart-details").get(checkingAuth, getCartDetails);
 router
   .route("/cart/:productId")
@@ -149,5 +153,6 @@ router
 
 // order routes
 router.route("/orders/:id").get(preventCache, checkingAuth, orderSummary);
+router.route("/orders").get(checkingAuth, orders);
 
 module.exports = router;

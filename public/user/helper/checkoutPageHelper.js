@@ -8,3 +8,9 @@ document
       form.style.display = "none";
     }
   });
+
+window.addEventListener("pageshow", function (event) {
+  if (event.persisted) {
+    window.location.reload();
+  }
+});

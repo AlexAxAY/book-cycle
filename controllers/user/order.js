@@ -2,6 +2,7 @@ const { Cart, CartItem } = require("../../models/cartSchemas");
 const Order = require("../../models/orderSchema");
 const Address = require("../../models/addressSchema");
 const Product = require("../../models/productSchema");
+const moment = require("moment");
 
 const orderSummary = async (req, res) => {
   try {
@@ -11,7 +12,8 @@ const orderSummary = async (req, res) => {
     if (!order) {
       return console.log("order not found!");
     }
-    return res.render("user/orderSummary", { order });
+    const orderCreated = moment(order.createdAt).format("MMMM Do YYYY, h:mm A");
+    return res.render("user/orderSummary", { order, orderCreated });
   } catch (err) {
     console.log("Error in orderSummary controller", err);
   }
@@ -189,4 +191,16 @@ const proceedToBuy = async (req, res) => {
   }
 };
 
-module.exports = { orderSummary, proceedToBuy };
+const orders = async (req, res) => {
+  try {
+    const orders = await Order.find().populate("products");
+    if (!orders) {
+      console.log("No orders found");
+    }
+    return res.render("user/ordersPage", { orders });
+  } catch (err) {
+    console.log("Error in orders controller", err);
+  }
+};
+
+module.exports = { orderSummary, proceedToBuy, orders };

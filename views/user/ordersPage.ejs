@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Orders</title>
+
+    <!-- bootstrap -->
+    <%- include("../partials/admin/bootLink.ejs") %>
+
+    <!-- icon link -->
+    <%- include("../partials/user/iconLink.ejs") %>
+
+    <!-- css -->
+    <link rel="stylesheet" href="/user/stylesheets/ordersPage.css" />
+  </head>
+  <body>
+    <!-- navbar -->
+    <header><%- include("../partials/user/userNavbar.ejs") %></header>
+    <div class="container mt-4" style="min-height: calc(100vh - 212px)">
+      <h3>Your orders</h3>
+      <% orders.forEach((order)=> { %>
+      <div class="order-container row mt-5">
+        <div class="col-auto">
+          <img
+            style="width: 70px"
+            src="<%= order.products[0].images[0].cropped_url ||  order.products[0].images[0].original_url%>"
+            alt="Book Image"
+            class="order-image"
+          />
+        </div>
+        <div class="col">
+          <div class="order-details">
+            <div class="row">
+              <div class="col-md-4">
+                <div class="row h-100" style="align-items: center">
+                  <% order.products.forEach((product)=> { %>
+                  <p class="m-0">🕮<%= product.name %></p>
+                  <% }) %>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="row h-100" style="align-items: center">
+                  <p class="m-0">₹ <%= order.selling_price %></p>
+                </div>
+              </div>
+              <div class="col-md-4 d-flex align-items-center">
+                <div
+                  class="d-flex h-100 w-100"
+                  style="justify-content: end; align-items: center"
+                >
+                  <a
+                    href="/user/orders/<%= order._id %>"
+                    style="
+                      width: fit-content;
+                      height: fit-content;
+                      text-decoration: none;
+                    "
+                    class="track-btn"
+                  >
+                    Track your order
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <% }) %>
+    </div>
+    <!-- footer partial -->
+    <footer><%- include("../partials/user/userFooter.ejs") %></footer>
+
+    <!-- logout -->
+    <script src="/user/helper/logoutHelper.js"></script>
+
+    <!-- pending user clear -->
+    <script src="/user/helper/removePendingUser.js"></script>
+
+    <!-- Include Axios -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+    <!-- bootstrap -->
+    <%- include("../partials/admin/bootScript.ejs") %>
+  </body>
+</html>

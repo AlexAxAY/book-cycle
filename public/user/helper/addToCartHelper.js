@@ -46,3 +46,9 @@ document.addEventListener("DOMContentLoaded", () => {
     }, 2000);
   }
 });
+
+window.addEventListener("pageshow", function (event) {
+  if (event.persisted) {
+    window.location.reload();
+  }
+});

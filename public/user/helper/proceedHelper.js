@@ -16,7 +16,7 @@ document
           showAlert(".alert-good", "Order placed successfully!");
 
           setTimeout(() => {
-            window.location.href = `/user/orders/${response.data.orderId}`;
+            window.location.replace(`/user/orders/${response.data.orderId}`);
           }, 500);
         } else if (response.data.partial) {
           const confirmModal = new bootstrap.Modal(
@@ -38,7 +38,9 @@ document
                     "Order placed successfully with available items!"
                   );
                   setTimeout(() => {
-                    window.location.href = `/user/orders/${resp.data.orderId}`;
+                    window.location.replace(
+                      `/user/orders/${response.data.orderId}`
+                    );
                   }, 500);
                 } else {
                   showAlert(".alert-bad", resp.data.message);
