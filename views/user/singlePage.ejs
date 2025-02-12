@@ -75,7 +75,11 @@
           <% if (product.author) { %>
           <p class="text-muted"><small>by <%= product.author %></small></p>
           <% } %> <% if (product.stock === "Limited stock") { %>
-          <p><strong style="color: #fb8500"><%= product.stock %></strong></p>
+          <p>
+            <strong style="color: #fb8500"
+              ><%= product.stock %> (<%= product.count %> books left)</strong
+            >
+          </p>
           <% } else if (product.stock === "In stock") { %>
           <p><strong style="color: green"><%= product.stock %></strong></p>
           <% } else if (product.stock === "Out of stock") { %>

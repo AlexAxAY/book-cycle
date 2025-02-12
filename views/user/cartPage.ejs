@@ -56,6 +56,13 @@
                         ><%= item.productId.category %></small
                       >
                     </p>
+                    <% if (item.productId.count <= 5) {%>
+                    <p>
+                      <small style="color: orange"
+                        ><%= item.productId.count %> books left</small
+                      >
+                    </p>
+                    <% } %>
                   </div>
                 </div>
                 <div class="col-3">

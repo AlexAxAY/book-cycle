@@ -211,6 +211,7 @@
                 type="radio"
                 name="paymentMethod"
                 id="cod"
+                value="COD"
                 checked
               />
               <label class="form-check-label" for="cod">
@@ -293,14 +294,15 @@
             with the available items?
           </div>
           <div class="modal-footer">
-            <button
+            <a
+              href="/user/cart"
               type="button"
               class="btn btn-secondary"
               id="cancelProceed"
               data-bs-dismiss="modal"
             >
               Cancel
-            </button>
+            </a>
             <button
               type="button"
               class="btn btn-primary"

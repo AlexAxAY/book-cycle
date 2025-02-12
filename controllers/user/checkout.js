@@ -16,15 +16,47 @@ const checkoutPage = async (req, res) => {
       "productId"
     );
 
-    const validCartItems = cartItems.filter((item) => {
-      return item.productId && item.productId.count > 0;
-    });
+    if (cartItems.length === 0) {
+      req.flash("error", "Your cart is empty!");
+      return res.redirect("/user/cart");
+    }
 
+    const validCartItems = cartItems.filter(
+      (item) => item.productId && item.productId.count > 0
+    );
+    const invalidCartItems = cartItems.filter(
+      (item) => !item.productId || item.productId.count <= 0
+    );
+
+    // Remove any invalid cart items from the database.
+    if (invalidCartItems.length > 0) {
+      const invalidIds = invalidCartItems.map((item) => item._id);
+      await CartItem.deleteMany({ _id: { $in: invalidIds } });
+    }
+
+    // If no valid items remain, alert the user and redirect to the cart page.
     if (validCartItems.length === 0) {
       req.flash(
         "error",
         "All items in your cart are out of stock. Please update your cart."
       );
+      return res.redirect("/user/cart");
+    }
+
+    // Check that the quantity selected for each valid cart item does not exceed the product's available stock.
+    const insufficientItems = validCartItems.filter(
+      (item) => item.quantity > item.productId.count
+    );
+    if (insufficientItems.length > 0) {
+      const errorMsg = insufficientItems
+        .map(
+          (item) =>
+            `${item.productId.name || "Product"} has ${
+              item.productId.count
+            } in stock but you opted for ${item.quantity}`
+        )
+        .join(" ");
+      req.flash("error", errorMsg);
       return res.redirect("/user/cart");
     }
 
@@ -34,7 +66,7 @@ const checkoutPage = async (req, res) => {
         "Some items in your cart are out of stock and have been removed.";
     }
 
-    // Recalculate totals based on valid (in-stock) items only.
+    // Recalculate totals using only valid (in-stock) items.
     let totalOriginalPrice = 0;
     let totalDiscountAmount = 0;
     let totalItems = 0;
@@ -54,15 +86,13 @@ const checkoutPage = async (req, res) => {
     });
 
     const totalAfterDiscount = totalOriginalPrice - totalDiscountAmount;
-
     const deliveryCharge = totalAfterDiscount >= 500 ? 0 : 50;
-
     const finalTotal = totalAfterDiscount + deliveryCharge;
 
     const addresses = await Address.find({ user_id: userId });
     const states = await State.find();
     if (!states) {
-      console.log("NO states found");
+      console.log("No states found");
     }
 
     return res.render("user/checkoutPage", {

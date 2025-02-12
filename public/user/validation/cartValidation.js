@@ -1,13 +1,26 @@
 document.addEventListener("DOMContentLoaded", () => {
-  // Select all plus and minus buttons for each cart item
+  function showAlert(message, type = "error") {
+    const alertEl =
+      type === "error"
+        ? document.querySelector(".alert-bad")
+        : document.querySelector(".alert-good");
+    if (!alertEl) return;
+
+    // Set the message and show the alert
+    alertEl.textContent = message;
+    alertEl.classList.remove("d-none");
+
+    setTimeout(() => {
+      alertEl.classList.add("d-none");
+    }, 3000);
+  }
+
   const plusButtons = document.querySelectorAll(".plus");
   const minusButtons = document.querySelectorAll(".minus");
 
-  // Attach click events for the plus buttons
   plusButtons.forEach((button) => {
     button.addEventListener("click", async function () {
-      const productId = this.getAttribute("data-id");
-
+      const cartItemId = this.getAttribute("data-id");
       const quantityInput =
         this.closest(".row").querySelector(".quantity-input");
       let currentQuantity = parseInt(quantityInput.value);
@@ -17,13 +30,20 @@ document.addEventListener("DOMContentLoaded", () => {
         quantityInput.value = newQuantity;
 
         try {
-          await axios.put(`/user/cart/${productId}`, {
+          await axios.put(`/user/cart/${cartItemId}`, {
             quantity: newQuantity,
           });
-
           updateCartDetails();
         } catch (error) {
+          if (
+            error.response &&
+            error.response.data &&
+            error.response.data.message
+          ) {
+            showAlert(error.response.data.message, "error");
+          }
           console.error("Error updating quantity:", error);
+          quantityInput.value = currentQuantity;
         }
       }
     });
@@ -32,26 +52,36 @@ document.addEventListener("DOMContentLoaded", () => {
   // Attach click events for the minus buttons
   minusButtons.forEach((button) => {
     button.addEventListener("click", async function () {
-      const productId = this.getAttribute("data-id");
+      const cartItemId = this.getAttribute("data-id");
       const quantityInput =
         this.closest(".row").querySelector(".quantity-input");
       let currentQuantity = parseInt(quantityInput.value);
+
       if (currentQuantity > 1) {
         let newQuantity = currentQuantity - 1;
         quantityInput.value = newQuantity;
         try {
-          await axios.put(`/user/cart/${productId}`, {
+          await axios.put(`/user/cart/${cartItemId}`, {
             quantity: newQuantity,
           });
           updateCartDetails();
         } catch (error) {
+          if (
+            error.response &&
+            error.response.data &&
+            error.response.data.message
+          ) {
+            showAlert(error.response.data.message, "error");
+          }
           console.error("Error updating quantity:", error);
+          // Optionally revert the UI quantity back on error
+          quantityInput.value = currentQuantity;
         }
       }
     });
   });
 
-  // This function fetches updated cart details and updates the Price Details section
+  // Function to update the Price Details section dynamically
   async function updateCartDetails() {
     try {
       const response = await axios.get("/user/cart-details");

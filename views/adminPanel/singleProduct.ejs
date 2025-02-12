@@ -107,9 +107,24 @@
               <strong>Publisher:</strong> <%= product.publisher ?
               product.publisher : 'Not Available' %>
             </p>
-            <p><strong>Stock Status:</strong> <%= product.stock %></p>
+            <% if(product.count === 0) {%>
             <p>
-              <strong>Discount:</strong> <%= product.discount %> <%=
+              <strong>Stock Status:</strong>
+              <span style="color: red"><%= product.stock %></span>
+            </p>
+            <% } else if (product.count <= 5) {%>
+            <p>
+              <strong>Stock Status:</strong>
+              <span style="color: orange"><%= product.stock %></span>
+            </p>
+            <% } else {%>
+            <p>
+              <strong>Stock Status:</strong>
+              <span style="color: green"><%= product.stock %></span>
+            </p>
+            <% } %>
+            <p>
+              <strong>Discount:</strong> <%= product.discount %><%=
               product.discount_type === 'percentage' ? '%' : '₹' %>
             </p>
             <p><strong>Final Price:</strong> ₹<%= product.final_price %></p>

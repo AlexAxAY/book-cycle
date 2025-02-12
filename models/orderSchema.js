@@ -6,10 +6,16 @@ const orderSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
-    address_id: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Address",
-      required: true,
+    address: {
+      address_line: { type: String, required: true, trim: true },
+      state: { type: String, required: true },
+      city: { type: String, required: true, trim: true },
+      pincode: { type: String, required: true, trim: true },
+      name: { type: String, required: true, trim: true },
+      phone: { type: String, required: true, trim: true },
+      address_type: { type: String, enum: ["work", "home"], required: true },
+      landmark: { type: String, trim: true, default: null },
+      alt_phone: { type: String, trim: true, default: null },
     },
     user_id: {
       type: mongoose.Schema.Types.ObjectId,
@@ -21,12 +27,15 @@ const orderSchema = new mongoose.Schema(
       enum: ["Confirmed", "Cancelled", "In transit", "Shipped", "Delivered"],
       default: "Confirmed",
     },
+    payment_type: { type: String, enum: ["COD", "Razorpay"], require: true },
     products: [
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Product",
+        require: true,
       },
     ],
+    selling_price: { type: Number, required: true },
     total_selling_price: {
       type: Number,
       required: true,

@@ -106,6 +106,7 @@ const removeFromCart = async (req, res) => {
   }
 };
 
+// get cart details after calculation
 const getCartDetails = async (req, res) => {
   try {
     const userId = req.user ? req.user.id : null;
@@ -173,10 +174,12 @@ const getCartDetails = async (req, res) => {
   }
 };
 
+// update the cart item
 const updateCartItem = async (req, res) => {
   try {
     const { productId } = req.params;
     const { quantity } = req.body;
+
     if (!productId) {
       return res
         .status(400)
@@ -187,21 +190,41 @@ const updateCartItem = async (req, res) => {
         .status(400)
         .json({ success: false, message: "Invalid quantity" });
     }
-    // Update the quantity for the cart item
-    const updatedItem = await CartItem.findByIdAndUpdate(
-      productId,
-      { quantity },
-      { new: true }
-    );
-    if (!updatedItem) {
+
+    // Retrieve the cart item using its ID.
+    const cartItem = await CartItem.findById(productId);
+    if (!cartItem) {
       return res
         .status(404)
         .json({ success: false, message: "Cart item not found" });
     }
+
+    // Use the productId stored in the cart item to fetch the product details.
+    const product = await Product.findById(cartItem.productId);
+    if (!product) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Product not found" });
+    }
+
+    // Validate that the requested quantity does not exceed the product's available stock.
+    if (quantity > product.count) {
+      return res.status(400).json({
+        success: false,
+        message: `${product.count} unit${
+          product.count > 1 ? "s" : ""
+        } available for this product.`,
+      });
+    }
+
+    // Update the cart item's quantity if validations pass.
+    cartItem.quantity = quantity;
+    await cartItem.save();
+
     return res.json({
       success: true,
       message: "Cart item updated",
-      data: updatedItem,
+      data: cartItem,
     });
   } catch (error) {
     console.error("Error updating cart item:", error);

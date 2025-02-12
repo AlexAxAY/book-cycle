@@ -131,7 +131,7 @@ router
 
 router
   .route("/manage-address/:id")
-  .get(checkingAuth, addressUpdatePage)
+  .get(preventCache, checkingAuth, addressUpdatePage)
   .delete(checkingAuth, deleteAddress)
   .put(checkingAuth, updateAddress);
 router.route("/view-address").get(checkingAuth, viewAllAddress);
@@ -139,14 +139,15 @@ router.route("/view-address").get(checkingAuth, viewAllAddress);
 // checkout routes
 router
   .route("/checkout")
-  .get(checkingAuth, checkoutPage)
+  .get(preventCache, checkingAuth, checkoutPage)
   .post(checkingAuth, proceedToBuy);
 router.route("/checkout/address").post(checkingAuth, addCheckoutAddress);
 router
   .route("/checkout/address/:id")
-  .get(checkingAuth, checkoutAddressUpdatePage)
+  .get(preventCache, checkingAuth, checkoutAddressUpdatePage)
   .put(checkingAuth, checkoutAddressUpdate);
 
 // order routes
-router.route("/orders/:id").get(orderSummary);
+router.route("/orders/:id").get(preventCache, checkingAuth, orderSummary);
+
 module.exports = router;

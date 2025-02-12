@@ -11,8 +11,8 @@ const addressSchema = new Schema(
     name: { type: String, required: true, trim: true },
     phone: { type: String, required: true, trim: true },
     address_type: { type: String, enum: ["work", "home"], required: true },
-    landmark: { type: String, trim: true },
-    alt_phone: { type: String, trim: true },
+    landmark: { type: String, trim: true, default: null },
+    alt_phone: { type: String, trim: true, default: null },
   },
   { timestamps: true }
 );
