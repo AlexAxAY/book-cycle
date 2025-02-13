@@ -7,7 +7,9 @@ const moment = require("moment");
 const orderSummary = async (req, res) => {
   try {
     const { id } = req.params;
-    const order = await Order.findById(id).populate("products");
+    const order = await Order.findById(id).populate({
+      path: "order_items.products",
+    });
 
     if (!order) {
       return console.log("order not found!");
@@ -129,6 +131,10 @@ const proceedToBuy = async (req, res) => {
     // Create a new order with the valid items and payment type; keep products array as is.
     const newOrder = new Order({
       total_items: totalItems,
+      order_items: validCartItems.map((item) => ({
+        products: item.productId._id,
+        quantity: item.quantity,
+      })),
       address: {
         name: addressDoc.name,
         address_line: addressDoc.address_line,
@@ -142,7 +148,6 @@ const proceedToBuy = async (req, res) => {
       },
       user_id: userId,
       status: "Confirmed",
-      products: validCartItems.map((item) => item.productId._id),
       selling_price: totalOriginalPrice,
       total_selling_price: totalAfterDiscount,
       coupon_applied: null,
@@ -193,7 +198,9 @@ const proceedToBuy = async (req, res) => {
 
 const orders = async (req, res) => {
   try {
-    const orders = await Order.find().populate("products");
+    const orders = await Order.find().populate({
+      path: "order_items.products",
+    });
     if (!orders) {
       console.log("No orders found");
     }

@@ -24,7 +24,7 @@
         <div class="col-auto">
           <img
             style="width: 70px"
-            src="<%= order.products[0].images[0].cropped_url ||  order.products[0].images[0].original_url%>"
+            src="<%= order.order_items[0].products.images[0].cropped_url ||  order.order_items[0].products.images[0].original_url%>"
             alt="Book Image"
             class="order-image"
           />
@@ -34,8 +34,8 @@
             <div class="row">
               <div class="col-md-4">
                 <div class="row h-100" style="align-items: center">
-                  <% order.products.forEach((product)=> { %>
-                  <p class="m-0">🕮<%= product.name %></p>
+                  <% order.order_items.forEach((item)=> { %>
+                  <p class="m-0">🕮<%= item.products.name %></p>
                   <% }) %>
                 </div>
               </div>
@@ -65,7 +65,7 @@
             </div>
           </div>
         </div>
-      </div>
+      </div>  
       <% }) %>
     </div>
     <!-- footer partial -->

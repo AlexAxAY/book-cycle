@@ -23,21 +23,21 @@
         <!-- Left Column -->
         <div class="col-lg-8">
           <div class="card p-4">
-            <% order.products.forEach((product)=> { %>
+            <% order.order_items.forEach((item) => { %>
             <div class="d-flex justify-content-between">
               <div>
-                <h5 class="m-0"><%= product.name %></h5>
+                <h5 class="m-0"><%= item.products.name %></h5>
                 <p class="m-0 text-muted">
-                  <small>by <%= product.author %></small>
+                  <small>by <%= item.products.author %></small>
                 </p>
                 <p class="mb-2 text-muted">
-                  <small><%= product.category %></small>
+                  <small><%= item.products.category %></small>
                 </p>
-                <h6>₹<%= product.price %></h6>
+                <h6>₹<%= item.products.price %></h6>
               </div>
               <img
                 style="width: 70px"
-                src="<%= product.images[0].cropped_url || product.images[0].original_url  %>"
+                src="<%= item.products.images[0].cropped_url || item.products.images[0].original_url  %>"
                 alt="Book Cover"
               />
             </div>

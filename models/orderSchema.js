@@ -6,6 +6,16 @@ const orderSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
+    order_items: [
+      {
+        products: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Product",
+          required: true,
+        },
+        quantity: { type: Number, required: true },
+      },
+    ],
     address: {
       address_line: { type: String, required: true, trim: true },
       state: { type: String, required: true },
