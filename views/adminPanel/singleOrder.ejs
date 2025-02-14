@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Orders</title>
+
+    <!-- css -->
+    <link rel="stylesheet" href="/admin/stylesheets/allOrdersPage.css" />
+
+    <!-- bootstrap -->
+    <%- include("../partials/admin/bootLink.ejs") %>
+
+    <!-- icon link -->
+    <%- include("../partials/user/iconLink.ejs") %>
+  </head>
+
+  <body>
+    <!-- sidebar -->
+    <div class="col-3" style="width: 200px; position: fixed">
+      <%- include("../partials/admin/adminNavbar.ejs") %>
+    </div>
+
+    <!-- error alert -->
+    <div class="alert-bad d-none text-center" style="position: fixed"></div>
+    <!-- success alert -->
+    <div class="alert-good d-none text-center" style="position: fixed"></div>
+
+    <!-- main section -->
+    <section class="container mt-5">
+      <div
+        class="d-flex flex-column align-items-center"
+        style="min-height: calc(100vh - 60px); margin-left: 210px"
+      >
+        <h2>Order details</h2>
+
+        <!-- Order Details Card -->
+        <div class="card w-75 mt-4">
+          <div class="card-body">
+            <h5 class="card-title">Order ID: <%= order._id %></h5>
+            <hr />
+            <p class="card-text">
+              <strong>User:</strong>
+              <%= order.user_id.name || order.user_id.email %>
+            </p>
+            <p class="card-text">
+              <strong>Order Date:</strong>
+              <%= orderCreated %>
+            </p>
+            <% if(order.status === "Cancelled") {%>
+            <p class="card-text">
+              <strong>Order Cancel Date:</strong>
+              <%= orderCancelled %>
+            </p>
+            <% } %>
+            <p class="card-text">
+              <strong>Total Items:</strong>
+              <%= order.total_items %>
+            </p>
+            <p class="card-text">
+              <strong>Items:</strong>
+              <% order.order_items.forEach((item, index) => { %> <%=
+              item.products.name %> (<%=item.quantity%>)<% if (index <
+              order.order_items.length - 1) { %>, <% } %> <% }) %>
+            </p>
+            <p class="card-text">
+              <strong>Total Amount:</strong>
+              ₹ <%= order.final_amount %>
+            </p>
+            <p class="card-text">
+              <strong>Payment Type:</strong>
+              <%= order.payment_type %>
+            </p>
+            <p class="card-text">
+              <strong>Shipping Address:</strong>
+              <%= order.address.name %>, <%= order.address.address_line %>, <%=
+              order.address.city %>, <%= order.address.state %>, <%=
+              order.address.pincode %>
+            </p>
+            <p class="card-text">
+              <strong>Status:</strong>
+              <% if(order.status === "Cancelled") {%>
+              <span style="color: red" id="currentStatus">
+                <%= order.status %>
+              </span>
+              <% } else {%>
+              <span id="currentStatus"><%= order.status %></span>
+              <% } %>
+            </p>
+            <% if(order.status === "Cancelled") {%>
+            <p class="card-text">
+              <strong>Cancellation reason:</strong>
+              <span><%= cancel.reason || "No reasons provided" %></span>
+            </p>
+            <% } %>
+          </div>
+        </div>
+
+        <!-- Status Update Form -->
+        <% if(order.status !== "Cancelled" || order.status !== "Delivered") {%>
+        <div class="w-75 mt-4">
+          <form id="statusForm">
+            <div class="form-group">
+              <label for="orderStatusSelect">
+                <strong>Update Order Status</strong>
+              </label>
+              <select id="orderStatusSelect" class="form-control">
+                <!-- Options will be populated by js -->
+              </select>
+            </div>
+            <button type="submit" class="btn btn-primary mt-3">
+              Update Status
+            </button>
+          </form>
+        </div>
+        <% } %>
+      </div>
+    </section>
+
+    <!-- footer -->
+    <%- include("../partials/admin/adminFooter.ejs") %>
+
+    <!-- js logout validation file -->
+    <script src="/admin/front-end-validation/logoutValidation.js"></script>
+
+    <script src="/admin/helper/singleOrderHelper.js"></script>
+
+    <!-- bootstrap -->
+    <%- include("../partials/admin/bootScript.ejs") %>
+
+    <!-- axios -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  </body>
+</html>

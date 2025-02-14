@@ -18,9 +18,9 @@
     <!-- navbar -->
     <header><%- include("../partials/user/userNavbar.ejs") %></header>
     <div class="container mt-4" style="min-height: calc(100vh - 212px)">
-      <h3>Your orders</h3>
+      <h3 class="mb-5">Your orders</h3>
       <% orders.forEach((order)=> { %>
-      <div class="order-container row mt-5">
+      <div class="order-container row">
         <div class="col-auto">
           <img
             style="width: 70px"
@@ -50,7 +50,7 @@
                   style="justify-content: end; align-items: center"
                 >
                   <a
-                    href="/user/orders/<%= order._id %>"
+                    href="/user/order/<%= order._id %>"
                     style="
                       width: fit-content;
                       height: fit-content;
@@ -58,14 +58,15 @@
                     "
                     class="track-btn"
                   >
-                    Track your order
+                    <% if (order.status === "Cancelled") {%> View order <% }
+                    else {%> Track your order <% } %>
                   </a>
                 </div>
               </div>
             </div>
           </div>
         </div>
-      </div>  
+      </div>
       <% }) %>
     </div>
     <!-- footer partial -->

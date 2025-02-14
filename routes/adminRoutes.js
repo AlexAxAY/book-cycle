@@ -33,6 +33,13 @@ const {
   adminLogout,
 } = require("../controllers/admin/adminAuth.js");
 
+// Order controllers
+const {
+  allOrders,
+  getSingleOrder,
+  updateOrderStatus,
+} = require("../controllers/admin/orders.js");
+
 // Requiring product controllers
 const {
   viewAllProductsPage,
@@ -101,5 +108,9 @@ router.route("/users").get(allUsers);
 router.route("/users/block/:id").patch(blockUser);
 router.route("/users/unblock/:id").patch(unblockUser);
 router.route("/user/details/:id").get(userDetailsPage);
+
+// Order routes
+router.route("/all-orders").get(allOrders);
+router.route("/order/:id").get(getSingleOrder).post(updateOrderStatus);
 
 module.exports = router;

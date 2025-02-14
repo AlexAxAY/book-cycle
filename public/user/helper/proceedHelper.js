@@ -16,7 +16,7 @@ document
           showAlert(".alert-good", "Order placed successfully!");
 
           setTimeout(() => {
-            window.location.replace(`/user/orders/${response.data.orderId}`);
+            window.location.replace(`/user/order/${response.data.orderId}`);
           }, 500);
         } else if (response.data.partial) {
           const confirmModal = new bootstrap.Modal(
@@ -39,7 +39,7 @@ document
                   );
                   setTimeout(() => {
                     window.location.replace(
-                      `/user/orders/${response.data.orderId}`
+                      `/user/order/${response.data.orderId}`
                     );
                   }, 500);
                 } else {

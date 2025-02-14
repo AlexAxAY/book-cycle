@@ -17,6 +17,9 @@
     <!-- navbar -->
     <header><%- include("../partials/user/userNavbar.ejs") %></header>
 
+    <!-- alert -->
+    <%- include("../partials/user/alertMessage.ejs") %>
+
     <div class="container mt-4" style="min-height: calc(100vh - 212px)">
       <h1>Order Summary</h1>
       <div class="row my-5">
@@ -26,7 +29,7 @@
             <% order.order_items.forEach((item) => { %>
             <div class="d-flex justify-content-between">
               <div>
-                <h5 class="m-0"><%= item.products.name %></h5>
+                <h5 class="m-0"><%= item.products.name %> (<%= item.quantity %>)</h5>
                 <p class="m-0 text-muted">
                   <small>by <%= item.products.author %></small>
                 </p>
@@ -46,11 +49,14 @@
             <div class="row">
               <div class="col">
                 <div class="order-status">
-                  <p><i class="fas fa-check-circle"></i> <%= orderCreated %></p>
+                  <p>
+                    <i class="fas fa-check-circle"></i>
+                    <%= orderCreated %>
+                  </p>
                   <% if (order.status === "Delivered") {%>
                   <p>
-                    <i class="fas fa-check-circle"></i> Order delivered, 20 Oct,
-                    2024
+                    <i class="fas fa-check-circle"></i>
+                    Order delivered, 20 Oct, 2024
                   </p>
                   <% } %>
                 </div>
@@ -59,16 +65,71 @@
                   style="cursor: pointer"
                   data-bs-toggle="modal"
                   data-bs-target="#deliveryModal"
-                  >See All Details</a
                 >
+                  See All Details
+                </a>
               </div>
               <div class="col text-end">
-                <% 
-                // prettier-ignore
-                if (order.status === "Confirmed" || order.status === "In transit") { %>
-                    <button class="btn btn-danger">Cancel order</button>
+                <% if (order.status === "Confirmed" || order.status === "In transit") { %>
+                  <button id="openCancelModal" class="btn btn-danger">Cancel order</button>
                 <% } %>
-            </div>            
+                <% if (order.status === "Cancelled") {%>
+                   <p class="text-danger">Order cancelled</p>
+                <% } %>
+              </div>
+            </div>
+
+            <!-- Cancel Order Modal (hidden by default) -->
+            <div
+              id="cancelModal"
+              class="modal"
+              style="
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.5);
+              "
+            >
+              <div
+                class="modal-content"
+                style="
+                  max-width: 500px;
+                  margin: 15% auto;
+                  padding: 20px;
+                  background: #fff;
+                  position: relative;
+                "
+              >
+                <span
+                  id="closeModal"
+                  style="
+                    position: absolute;
+                    right: 10px;
+                    top: 10px;
+                    cursor: pointer;
+                  "
+                >
+                  &times;
+                </span>
+                <h3>Cancel Order</h3>
+                <p>Please provide a reason for cancellation:</p>
+                <textarea
+                  id="cancelReason"
+                  rows="3"
+                  style="width: 100%"
+                  placeholder="Reason for cancellation (optional)"
+                ></textarea>
+                <button
+                  id="confirmCancelBtn"
+                  class="btn btn-danger"
+                  style="margin-top: 10px"
+                >
+                  Confirm Cancellation
+                </button>
+              </div>
             </div>
 
             <% if (order.status === "Delivered") {%>
@@ -88,7 +149,8 @@
         <!-- Right Column -->
         <div class="col-lg-4">
           <div class="invoice-btn mb-3">
-            <i class="fas fa-file-download"></i> Download Invoice
+            <i class="fas fa-file-download"></i>
+            Download Invoice
           </div>
           <div class="card p-3 mb-3">
             <h6 class="text-muted">Shipping details</h6>
@@ -100,16 +162,16 @@
             </p>
 
             <p>
-              <strong>Phone number:</strong> <%= order.address.phone %><% if
-              (order.address.alt_phone) {%>, <%= order.address.alt_phone %> <% }
-              %>
+              <strong>Phone number:</strong>
+              <%= order.address.phone %><% if (order.address.alt_phone) {%>, <%=
+              order.address.alt_phone %> <% } %>
             </p>
           </div>
           <div class="card p-3">
             <h6 class="text-muted">Price details</h6>
             <div class="row">
               <div class="col-6 text-start">
-                <p>Selling price</p>
+                <p>Selling price (<%= order.total_items %> items)</p>
                 <p>Discount</p>
                 <p>Delivery charge</p>
               </div>
@@ -135,72 +197,92 @@
     </div>
 
     <!-- Modal -->
-    <div
-      class="modal fade"
-      id="deliveryModal"
-      tabindex="-1"
-      aria-labelledby="deliveryModalLabel"
-      aria-hidden="true"
-    >
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="deliveryModalLabel">Delivery Status</h5>
-            <button
-              type="button"
-              class="btn-close"
-              data-bs-dismiss="modal"
-              aria-label="Close"
-            ></button>
-          </div>
-          <div class="modal-body">
-            <ul class="timeline">
-              <li>
-                <i style="color: green" class="fas fa-check-circle"></i>
-                <strong> Order confirmed</strong>
-                <small class="text-muted"><%= orderCreated %></small>
-              </li>
-              <li>
-                <% if(order.status === "In transit") {%>
-                <i style="color: green" class="fas fa-check-circle"></i>
-                <strong>In transit</strong>
-                <small class="text-muted"
-                  >Saturday, 26th Oct, 2024 - 1.25pm</small
-                >
-                <% }else { %>
-                <i class="fa-regular fa-circle"></i>
-                <strong>In transit</strong>
-                <% } %>
-              </li>
-              <li>
-                <% if(order.status === "Shipped") {%>
-                <i style="color: green" class="fas fa-check-circle"></i>
-                <strong>Shipped</strong>
-                <small class="text-muted"
-                  >Monday, 28th Oct, 2024 - 11.20am</small
-                >
-                <% }else { %>
-                <i class="fa-regular fa-circle"></i>
-                <strong>Shipped</strong>
-                <% } %>
-              </li>
-              <li>
-                <% if(order.status === "Shipped") {%>
-                <i style="color: green" class="fas fa-check-circle"></i>
-                <strong>Delivered</strong>
-                <small class="text-muted"
-                  >Tuesday, 29th Oct, 2024 - 11.00pm</small
-                >
-                <% }else { %>
-                <i class="fa-regular fa-circle"></i>
-                <strong>Delivered</strong>
-                <% } %>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </div>
+<div
+class="modal fade"
+id="deliveryModal"
+tabindex="-1"
+aria-labelledby="deliveryModalLabel"
+aria-hidden="true"
+>
+<div class="modal-dialog">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h5 class="modal-title" id="deliveryModalLabel">Delivery Status</h5>
+      <button
+        type="button"
+        class="btn-close"
+        data-bs-dismiss="modal"
+        aria-label="Close"
+      ></button>
     </div>
+    <div class="modal-body">
+      <ul class="timeline list-unstyled">
+        <!-- Order Confirmed -->
+        <li class="mb-3">
+          <i style="color: green" class="fas fa-check-circle me-2"></i>
+          <strong>Order confirmed</strong>
+          <br />
+          <small class="text-muted"><%= orderCreated %></small>
+        </li>
+        
+        <% if(order.status === "Cancelled") { %>
+          <!-- Cancelled -->
+          <li class="mb-3">
+            <i style="color: red;" class="fa-solid fa-circle-xmark me-2"></i>
+            <strong>Cancelled</strong>
+            <br />
+            <small class="text-muted"><%= orderCancelled %></small>
+          </li>
+        <% } else { %>
+          <!-- In transit -->
+          <li class="mb-3">
+            <% if(order.status === "In transit" || order.status === "Shipped" || order.status === "Delivered") { %>
+              <i style="color: green" class="fas fa-check-circle me-2"></i>
+              <strong>In transit</strong>
+              <br />
+              <small class="text-muted">
+                <%= moment(order.updatedAt).format("dddd, Do MMM, YYYY - h:ma") %>
+              </small>
+            <% } else { %>
+              <i class="fa-regular fa-circle me-2"></i>
+              <strong>In transit</strong>
+            <% } %>
+          </li>
+          <!-- Shipped -->
+          <li class="mb-3">
+            <% if(order.status === "Shipped" || order.status === "Delivered") { %>
+              <i style="color: green" class="fas fa-check-circle me-2"></i>
+              <strong>Shipped</strong>
+              <br />
+              <small class="text-muted">
+                <%= moment(order.updatedAt).format("dddd, Do MMM, YYYY - h:ma") %>
+              </small>
+            <% } else { %>
+              <i class="fa-regular fa-circle me-2"></i>
+              <strong>Shipped</strong>
+            <% } %>
+          </li>
+          <!-- Delivered -->
+          <li class="mb-3">
+            <% if(order.status === "Delivered") { %>
+              <i style="color: green" class="fas fa-check-circle me-2"></i>
+              <strong>Delivered</strong>
+              <br />
+              <small class="text-muted">
+                <%= moment(order.updatedAt).format("dddd, Do MMM, YYYY - h:ma") %>
+              </small>
+            <% } else { %>
+              <i class="fa-regular fa-circle me-2"></i>
+              <strong>Delivered</strong>
+            <% } %>
+          </li>
+        <% } %>
+      </ul>
+    </div>
+  </div>
+</div>
+</div>
+
 
     <!-- footer partial -->
     <footer><%- include("../partials/user/userFooter.ejs") %></footer>
@@ -210,6 +292,9 @@
 
     <!-- pending user clear -->
     <script src="/user/helper/removePendingUser.js"></script>
+
+    <!-- cancel order helper -->
+    <script src="/user/helper/cancelOrderHelper.js"></script>
 
     <!-- Include Axios -->
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>

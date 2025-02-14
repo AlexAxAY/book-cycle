@@ -2,6 +2,7 @@ const { Cart, CartItem } = require("../../models/cartSchemas");
 const Order = require("../../models/orderSchema");
 const Address = require("../../models/addressSchema");
 const Product = require("../../models/productSchema");
+const Cancel = require("../../models/cancelSchema");
 const moment = require("moment");
 
 const orderSummary = async (req, res) => {
@@ -14,8 +15,20 @@ const orderSummary = async (req, res) => {
     if (!order) {
       return console.log("order not found!");
     }
+
+    const cancel = await Cancel.findOne({ order_id: id });
+    let orderCancelled = null;
+
     const orderCreated = moment(order.createdAt).format("MMMM Do YYYY, h:mm A");
-    return res.render("user/orderSummary", { order, orderCreated });
+    if (cancel) {
+      orderCancelled = moment(cancel.createdAt).format("MMMM Do YYYY, h:mm A");
+    }
+    return res.render("user/orderSummary", {
+      order,
+      orderCreated,
+      orderCancelled,
+      moment,
+    });
   } catch (err) {
     console.log("Error in orderSummary controller", err);
   }
@@ -198,9 +211,11 @@ const proceedToBuy = async (req, res) => {
 
 const orders = async (req, res) => {
   try {
-    const orders = await Order.find().populate({
-      path: "order_items.products",
-    });
+    const orders = await Order.find()
+      .populate({
+        path: "order_items.products",
+      })
+      .sort({ _id: -1 });
     if (!orders) {
       console.log("No orders found");
     }
@@ -210,4 +225,46 @@ const orders = async (req, res) => {
   }
 };
 
-module.exports = { orderSummary, proceedToBuy, orders };
+const cancelOrder = async (req, res) => {
+  try {
+    const userId = req.user ? req.user.id : null;
+    const { reason } = req.body;
+    const { id } = req.params;
+
+    let order = await Order.findById(id);
+    if (!order) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Order not found" });
+    }
+
+    if (order.status !== "Confirmed" && order.status !== "In transit") {
+      return res.status(400).json({
+        success: false,
+        message: "Order cannot be cancelled at this stage",
+      });
+    }
+
+    const cancelRecord = new Cancel({
+      user_id: userId,
+      order_id: id,
+      reason: reason || null,
+    });
+    await cancelRecord.save();
+
+    order.status = "Cancelled";
+    await order.save();
+
+    return res.json({
+      success: true,
+      message: "Order cancelled",
+    });
+  } catch (error) {
+    console.error("Error in cancelOrder controller:", error);
+    return res
+      .status(500)
+      .json({ success: false, message: "Server error. Please try again." });
+  }
+};
+
+module.exports = { orderSummary, proceedToBuy, orders, cancelOrder };

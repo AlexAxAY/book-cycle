@@ -25,6 +25,7 @@ const {
   orderSummary,
   proceedToBuy,
   orders,
+  cancelOrder,
 } = require("../controllers/user/order");
 
 // checkout
@@ -152,7 +153,10 @@ router
   .put(checkingAuth, checkoutAddressUpdate);
 
 // order routes
-router.route("/orders/:id").get(preventCache, checkingAuth, orderSummary);
+router
+  .route("/order/:id")
+  .get(preventCache, checkingAuth, orderSummary)
+  .post(checkingAuth, cancelOrder);
 router.route("/orders").get(checkingAuth, orders);
 
 module.exports = router;
