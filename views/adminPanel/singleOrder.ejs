@@ -97,15 +97,15 @@
         </div>
 
         <!-- Status Update Form -->
-        <% if(order.status !== "Cancelled" || order.status !== "Delivered") {%>
-        <div class="w-75 mt-4">
+        <% if(order.status !== "Cancelled" && order.status !== "Delivered") { %>
+        <div class="w-75 mt-4 mb-4">
           <form id="statusForm">
             <div class="form-group">
               <label for="orderStatusSelect">
                 <strong>Update Order Status</strong>
               </label>
               <select id="orderStatusSelect" class="form-control">
-                <!-- Options will be populated by js -->
+                <!-- Options will be populated by JS -->
               </select>
             </div>
             <button type="submit" class="btn btn-primary mt-3">
@@ -116,6 +116,49 @@
         <% } %>
       </div>
     </section>
+
+    <!-- Cancellation Reason Modal (Bootstrap 5) -->
+    <div
+      class="modal fade"
+      id="cancelReasonModal"
+      tabindex="-1"
+      aria-labelledby="cancelReasonModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="cancelReasonModalLabel">
+              Cancellation Reason
+            </h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <textarea
+              id="cancelReasonInput"
+              class="form-control"
+              rows="3"
+              placeholder="Enter reason for cancellation (optional)"
+            ></textarea>
+          </div>
+          <div class="modal-footer">
+            <button
+              data-bs-dismiss="modal"
+              id="confirmCancelButton"
+              type="button"
+              class="btn btn-danger"
+            >
+              Confirm Cancellation
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <!-- footer -->
     <%- include("../partials/admin/adminFooter.ejs") %>

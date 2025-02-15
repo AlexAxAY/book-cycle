@@ -17,7 +17,10 @@
   <body>
     <!-- navbar -->
     <header><%- include("../partials/user/userNavbar.ejs") %></header>
+
+    <!-- main section -->
     <div class="container mt-4" style="min-height: calc(100vh - 212px)">
+      <% if (orders.length > 0) {%>
       <h3 class="mb-5">Your orders</h3>
       <% orders.forEach((order)=> { %>
       <div class="order-container row">
@@ -58,7 +61,7 @@
                     "
                     class="track-btn"
                   >
-                    <% if (order.status === "Cancelled") {%> View order <% }
+                    <% if (order.status === "Cancelled" || order.status === "Delivered") {%> View order <% }
                     else {%> Track your order <% } %>
                   </a>
                 </div>
@@ -68,6 +71,12 @@
         </div>
       </div>
       <% }) %>
+      <% } else {%>
+        <div class="text-center">
+        <h2>No orders yet</h2>
+        <a class="btn btn-primary" href="/user/shop">Shop</a>
+      </div>
+       <% } %> 
     </div>
     <!-- footer partial -->
     <footer><%- include("../partials/user/userFooter.ejs") %></footer>

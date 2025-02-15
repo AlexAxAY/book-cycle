@@ -51,12 +51,12 @@
                 <div class="order-status">
                   <p>
                     <i class="fas fa-check-circle"></i>
-                    <%= orderCreated %>
+                    <strong>Ordered:</strong> <%= orderCreated %>
                   </p>
                   <% if (order.status === "Delivered") {%>
                   <p>
                     <i class="fas fa-check-circle"></i>
-                    Order delivered, 20 Oct, 2024
+                    <strong>Delivered:</strong> <%= moment(order.updatedAt).format("MMMM Do YYYY, h:mm A") %>
                   </p>
                   <% } %>
                 </div>
@@ -75,6 +75,9 @@
                 <% } %>
                 <% if (order.status === "Cancelled") {%>
                    <p class="text-danger">Order cancelled</p>
+                <% } %>
+                <% if (order.status === "Cancelled" && cancel.user_id.isAdmin) {%>
+                    <p><%= cancel.reason %></p>
                 <% } %>
               </div>
             </div>
@@ -196,92 +199,82 @@
       </div>
     </div>
 
-    <!-- Modal -->
-<div
-class="modal fade"
-id="deliveryModal"
-tabindex="-1"
-aria-labelledby="deliveryModalLabel"
-aria-hidden="true"
->
-<div class="modal-dialog">
-  <div class="modal-content">
-    <div class="modal-header">
-      <h5 class="modal-title" id="deliveryModalLabel">Delivery Status</h5>
-      <button
-        type="button"
-        class="btn-close"
-        data-bs-dismiss="modal"
-        aria-label="Close"
-      ></button>
-    </div>
-    <div class="modal-body">
-      <ul class="timeline list-unstyled">
-        <!-- Order Confirmed -->
-        <li class="mb-3">
-          <i style="color: green" class="fas fa-check-circle me-2"></i>
-          <strong>Order confirmed</strong>
-          <br />
-          <small class="text-muted"><%= orderCreated %></small>
-        </li>
-        
-        <% if(order.status === "Cancelled") { %>
-          <!-- Cancelled -->
+<!-- Modal -->
+<div class="modal fade" id="deliveryModal" tabindex="-1" aria-labelledby="deliveryModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="deliveryModalLabel">Delivery Status</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <ul class="timeline list-unstyled">
+          <!-- Order Confirmed -->
           <li class="mb-3">
-            <i style="color: red;" class="fa-solid fa-circle-xmark me-2"></i>
-            <strong>Cancelled</strong>
+            <i style="color: green" class="fas fa-check-circle me-2"></i>
+            <strong>Order confirmed</strong>
             <br />
-            <small class="text-muted"><%= orderCancelled %></small>
+            <small class="text-muted"><%= orderCreated %></small>
           </li>
-        <% } else { %>
-          <!-- In transit -->
-          <li class="mb-3">
-            <% if(order.status === "In transit" || order.status === "Shipped" || order.status === "Delivered") { %>
-              <i style="color: green" class="fas fa-check-circle me-2"></i>
-              <strong>In transit</strong>
+          
+          <% if(order.status === "Cancelled") { %>
+            <!-- Cancelled -->
+            <li class="mb-3">
+              <i style="color: red;" class="fa-solid fa-circle-xmark me-2"></i>
+              <strong>Cancelled</strong>
               <br />
-              <small class="text-muted">
-                <%= moment(order.updatedAt).format("dddd, Do MMM, YYYY - h:ma") %>
-              </small>
-            <% } else { %>
-              <i class="fa-regular fa-circle me-2"></i>
-              <strong>In transit</strong>
-            <% } %>
-          </li>
-          <!-- Shipped -->
-          <li class="mb-3">
-            <% if(order.status === "Shipped" || order.status === "Delivered") { %>
-              <i style="color: green" class="fas fa-check-circle me-2"></i>
-              <strong>Shipped</strong>
-              <br />
-              <small class="text-muted">
-                <%= moment(order.updatedAt).format("dddd, Do MMM, YYYY - h:ma") %>
-              </small>
-            <% } else { %>
-              <i class="fa-regular fa-circle me-2"></i>
-              <strong>Shipped</strong>
-            <% } %>
-          </li>
-          <!-- Delivered -->
-          <li class="mb-3">
-            <% if(order.status === "Delivered") { %>
-              <i style="color: green" class="fas fa-check-circle me-2"></i>
-              <strong>Delivered</strong>
-              <br />
-              <small class="text-muted">
-                <%= moment(order.updatedAt).format("dddd, Do MMM, YYYY - h:ma") %>
-              </small>
-            <% } else { %>
-              <i class="fa-regular fa-circle me-2"></i>
-              <strong>Delivered</strong>
-            <% } %>
-          </li>
-        <% } %>
-      </ul>
+              <small class="text-muted"><%= orderCancelled %></small>
+            </li>
+          <% } else { %>
+            <!-- In transit -->
+            <li class="mb-3">
+              <% if(order.inTransitAt) { %>
+                <i style="color: green" class="fas fa-check-circle me-2"></i>
+                <strong>In transit</strong>
+                <br />
+                <small class="text-muted">
+                  <%= moment(order.inTransitAt).format("MMMM Do YYYY, h:mm A") %>
+                </small>
+              <% } else { %>
+                <i class="fa-regular fa-circle me-2"></i>
+                <strong>In transit</strong>
+              <% } %>
+            </li>
+            <!-- Shipped -->
+            <li class="mb-3">
+              <% if(order.shippedAt) { %>
+                <i style="color: green" class="fas fa-check-circle me-2"></i>
+                <strong>Shipped</strong>
+                <br />
+                <small class="text-muted">
+                  <%= moment(order.shippedAt).format("MMMM Do YYYY, h:mm A") %>
+                </small>
+              <% } else { %>
+                <i class="fa-regular fa-circle me-2"></i>
+                <strong>Shipped</strong>
+              <% } %>
+            </li>
+            <!-- Delivered -->
+            <li class="mb-3">
+              <% if(order.deliveredAt) { %>
+                <i style="color: green" class="fas fa-check-circle me-2"></i>
+                <strong>Delivered</strong>
+                <br />
+                <small class="text-muted">
+                  <%= moment(order.deliveredAt).format("MMMM Do YYYY, h:mm A") %>
+                </small>
+              <% } else { %>
+                <i class="fa-regular fa-circle me-2"></i>
+                <strong>Delivered</strong>
+              <% } %>
+            </li>
+          <% } %>
+        </ul>
+      </div>
     </div>
   </div>
 </div>
-</div>
+
 
 
     <!-- footer partial -->

@@ -1,5 +1,6 @@
 const Order = require("../../models/orderSchema");
 const Cancel = require("../../models/cancelSchema");
+const Product = require("../../models/productSchema");
 const moment = require("moment");
 
 const allOrders = async (req, res) => {
@@ -8,7 +9,8 @@ const allOrders = async (req, res) => {
       .populate({
         path: "order_items.products",
       })
-      .populate("user_id");
+      .populate("user_id")
+      .sort({ _id: -1 });
     return res.render("adminPanel/allOrdersPage", { orders });
   } catch (err) {
     console.log("Error from allOrders conmtroller from admin", err);
@@ -75,6 +77,7 @@ const updateOrderStatus = async (req, res) => {
         .json({ success: false, message: "Invalid status transition" });
     }
 
+    // If the new status is "Cancelled", create a cancellation record
     if (status === "Cancelled") {
       const cancelRecord = new Cancel({
         user_id: req.user ? req.user.id : null,
@@ -84,8 +87,43 @@ const updateOrderStatus = async (req, res) => {
       await cancelRecord.save();
     }
 
+    // Set the corresponding timestamp based on the status transition
+    if (status === "In transit") {
+      order.inTransitAt = new Date();
+    } else if (status === "Shipped") {
+      order.shippedAt = new Date();
+    } else if (status === "Delivered") {
+      order.deliveredAt = new Date();
+    }
+
+    // Update the order status
     order.status = status;
     await order.save();
+
+    if (status === "Cancelled") {
+      await Promise.all(
+        order.order_items.map(async (item) => {
+          const updatedProduct = await Product.findByIdAndUpdate(
+            item.products,
+            { $inc: { count: item.quantity } },
+            { new: true }
+          );
+          let newStock;
+          if (updatedProduct.count === 0) {
+            newStock = "Out of stock";
+          } else if (updatedProduct.count <= 5) {
+            newStock = "Limited stock";
+          } else {
+            newStock = "In stock";
+          }
+          if (updatedProduct.stock !== newStock) {
+            await Product.findByIdAndUpdate(updatedProduct._id, {
+              stock: newStock,
+            });
+          }
+        })
+      );
+    }
 
     return res.json({
       success: true,

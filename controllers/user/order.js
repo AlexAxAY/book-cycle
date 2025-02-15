@@ -16,7 +16,7 @@ const orderSummary = async (req, res) => {
       return console.log("order not found!");
     }
 
-    const cancel = await Cancel.findOne({ order_id: id });
+    const cancel = await Cancel.findOne({ order_id: id }).populate("user_id");
     let orderCancelled = null;
 
     const orderCreated = moment(order.createdAt).format("MMMM Do YYYY, h:mm A");
@@ -28,6 +28,7 @@ const orderSummary = async (req, res) => {
       orderCreated,
       orderCancelled,
       moment,
+      cancel,
     });
   } catch (err) {
     console.log("Error in orderSummary controller", err);
@@ -238,6 +239,7 @@ const cancelOrder = async (req, res) => {
         .json({ success: false, message: "Order not found" });
     }
 
+    // Only allow cancellation if status is "Confirmed" or "In transit"
     if (order.status !== "Confirmed" && order.status !== "In transit") {
       return res.status(400).json({
         success: false,
@@ -245,6 +247,7 @@ const cancelOrder = async (req, res) => {
       });
     }
 
+    // Create a cancellation record
     const cancelRecord = new Cancel({
       user_id: userId,
       order_id: id,
@@ -252,8 +255,35 @@ const cancelOrder = async (req, res) => {
     });
     await cancelRecord.save();
 
+    // Update the order status to "Cancelled"
     order.status = "Cancelled";
     await order.save();
+
+    // Return the purchased quantity back to the product's stock.
+    await Promise.all(
+      order.order_items.map(async (item) => {
+        const updatedProduct = await Product.findByIdAndUpdate(
+          item.products,
+          { $inc: { count: item.quantity } },
+          { new: true }
+        );
+
+        let newStock;
+        if (updatedProduct.count === 0) {
+          newStock = "Out of stock";
+        } else if (updatedProduct.count <= 5) {
+          newStock = "Limited stock";
+        } else {
+          newStock = "In stock";
+        }
+
+        if (updatedProduct.stock !== newStock) {
+          await Product.findByIdAndUpdate(updatedProduct._id, {
+            stock: newStock,
+          });
+        }
+      })
+    );
 
     return res.json({
       success: true,
@@ -261,9 +291,10 @@ const cancelOrder = async (req, res) => {
     });
   } catch (error) {
     console.error("Error in cancelOrder controller:", error);
-    return res
-      .status(500)
-      .json({ success: false, message: "Server error. Please try again." });
+    return res.status(500).json({
+      success: false,
+      message: "Server error. Please try again.",
+    });
   }
 };
 

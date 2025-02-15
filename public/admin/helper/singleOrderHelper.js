@@ -8,48 +8,53 @@ document.addEventListener("DOMContentLoaded", function () {
   const alertGood = document.querySelector(".alert-good");
   const alertBad = document.querySelector(".alert-bad");
 
-  // Determine allowed options based on the current status
+  // Determine allowed options based on the current status (remove current status itself)
   let options = [];
   if (currentStatus === "Confirmed") {
-    options = ["Confirmed", "In transit", "Cancelled"];
+    options = ["In transit", "Cancelled"];
   } else if (currentStatus === "In transit") {
-    options = ["In transit", "Shipped", "Cancelled"];
+    options = ["Shipped", "Cancelled"];
   } else if (currentStatus === "Shipped") {
-    options = ["Shipped", "Delivered"];
+    options = ["Delivered"];
   } else if (currentStatus === "Delivered" || currentStatus === "Cancelled") {
-    options = [currentStatus];
+    options = [];
   }
 
-  // Populate the select element
+  // Populate the select element only if options exist.
   statusSelect.innerHTML = "";
   options.forEach((opt) => {
     const optionElement = document.createElement("option");
     optionElement.value = opt;
     optionElement.text = opt;
-    if (opt === currentStatus) {
-      optionElement.selected = true;
-    }
     statusSelect.appendChild(optionElement);
   });
 
+  // Get the order id from the URL (last part of the pathname)
   const id = window.location.pathname.split("/").pop();
   const statusForm = document.getElementById("statusForm");
 
-  statusForm.addEventListener("submit", async function (e) {
-    e.preventDefault();
-    const selectedStatus = statusSelect.value;
+  // Reference to the cancellation modal and its elements
+  const cancelReasonModal = new bootstrap.Modal(
+    document.getElementById("cancelReasonModal")
+  );
+  const cancelReasonInput = document.getElementById("cancelReasonInput");
+  const confirmCancelButton = document.getElementById("confirmCancelButton");
+
+  // Function to perform the status update via axios
+  const updateStatus = async (status, reason = null) => {
     try {
       const response = await axios.post(`/admin/order/${id}`, {
-        status: selectedStatus,
+        status,
+        reason,
       });
       if (response.data.success) {
         alertGood.textContent = response.data.message;
         alertGood.classList.remove("d-none");
-        document.getElementById("currentStatus").innerText = selectedStatus;
+        document.getElementById("currentStatus").innerText = status;
         setTimeout(() => {
           alertGood.classList.add("d-none");
           location.reload();
-        }, 500);
+        }, 1500);
       } else {
         alertBad.textContent = "Error: " + response.data.message;
         alertBad.classList.remove("d-none");
@@ -65,5 +70,23 @@ document.addEventListener("DOMContentLoaded", function () {
         alertBad.classList.add("d-none");
       }, 1500);
     }
+  };
+
+  statusForm.addEventListener("submit", function (e) {
+    e.preventDefault();
+    const selectedStatus = statusSelect.value;
+    if (selectedStatus === "Cancelled") {
+      cancelReasonInput.value = "";
+      cancelReasonModal.show();
+    } else {
+      updateStatus(selectedStatus);
+    }
+  });
+
+  // When admin confirms cancellation reason in the modal, send update request
+  confirmCancelButton.addEventListener("click", function () {
+    const reason = cancelReasonInput.value;
+    updateStatus("Cancelled", reason);
+    cancelReasonModal.hide();
   });
 });

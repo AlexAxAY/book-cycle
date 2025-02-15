@@ -37,6 +37,9 @@ const orderSchema = new mongoose.Schema(
       enum: ["Confirmed", "Cancelled", "In transit", "Shipped", "Delivered"],
       default: "Confirmed",
     },
+    inTransitAt: { type: Date },
+    shippedAt: { type: Date },
+    deliveredAt: { type: Date },
     payment_type: { type: String, enum: ["COD", "Razorpay"], require: true },
     products: [
       {
