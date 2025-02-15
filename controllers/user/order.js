@@ -18,16 +18,29 @@ const orderSummary = async (req, res) => {
 
     const cancel = await Cancel.findOne({ order_id: id }).populate("user_id");
     let orderCancelled = null;
-
-    const orderCreated = moment(order.createdAt).format("MMMM Do YYYY, h:mm A");
     if (cancel) {
       orderCancelled = moment(cancel.createdAt).format("MMMM Do YYYY, h:mm A");
     }
+
+    // Format dates on the backend
+    const orderCreated = moment(order.createdAt).format("MMMM Do YYYY, h:mm A");
+    const orderInTransit = order.inTransitAt
+      ? moment(order.inTransitAt).format("MMMM Do YYYY, h:mm A")
+      : null;
+    const orderShipped = order.shippedAt
+      ? moment(order.shippedAt).format("MMMM Do YYYY, h:mm A")
+      : null;
+    const orderDelivered = order.deliveredAt
+      ? moment(order.deliveredAt).format("MMMM Do YYYY, h:mm A")
+      : null;
+
     return res.render("user/orderSummary", {
       order,
       orderCreated,
+      orderInTransit,
+      orderShipped,
+      orderDelivered,
       orderCancelled,
-      moment,
       cancel,
     });
   } catch (err) {

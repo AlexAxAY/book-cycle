@@ -56,7 +56,7 @@
                   <% if (order.status === "Delivered") {%>
                   <p>
                     <i class="fas fa-check-circle"></i>
-                    <strong>Delivered:</strong> <%= moment(order.updatedAt).format("MMMM Do YYYY, h:mm A") %>
+                    <strong>Delivered:</strong> <%= orderDelivered %>
                   </p>
                   <% } %>
                 </div>
@@ -233,7 +233,7 @@
                 <strong>In transit</strong>
                 <br />
                 <small class="text-muted">
-                  <%= moment(order.inTransitAt).format("MMMM Do YYYY, h:mm A") %>
+                  <%= orderInTransit %>
                 </small>
               <% } else { %>
                 <i class="fa-regular fa-circle me-2"></i>
@@ -247,7 +247,7 @@
                 <strong>Shipped</strong>
                 <br />
                 <small class="text-muted">
-                  <%= moment(order.shippedAt).format("MMMM Do YYYY, h:mm A") %>
+                  <%= orderInTransit %>
                 </small>
               <% } else { %>
                 <i class="fa-regular fa-circle me-2"></i>
@@ -261,7 +261,7 @@
                 <strong>Delivered</strong>
                 <br />
                 <small class="text-muted">
-                  <%= moment(order.deliveredAt).format("MMMM Do YYYY, h:mm A") %>
+                  <%= orderDelivered %>
                 </small>
               <% } else { %>
                 <i class="fa-regular fa-circle me-2"></i>
