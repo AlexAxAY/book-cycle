@@ -12,7 +12,6 @@ const allUsers = async (req, res) => {
     const { status, name } = req.query;
     let query = { isAdmin: false };
 
-    // Only filter by isBlocked if status is not "all"
     if (status && status !== "all") {
       query.isBlocked = status === "blocked";
     }
@@ -21,9 +20,23 @@ const allUsers = async (req, res) => {
       query.name = { $regex: name, $options: "i" };
     }
 
-    const users = await User.find(query);
+    // Pagination logic
+    const page = parseInt(req.query.page) || 1;
+    const limit = 20;
+    const totalUsers = await User.countDocuments(query);
+    const totalPages = Math.ceil(totalUsers / limit);
 
-    return res.status(200).render("adminPanel/allUsers", { users });
+    const users = await User.find(query)
+      .skip((page - 1) * limit)
+      .limit(limit);
+
+    return res.status(200).render("adminPanel/allUsers", {
+      users,
+      totalPages,
+      currentPage: page,
+      status: status || "all",
+      name: name || "",
+    });
   } catch (err) {
     console.log("Error in fetching all users!", err);
     return res

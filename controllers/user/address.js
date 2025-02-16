@@ -69,6 +69,14 @@ const addAddress = async (req, res) => {
       });
     }
 
+    const nameRegex = /^[A-Za-z\s]+$/;
+    if (!nameRegex.test(name)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid name. Name should contain only letters and spaces.",
+      });
+    }
+
     const phoneRegex = /^\d{10}$/;
     if (!phoneRegex.test(phone)) {
       return res.status(400).json({
@@ -178,6 +186,14 @@ const updateAddress = async (req, res) => {
       return res.status(400).json({
         success: false,
         message: "Please fill in all required fields.",
+      });
+    }
+
+    const nameRegex = /^[A-Za-z\s]+$/;
+    if (!nameRegex.test(name)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid name. Name should contain only letters and spaces.",
       });
     }
 

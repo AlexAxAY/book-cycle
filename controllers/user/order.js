@@ -225,17 +225,50 @@ const proceedToBuy = async (req, res) => {
 
 const orders = async (req, res) => {
   try {
-    const orders = await Order.find()
-      .populate({
-        path: "order_items.products",
-      })
-      .sort({ _id: -1 });
-    if (!orders) {
-      console.log("No orders found");
+    const userId = req.user ? req.user.id : null;
+    const page = parseInt(req.query.page) || 1;
+    const limit = 20;
+    const skip = (page - 1) * limit;
+
+    let query = { user_id: userId };
+
+    if (req.query.statusFilter) {
+      query.status = req.query.statusFilter;
     }
-    return res.render("user/ordersPage", { orders });
+
+    if (req.query.yearFilter && req.query.yearFilter === "2025") {
+      const start = new Date(2025, 0, 1);
+      const end = new Date(2025, 11, 31, 23, 59, 59, 999);
+      query.createdAt = { $gte: start, $lte: end };
+    }
+
+    const totalOrders = await Order.countDocuments(query);
+    const totalPages = Math.ceil(totalOrders / limit);
+
+    const ordersData = await Order.find(query)
+      .populate({ path: "order_items.products" })
+      .sort({ _id: -1 })
+      .skip(skip)
+      .limit(limit);
+
+    if (req.xhr || req.query.ajax) {
+      return res.json({
+        orders: ordersData,
+        totalPages,
+        currentPage: page,
+      });
+    }
+
+    return res.render("user/ordersPage", {
+      orders: ordersData,
+      totalPages,
+      currentPage: page,
+      selectedStatus: req.query.statusFilter || "",
+      selectedYear: req.query.yearFilter || "",
+    });
   } catch (err) {
     console.log("Error in orders controller", err);
+    res.status(500).send("Server Error");
   }
 };
 

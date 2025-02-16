@@ -20,6 +20,9 @@ const {
 // user profile
 const { getProfile, updateProfile } = require("../controllers/user/profile");
 
+// user review
+const { reviewPage, submitReview } = require("../controllers/user/review");
+
 // user orders
 const {
   orderSummary,
@@ -158,5 +161,11 @@ router
   .get(preventCache, checkingAuth, orderSummary)
   .post(checkingAuth, cancelOrder);
 router.route("/orders").get(checkingAuth, orders);
+
+// review routes
+router
+  .route("/review/:id")
+  .get(checkingAuth, reviewPage)
+  .post(checkingAuth, submitReview);
 
 module.exports = router;

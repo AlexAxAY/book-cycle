@@ -5,15 +5,53 @@ const moment = require("moment");
 
 const allOrders = async (req, res) => {
   try {
-    const orders = await Order.find()
-      .populate({
-        path: "order_items.products",
-      })
-      .populate("user_id")
-      .sort({ _id: -1 });
-    return res.render("adminPanel/allOrdersPage", { orders });
+    const { status, name } = req.query;
+    let query = {};
+
+    if (status && status !== "all") {
+      query.status = status;
+    }
+
+    const page = parseInt(req.query.page) || 1;
+    const limit = 20;
+    let totalOrders = 0;
+    let orders = [];
+
+    if (name) {
+      let allOrders = await Order.find(query)
+        .populate({ path: "order_items.products" })
+        .populate("user_id")
+        .sort({ _id: -1 });
+
+      allOrders = allOrders.filter((order) => {
+        const userName = order.user_id.name || order.user_id.email;
+        return userName.toLowerCase().includes(name.toLowerCase());
+      });
+
+      totalOrders = allOrders.length;
+      orders = allOrders.slice((page - 1) * limit, page * limit);
+    } else {
+      totalOrders = await Order.countDocuments(query);
+      orders = await Order.find(query)
+        .populate({ path: "order_items.products" })
+        .populate("user_id")
+        .sort({ _id: -1 })
+        .skip((page - 1) * limit)
+        .limit(limit);
+    }
+
+    const totalPages = Math.ceil(totalOrders / limit);
+
+    return res.render("adminPanel/allOrdersPage", {
+      orders,
+      totalPages,
+      currentPage: page,
+      status: status || "all",
+      name: name || "",
+    });
   } catch (err) {
-    console.log("Error from allOrders conmtroller from admin", err);
+    console.log("Error from allOrders controller from admin", err);
+    res.status(500).send("Server Error");
   }
 };
 

@@ -37,9 +37,21 @@
                   <small><%= item.products.category %></small>
                 </p>
                 <h6>₹<%= item.products.price %></h6>
+                <% if (order.status === "Delivered") { %>
+                  <hr>
+                  <p class="mt-3 mb-0">Rate the product</p>
+                  <div class="rating">
+                    <% for (let i = 1; i <= 5; i++) { %>
+                      <a href="/user/review/<%= order.order_items[0].products._id %>?order_id=<%= order._id %>&rating=<%= i %>">
+                        <i class="fas fa-star"></i>
+                      </a>
+                    <% } %>
+                  </div>
+                <% } %>
+                
               </div>
               <img
-                style="width: 70px"
+                style="max-width: 70px; max-height: 107px;"
                 src="<%= item.products.images[0].cropped_url || item.products.images[0].original_url  %>"
                 alt="Book Cover"
               />
@@ -134,18 +146,6 @@
                 </button>
               </div>
             </div>
-
-            <% if (order.status === "Delivered") {%>
-            <hr />
-            <h5 class="mt-3">Rate The Product</h5>
-            <div class="rating">
-              <i class="fas fa-star"></i>
-              <i class="fas fa-star"></i>
-              <i class="fas fa-star"></i>
-              <i class="fas fa-star"></i>
-              <i class="fas fa-star"></i>
-            </div>
-            <% } %>
           </div>
         </div>
 
@@ -176,6 +176,7 @@
               <div class="col-6 text-start">
                 <p>Selling price (<%= order.total_items %> items)</p>
                 <p>Discount</p>
+                <p>Price after discount</p>
                 <p>Delivery charge</p>
               </div>
               <div class="col-6 text-end">
@@ -183,6 +184,7 @@
                 <p class="text-success">
                   ₹<%= order.total_discount.toFixed(2) %>
                 </p>
+                <p>₹ <%= order.total_selling_price %></p>
                 <p class="text-success">₹<%= order.delivery_charge %></p>
               </div>
             </div>

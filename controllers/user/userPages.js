@@ -20,10 +20,36 @@ const landingPage = async (req, res) => {
   }
 };
 
-// shopping page get
 const shoppingPage = async (req, res) => {
   try {
     const { search, category, minPrice, maxPrice, rating, sort } = req.query;
+
+    if (minPrice && Number(minPrice) < 0) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Minimum price cannot be negative." });
+    }
+    if (maxPrice && Number(maxPrice) < 0) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Maximum price cannot be negative." });
+    }
+    if (minPrice && maxPrice && Number(minPrice) > Number(maxPrice)) {
+      return res.status(400).json({
+        success: false,
+        message: "Minimum price cannot be greater than maximum price.",
+      });
+    }
+
+    if (rating) {
+      const ratingValue = Number(rating);
+      if (ratingValue < 1 || ratingValue > 5) {
+        return res
+          .status(400)
+          .json({ success: false, message: "Rating must be between 1 and 5." });
+      }
+    }
+
     const query = { is_deleted: false };
 
     // Search filter
@@ -60,10 +86,8 @@ const shoppingPage = async (req, res) => {
     } else if (sort === "priceHighToLow") {
       sortQuery.final_price = -1;
     } else if (sort === "rating") {
-      // Assuming you want higher ratings first
       sortQuery.avg_rating = -1;
     } else if (sort === "newArrivals") {
-      // Assuming you have updatedAt field tracking product updates
       sortQuery.updatedAt = -1;
     } else if (sort === "nameAsc") {
       sortQuery.name = 1;

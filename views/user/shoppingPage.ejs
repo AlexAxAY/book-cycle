@@ -79,33 +79,44 @@
             min="0"
             max="5"
           />
-
-          <button class="btn btn-success mt-2" id="apply-filters">
-            Apply Filters
-          </button>
+          <div class="d-flex mt-2">
+            <button
+              class="col-auto btn btn-success ms-auto me-2"
+              id="apply-filters"
+            >
+              Apply Filters
+            </button>
+            <button class="col-auto btn btn-dark" id="clear_filters">
+              Clear
+            </button>
+          </div>
         </div>
         <!-- Sorting Radio Buttons Section -->
         <div class="d-flex flex-column" style="gap: 0.5rem; margin-top: 1rem">
           <strong>Sort By:</strong>
           <label>
-            <input type="radio" name="sort" value="priceLowToHigh" /> Price: Low
-            to High
+            <input type="radio" name="sort" value="priceLowToHigh" />
+            Price: Low to High
           </label>
           <label>
-            <input type="radio" name="sort" value="priceHighToLow" /> Price:
-            High to Low
+            <input type="radio" name="sort" value="priceHighToLow" />
+            Price: High to Low
           </label>
           <label>
-            <input type="radio" name="sort" value="rating" /> Average Ratings
+            <input type="radio" name="sort" value="rating" />
+            Average Ratings
           </label>
           <label>
-            <input type="radio" name="sort" value="newArrivals" /> New Arrivals
+            <input type="radio" name="sort" value="newArrivals" />
+            New Arrivals
           </label>
           <label>
-            <input type="radio" name="sort" value="nameAsc" /> A to Z
+            <input type="radio" name="sort" value="nameAsc" />
+            A to Z
           </label>
           <label>
-            <input type="radio" name="sort" value="nameDesc" /> Z to A
+            <input type="radio" name="sort" value="nameDesc" />
+            Z to A
           </label>
         </div>
       </div>
@@ -191,9 +202,6 @@
 
     <!-- pending user clear -->
     <script src="/user/helper/removePendingUser.js"></script>
-
-    <!-- Add to cart helper -->
-    <script src="/user/helper/addToCartHelper.js"></script>
 
     <!-- bootstrap -->
     <%- include("../partials/admin/bootScript.ejs") %>

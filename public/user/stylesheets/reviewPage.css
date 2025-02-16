@@ -1,0 +1,99 @@
+body {
+  margin: 0 !important;
+  font-family: Arial, sans-serif !important;
+}
+
+/* must include in all other templates for the navbar */
+.navbar-logo {
+  margin-left: 30px;
+  border-radius: 50%;
+  transition: 0.2s ease-in-out;
+}
+
+.navbar-logo:hover {
+  box-shadow: 0 4px 8px 0 rgba(255, 255, 255, 0.1),
+    0 6px 20px 0 rgba(255, 255, 255, 0.1);
+  transform: scale(1.1);
+}
+
+/* for alert */
+.alert-bad,
+.alert-good {
+  padding: 20px;
+  width: fit-content;
+  border-radius: 5px !important;
+  color: white !important;
+  position: fixed;
+  top: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9999;
+}
+
+.alert-bad {
+  background-color: #f44336 !important;
+}
+
+.alert-good {
+  background-color: green !important;
+}
+
+.rating-stars i {
+  font-size: 24px;
+  color: #ccc;
+  cursor: pointer;
+}
+.rating-stars i.selected {
+  color: gold;
+}
+
+/* apply this on every user template */
+@media (max-width: 767px) {
+  #contact-us {
+    font-size: 1rem !important;
+  }
+
+  #footer-mail {
+    font-size: 0.6rem !important;
+  }
+
+  .right h5 {
+    font-size: 1rem !important;
+  }
+
+  .right ul {
+    font-size: 0.6rem !important;
+  }
+
+  .cycle-logo {
+    height: 60px !important;
+  }
+  .all-rights {
+    font-size: 0.5rem !important;
+  }
+}
+
+@media (max-width: 375px) {
+  #contact-us {
+    font-size: 0.8rem !important;
+  }
+
+  #footer-mail {
+    font-size: 0.4rem !important;
+  }
+
+  .right h5 {
+    font-size: 0.8rem !important;
+  }
+
+  .right ul {
+    font-size: 0.4rem !important;
+  }
+
+  .cycle-logo {
+    height: 40px !important;
+  }
+  .all-rights {
+    font-size: 0.3rem !important;
+  }
+}

@@ -98,6 +98,8 @@ const checkoutPage = async (req, res) => {
     return res.render("user/checkoutPage", {
       checkoutData: {
         totalItems,
+        totalOriginalPrice,
+        totalDiscountAmount,
         totalAfterDiscount,
         deliveryCharge,
         finalTotal,
@@ -105,6 +107,7 @@ const checkoutPage = async (req, res) => {
       outOfStockMessage,
       addresses,
       states,
+      validCartItems,
     });
   } catch (error) {
     console.error("Error rendering checkout page:", error);

@@ -27,105 +27,121 @@
     <div class="alert-good d-none text-center" style="position: fixed"></div>
 
     <!-- main section -->
-    <section class="container mt-5">
+<section class="container mt-5">
+  <div
+    class="d-flex"
+    style="min-height: calc(100vh - 60px); margin-left: 210px; flex-direction: column; align-items: center;"
+  >
+    <h2>Orders</h2>
+
+    <!-- Filter Section -->
+    <div class="mb-3 mt-5">
+      <button class="btn btn-primary filter-btn">Filters</button>
       <div
-        class="d-flex"
-        style="
-          min-height: calc(100vh - 60px);
-          margin-left: 210px;
-          flex-direction: column;
-          align-items: center;
-        "
+        id="filterSection"
+        class="d-none mt-3 text-center d-flex justify-content-center"
       >
-        <h2>Orders</h2>
-
-        <!-- Filter Section -->
-        <div class="mb-3 mt-5">
-          <button class="btn btn-primary filter-btn">Filters</button>
-          <div
-            id="filterSection"
-            class="d-none mt-3 text-center d-flex justify-content-center"
-          >
-            <form
-              action="/admin/users"
-              method="GET"
-              class="d-flex flex-wrap align-items-center"
-            >
-              <!-- Status Filter -->
-              <div class="form-group mx-2 d-flex align-items-center">
-                <label for="statusFilter" class="mr-2"></label>
-                <select name="status" id="statusFilter" class="form-control">
-                  <option value="all">All</option>
-                  <option value="Confirmed">Confirmed</option>
-                  <option value="Cancelled">Cancelled</option>
-                  <option value="In transit">In transit</option>
-                  <option value="Shipped">Shipped</option>
-                  <option value="Delivered">Delivered</option>
-                </select>
-              </div>
-              <!-- Name Search -->
-              <div class="form-group mx-2 d-flex align-items-center">
-                <label for="nameSearch" class="mr-2"></label>
-                <input
-                  type="text"
-                  name="name"
-                  id="nameSearch"
-                  class="form-control"
-                  style="border-radius: 20px"
-                  placeholder="Search for a user"
-                />
-              </div>
-              <!-- Submit Button -->
-              <div class="form-group mx-2 d-flex align-items-center">
-                <button
-                  type="submit"
-                  class="btn btn-outline-dark btn-sm search"
-                >
-                  Search
-                </button>
-              </div>
-            </form>
+        <form
+          action="/admin/all-orders"
+          method="GET"
+          class="d-flex flex-wrap align-items-center"
+        >
+          <!-- Status Filter -->
+          <div class="form-group mx-2 d-flex align-items-center">
+            <label for="statusFilter" class="mr-2"></label>
+            <select name="status" id="statusFilter" class="form-control">
+              <option value="all" <%= (!status || status === "all") ? "selected" : "" %>>All</option>
+              <option value="Confirmed" <%= status === "Confirmed" ? "selected" : "" %>>Confirmed</option>
+              <option value="Cancelled" <%= status === "Cancelled" ? "selected" : "" %>>Cancelled</option>
+              <option value="In transit" <%= status === "In transit" ? "selected" : "" %>>In transit</option>
+              <option value="Shipped" <%= status === "Shipped" ? "selected" : "" %>>Shipped</option>
+              <option value="Delivered" <%= status === "Delivered" ? "selected" : "" %>>Delivered</option>
+            </select>
           </div>
-        </div>
-
-        <!-- User Table -->
-        <table class="table table-bordered" style="max-width: 1200px">
-          <thead>
-            <tr>
-              <th>Order Id</th>
-              <th>Ordered Items</th>
-              <th>Total Items</th>
-              <th>Ordered by</th>
-              <th>Current Status</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            <% orders.forEach(function(order) { %>
-            <tr>
-              <td>
-                <span class="text-muted">(#<%= order._id %>)</span>
-              </td>
-              <td>
-                <% order.order_items.forEach((item, index) => { %> <%=
-                item.products.name %><% if (index < order.order_items.length -
-                1) { %>, <% } %> <% }) %>
-              </td>
-
-              <td><%= order.total_items %></td>
-              <td><%= order.user_id.name %></td>
-              <td><%= order.status %></td>
-              <td>
-                <a href="/admin/order/<%= order._id %>">
-                  <i style="color: skyblue" class="fa-solid fa-circle-info"></i>
-                </a>
-              </td>
-            </tr>
-            <% }) %>
-          </tbody>
-        </table>
+          <!-- Name Search -->
+          <div class="form-group mx-2 d-flex align-items-center">
+            <label for="nameSearch" class="mr-2"></label>
+            <input
+              type="text"
+              name="name"
+              id="nameSearch"
+              class="form-control"
+              style="border-radius: 20px"
+              placeholder="Search for a user"
+              value="<%= name %>"
+            />
+          </div>
+          <!-- Submit Button -->
+          <div class="form-group mx-2 d-flex align-items-center">
+            <button
+              type="submit"
+              class="btn btn-outline-dark btn-sm search"
+            >
+              Search
+            </button>
+          </div>
+        </form>
       </div>
-    </section>
+    </div>
+
+    <!-- User Table -->
+     <% if (orders.length > 0) {%>
+    <table class="table table-bordered" style="max-width: 1200px">
+      <thead>
+        <tr>
+          <th>Order Id</th>
+          <th>Ordered Items</th>
+          <th>Total Items</th>
+          <th>Ordered by</th>
+          <th>Current Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% orders.forEach(function(order) { %>
+        <tr>
+          <td>
+            <span class="text-muted">(#<%= order._id %>)</span>
+          </td>
+          <td>
+            <% order.order_items.forEach((item, index) => { %>
+              <%= item.products.name %><% if (index < order.order_items.length - 1) { %>, <% } %>
+            <% }) %>
+          </td>
+          <td><%= order.total_items %></td>
+          <td><%= order.user_id.name %></td>
+          <td><%= order.status %></td>
+          <td>
+            <a href="/admin/order/<%= order._id %>">
+              <i style="color: skyblue" class="fa-solid fa-circle-info"></i>
+            </a>
+          </td>
+        </tr>
+        <% }) %>
+      </tbody>
+    </table>
+
+    <!-- Pagination Controls -->
+    <nav aria-label="Page navigation">
+      <ul class="pagination justify-content-center">
+        <% for (let i = 1; i <= totalPages; i++) { %>
+          <li class="page-item <%= currentPage == i ? 'active' : '' %>">
+            <a
+              class="page-link"
+              href="/admin/all-orders?<% if(status && status !== 'all') { %>status=<%= status %>&<% } %><% if(name) { %>name=<%= name %>&<% } %>page=<%= i %>"
+            >
+              <%= i %>
+            </a>
+          </li>
+        <% } %>
+      </ul>
+    </nav>
+    <% } else  {%>
+      <p class="text-center">No orders found</p>
+    <% } %>
+  </div>
+</section>
+
 
     <!-- footer -->
     <%- include("../partials/admin/adminFooter.ejs") %>

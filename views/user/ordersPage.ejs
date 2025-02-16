@@ -19,65 +19,156 @@
     <header><%- include("../partials/user/userNavbar.ejs") %></header>
 
     <!-- main section -->
-    <div class="container mt-4" style="min-height: calc(100vh - 212px)">
-      <% if (orders.length > 0) {%>
-      <h3 class="mb-5">Your orders</h3>
-      <% orders.forEach((order)=> { %>
-      <div class="order-container row">
-        <div class="col-auto">
-          <img
-            style="width: 70px"
-            src="<%= order.order_items[0].products.images[0].cropped_url ||  order.order_items[0].products.images[0].original_url%>"
-            alt="Book Image"
-            class="order-image"
-          />
+    <div
+      class="container-fluid mt-4 p-4"
+      style="min-height: calc(100vh - 212px)"
+    >
+      <% if (orders.length > 0) { %>
+      <div class="row heading" style="justify-content: space-around">
+        <div class="col-2"></div>
+        <div class="col-8">
+          <h3 class="mb-5">Your orders</h3>
         </div>
-        <div class="col">
-          <div class="order-details">
-            <div class="row">
-              <div class="col-md-4">
-                <div class="row h-100" style="align-items: center">
-                  <% order.order_items.forEach((item)=> { %>
-                  <p class="m-0">🕮<%= item.products.name %></p>
-                  <% }) %>
-                </div>
+      </div>
+      <div class="row" style="justify-content: space-around">
+        <!-- Filter Sidebar -->
+        <div
+          class="col-2 filter-display p-3"
+          style="
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1),
+              0 6px 20px rgba(0, 0, 0, 0.1);
+            height: fit-content;
+            border-radius: 5px;
+          "
+        >
+          <h5 class="text-center">Filter orders</h5>
+          <hr />
+
+          <!-- Status Filter -->
+          <div class="mb-3">
+            <label class="form-label text-muted">Status</label>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="statusFilter"
+              id="cancelled" value="Cancelled" <%= selectedStatus ===
+              "Cancelled" ? "checked" : "" %> />
+              <label class="form-check-label" for="cancelled">Cancelled</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="statusFilter"
+              id="delivered" value="Delivered" <%= selectedStatus ===
+              "Delivered" ? "checked" : "" %> />
+              <label class="form-check-label" for="delivered">Delivered</label>
+            </div>
+          </div>
+
+          <!-- Year Filter (Hardcoded to 2025) -->
+          <div>
+            <label class="form-label text-muted">Year</label>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="yearFilter"
+              id="year2025" value="2025" <%= selectedYear === "2025" ? "checked"
+              : "" %> />
+              <label class="form-check-label" for="year2025">2025</label>
+            </div>
+          </div>
+          <button class="btn btn-dark btn-sm mt-3 clear-btn">Clear</button>
+        </div>
+
+        <!-- Orders Display and Pagination -->
+        <div class="col-8">
+          <!-- Orders Listing Container -->
+          <div id="orders-container">
+            <% orders.forEach((order) => { %>
+            <div class="order-container row mb-2">
+              <div class="col-auto">
+                <img
+                  style="width: 70px"
+                  src="<%= order.order_items[0].products.images[0].cropped_url || order.order_items[0].products.images[0].original_url %>"
+                  alt="Book Image"
+                  class="order-image"
+                />
               </div>
-              <div class="col-md-4">
-                <div class="row h-100" style="align-items: center">
-                  <p class="m-0">₹ <%= order.selling_price %></p>
-                </div>
-              </div>
-              <div class="col-md-4 d-flex align-items-center">
-                <div
-                  class="d-flex h-100 w-100"
-                  style="justify-content: end; align-items: center"
-                >
-                  <a
-                    href="/user/order/<%= order._id %>"
-                    style="
-                      width: fit-content;
-                      height: fit-content;
-                      text-decoration: none;
-                    "
-                    class="track-btn"
-                  >
-                    <% if (order.status === "Cancelled" || order.status === "Delivered") {%> View order <% }
-                    else {%> Track your order <% } %>
-                  </a>
+              <div class="col">
+                <div class="order-details">
+                  <div class="row">
+                    <div class="col-md-4">
+                      <div class="row h-100" style="align-items: center">
+                        <% order.order_items.forEach((item) => { %>
+                        <p class="m-0">
+                          🕮 <%= item.products.name %>(<%= item.quantity %>)
+                        </p>
+                        <% }); %>
+                      </div>
+                    </div>
+                    <div class="col-md-4">
+                      <div class="row h-100" style="align-items: center">
+                        <p class="m-0 text-center">
+                          ₹ <%= order.selling_price %>
+                        </p>
+                      </div>
+                    </div>
+                    <div class="col-md-4 d-flex align-items-center">
+                      <div
+                        class="d-flex h-100 w-100"
+                        style="align-items: center; flex-direction: column"
+                      >
+                        <a
+                          href="/user/order/<%= order._id %>"
+                          style="
+                            width: fit-content;
+                            height: fit-content;
+                            text-decoration: none;
+                          "
+                          class="track-btn"
+                        >
+                          <% if (order.status === "Cancelled" || order.status
+                          === "Delivered") { %> View order <% } else { %> Track
+                          your order <% } %>
+                        </a>
+                        <% if (order.status === "Delivered") {%>
+                        <p class="mb-0 m-3 text-success">
+                          Delivered
+                          <span style="color: green">⬤</span>
+                        </p>
+                        <% } else if (order.status === "Cancelled") {%>
+                        <p class="mb-0 m-3 text-danger">
+                          Cancelled
+                          <span style="color: red">⬤</span>
+                        </p>
+                        <% } %>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
+            <% }); %> <% } else { %>
+            <div class="text-center">
+              <h2>No orders yet</h2>
+              <a class="btn btn-primary" href="/user/shop">Shop</a>
+            </div>
+            <% } %>
           </div>
+          <!-- Pagination Controls -->
+          <nav aria-label="Page navigation" id="pagination-container">
+            <ul class="pagination justify-content-center">
+              <% for (let i = 1; i <= totalPages; i++) { %>
+              <li class="page-item <%= currentPage == i ? 'active' : '' %>">
+                <a
+                  class="page-link pagination-link"
+                  href="#"
+                  data-page="<%= i %>"
+                >
+                  <%= i %>
+                </a>
+              </li>
+              <% } %>
+            </ul>
+          </nav>
         </div>
       </div>
-      <% }) %>
-      <% } else {%>
-        <div class="text-center">
-        <h2>No orders yet</h2>
-        <a class="btn btn-primary" href="/user/shop">Shop</a>
-      </div>
-       <% } %> 
     </div>
+
     <!-- footer partial -->
     <footer><%- include("../partials/user/userFooter.ejs") %></footer>
 
@@ -87,10 +178,16 @@
     <!-- pending user clear -->
     <script src="/user/helper/removePendingUser.js"></script>
 
+    <!-- filter helper -->
+    <script src="/user/helper/ordersFilterHelper.js"></script>
+
     <!-- Include Axios -->
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 
-    <!-- bootstrap -->
+    <!-- Bootstrap Scripts -->
     <%- include("../partials/admin/bootScript.ejs") %>
+
+    <!-- Custom JS for filtering and pagination -->
+    <script src="/user/helper/filterOrders.js"></script>
   </body>
 </html>

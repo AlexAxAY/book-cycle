@@ -39,60 +39,76 @@
           <div class="card-body">
             <h5 class="card-title">Order ID: <%= order._id %></h5>
             <hr />
-            <p class="card-text">
-              <strong>User:</strong>
-              <%= order.user_id.name || order.user_id.email %>
-            </p>
-            <p class="card-text">
-              <strong>Order Date:</strong>
-              <%= orderCreated %>
-            </p>
-            <% if(order.status === "Cancelled") {%>
-            <p class="card-text">
-              <strong>Order Cancel Date:</strong>
-              <%= orderCancelled %>
-            </p>
-            <% } %>
-            <p class="card-text">
-              <strong>Total Items:</strong>
-              <%= order.total_items %>
-            </p>
-            <p class="card-text">
-              <strong>Items:</strong>
-              <% order.order_items.forEach((item, index) => { %> <%=
-              item.products.name %> (<%=item.quantity%>)<% if (index <
-              order.order_items.length - 1) { %>, <% } %> <% }) %>
-            </p>
-            <p class="card-text">
-              <strong>Total Amount:</strong>
-              ₹ <%= order.final_amount %>
-            </p>
-            <p class="card-text">
-              <strong>Payment Type:</strong>
-              <%= order.payment_type %>
-            </p>
-            <p class="card-text">
-              <strong>Shipping Address:</strong>
-              <%= order.address.name %>, <%= order.address.address_line %>, <%=
-              order.address.city %>, <%= order.address.state %>, <%=
-              order.address.pincode %>
-            </p>
-            <p class="card-text">
-              <strong>Status:</strong>
-              <% if(order.status === "Cancelled") {%>
-              <span style="color: red" id="currentStatus">
-                <%= order.status %>
-              </span>
-              <% } else {%>
-              <span id="currentStatus"><%= order.status %></span>
-              <% } %>
-            </p>
-            <% if(order.status === "Cancelled") {%>
-            <p class="card-text">
-              <strong>Cancellation reason:</strong>
-              <span><%= cancel.reason || "No reasons provided" %></span>
-            </p>
-            <% } %>
+            <div class="row" style="justify-content: space-between">
+              <div class="col-auto details-side">
+                <p class="card-text">
+                  <strong>User:</strong>
+                  <%= order.user_id.name || order.user_id.email %>
+                </p>
+                <p class="card-text">
+                  <strong>Order Date:</strong>
+                  <%= orderCreated %>
+                </p>
+                <% if(order.status === "Cancelled") {%>
+                <p class="card-text">
+                  <strong>Order Cancel Date:</strong>
+                  <%= orderCancelled %>
+                </p>
+                <% } %>
+                <p class="card-text">
+                  <strong>Total Items:</strong>
+                  <%= order.total_items %>
+                </p>
+                <p class="card-text">
+                  <strong>Items:</strong>
+                  <% order.order_items.forEach((item, index) => { %> <%=
+                  item.products.name %> (<%=item.quantity%>)<% if (index <
+                  order.order_items.length - 1) { %>, <% } %> <% }) %>
+                </p>
+                <p class="card-text">
+                  <strong>Total Amount:</strong>
+                  ₹ <%= order.final_amount %>
+                </p>
+                <p class="card-text">
+                  <strong>Payment Type:</strong>
+                  <%= order.payment_type %>
+                </p>
+                <p class="card-text">
+                  <strong>Shipping Address:</strong>
+                  <%= order.address.name %>, <%= order.address.address_line %>,
+                  <%= order.address.city %>, <%= order.address.state %>, <%=
+                  order.address.pincode %>
+                </p>
+                <p class="card-text">
+                  <strong>Status:</strong>
+                  <% if(order.status === "Cancelled") {%>
+                  <span style="color: red" id="currentStatus">
+                    <%= order.status %>
+                  </span>
+                  <% } else {%>
+                  <span id="currentStatus"><%= order.status %></span>
+                  <% } %>
+                </p>
+                <% if(order.status === "Cancelled") {%>
+                <p class="card-text">
+                  <strong>Cancellation reason:</strong>
+                  <span><%= cancel.reason || "No reasons provided" %></span>
+                </p>
+                <% } %>
+              </div>
+              <div class="col-auto image-side">
+                <% order.order_items.forEach((item)=> { %>
+                <div>
+                  <img
+                    style="width: 70px; border-radius: 4px"
+                    class="mb-2"
+                    src="<%= item.products.images[0].cropped_url || item.products.images[0].original_url %>"
+                    alt="product-image"
+                  />
+                </div>
+                <% }) %>
+              </div>
+            </div>
           </div>
         </div>
 

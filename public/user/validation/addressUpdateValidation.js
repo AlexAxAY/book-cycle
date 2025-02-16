@@ -34,6 +34,13 @@ document.addEventListener("DOMContentLoaded", function () {
       return;
     }
 
+    const nameRegex = /^[A-Za-z\s]+$/;
+    if (!nameRegex.test(name.value.trim())) {
+      showAlert(".alert-bad", "Name should contain only letters and spaces.");
+      name.classList.add("is-invalid");
+      return;
+    }
+
     // Validate phone number (10 digits)
     const phoneRegex = /^\d{10}$/;
     if (!phoneRegex.test(phone.value.trim())) {
