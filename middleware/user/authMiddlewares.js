@@ -23,9 +23,7 @@ const checkingAuth = (req, res, next) => {
     console.log("User is not authenticated and verified");
 
     if (req.xhr || req.headers.accept.indexOf("json") > -1) {
-      return res
-        .status(401)
-        .json({ success: false, message: "User not logged in" });
+      return res.status(401).json({ success: false, message: "Please login!" });
     }
 
     return res.redirect("/user/login");

@@ -113,6 +113,7 @@ const shoppingPage = async (req, res) => {
     res.render("user/shoppingPage", {
       products,
       categories,
+      category,
     });
   } catch (error) {
     console.error(error);

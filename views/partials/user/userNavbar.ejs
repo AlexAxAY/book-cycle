@@ -34,7 +34,7 @@
       </div>
 
       <div class="offcanvas-body ms-auto me-5">
-        <% if (currentURL === '/user/shop') { %>
+        <% if (currentURL.startsWith('/user/shop')) { %>
         <form class="d-flex me-5" role="search">
           <input
             style="border-radius: 20px"
@@ -68,7 +68,7 @@
             </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="/user/saved">
+            <a class="nav-link" href="/user/wishlist">
               <i class="fas fa-heart me-2"></i>
               Saved
             </a>

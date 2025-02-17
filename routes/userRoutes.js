@@ -23,6 +23,13 @@ const { getProfile, updateProfile } = require("../controllers/user/profile");
 // user review
 const { reviewPage, submitReview } = require("../controllers/user/review");
 
+// user wishlist
+const {
+  wishlistPage,
+  addToWishlist,
+  removeFromWishlist,
+} = require("../controllers/user/wishlist");
+
 // user orders
 const {
   orderSummary,
@@ -167,5 +174,12 @@ router
   .route("/review/:id")
   .get(checkingAuth, reviewPage)
   .post(checkingAuth, submitReview);
+
+// wishlist routes
+router.route("/wishlist").get(checkingAuth, wishlistPage);
+router
+  .route("/wishlist/:id")
+  .post(checkingAuth, addToWishlist)
+  .delete(checkingAuth, removeFromWishlist);
 
 module.exports = router;

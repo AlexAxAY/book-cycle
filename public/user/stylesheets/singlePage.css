@@ -135,6 +135,22 @@ body {
   color: #ffc107;
 }
 
+.wishlist-icon {
+  color: red;
+}
+
+.add-to-wish-btn:hover .wishlist-icon {
+  color: white;
+}
+
+.cart-icon {
+  color: black;
+}
+
+.add-to-cart-btn:hover .cart-icon {
+  color: white;
+}
+
 /* apply this on every user template */
 @media (max-width: 767px) {
   #contact-us {

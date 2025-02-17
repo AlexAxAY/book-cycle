@@ -27,7 +27,7 @@ document.addEventListener("DOMContentLoaded", () => {
           showAlert(errorAlert, errorMessage, "bad");
           setTimeout(() => {
             window.location.href = "/user/login";
-          }, 500);
+          }, 1000);
         } else {
           const errorMessage =
             error.response?.data?.message || "Failed to add product to cart";
@@ -43,7 +43,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     setTimeout(() => {
       element.classList.add("d-none");
-    }, 2000);
+    }, 1000);
   }
 });
 

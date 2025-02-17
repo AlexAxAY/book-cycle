@@ -33,10 +33,7 @@ const addToCart = async (req, res) => {
     const userId = req.user ? req.user.id : null;
 
     if (!userId) {
-      console.log("user not logged in!");
-      return res
-        .status(401)
-        .json({ success: false, message: "User not logged in" });
+      return res.status(401).json({ success: false, message: "Please login!" });
     }
 
     if (!productId) {

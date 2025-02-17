@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cart</title>
+
+    <!-- bootstrap -->
+    <%- include("../partials/admin/bootLink.ejs") %>
+
+    <!-- icon link -->
+    <%- include("../partials/user/iconLink.ejs") %>
+
+    <!-- css -->
+    <link rel="stylesheet" href="/user/stylesheets/wishlistPage.css" />
+  </head>
+
+  <body>
+    <!-- navbar -->
+    <header><%- include("../partials/user/userNavbar.ejs") %></header>
+
+    <!-- alert -->
+    <%- include("../partials/user/alertMessage.ejs") %>
+
+    <!-- main section -->
+    <section class="container mt-5" style="min-height: calc(100vh - 212px)">
+      <% if (wishlistItems.length > 0) {%>
+      <h2 class="mb-4">My Wishlist (<%= count %>)</h2>
+
+      <!-- Items div -->
+      <% wishlistItems.forEach((items)=> { %>
+      <div class="border p-3 mb-3 rounded">
+        <div
+          class="row align-items-center"
+          style="justify-content: space-between"
+        >
+          <!-- Product image + name -->
+          <div class="col-2 d-flex align-items-center">
+            <img
+              src="<%= items.productId.images[0].cropped_url ||  items.productId.images[0].original_url%>"
+              alt="The Batman"
+              class="img-fluid rounded me-3"
+              style="width: 60px; height: auto"
+            />
+            <span><%= items.productId.name %></span>
+          </div>
+
+          <!-- Unit price -->
+          <div class="col-2 text-center">₹<%= items.productId.final_price %></div>
+
+          <!-- Stock status -->
+          <% if (items.productId.stock === "In stock") {%>
+          <div class="col-3 text-success text-center fw-bold">In stock</div>
+          <% } else if (items.productId.stock === "Limited stock") { %>
+          <div style="color: orange" class="col-3 fw-bold text-center">
+            Limited stock (<%= items.productId.count %> books left)
+          </div>
+          <% } else { %>
+          <div class="col-3 text-danger fw-bold text-center">Out of stock</div>
+          <% } %>
+
+          <!-- Add to cart button -->
+          <div class="col-auto">
+            <button
+              class="btn btn-outline-dark btn-sm mx-2 add-to-cart-btn"
+              data-product-id="<%= items.productId._id %>"
+            >
+              <strong>Add to cart</strong>
+              <i class="fa-solid fa-cart-shopping cart-icon"></i>
+            </button>
+            <button
+              class="btn btn-link text-danger p-0 mx-2 dlt-item"
+              style="font-size: 1.25rem"
+              data-product-id="<%= items.productId._id %>"
+            >
+              <i class="fa-solid fa-trash-can"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+      <% }) %> <% } else {%>
+      <div
+        class="d-flex"
+        style="
+          justify-content: center;
+          flex-direction: column;
+          align-items: center;
+        "
+      >
+        <h5 class="text-center">No books added</h5>
+        <a class="btn btn-primary" style="width: fit-content" href="/user/shop">
+          Add products
+        </a>
+      </div>
+      <% } %>
+    </section>
+
+    <!-- footer partial -->
+    <footer><%- include("../partials/user/userFooter.ejs") %></footer>
+
+    <!-- logout -->
+    <script src="/user/helper/logoutHelper.js"></script>
+
+    <!-- pending user clear -->
+    <script src="/user/helper/removePendingUser.js"></script>
+
+    <!-- add to cart helper -->
+    <script src="/user/helper/addToCartHelper.js"></script>
+
+    <!-- remove wishlist   helper -->
+    <script src="/user/helper/removeWishlistHelper.js"></script>
+
+    <!-- Include Axios -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+    <!-- bootstrap -->
+    <%- include("../partials/admin/bootScript.ejs") %>
+  </body>
+</html>

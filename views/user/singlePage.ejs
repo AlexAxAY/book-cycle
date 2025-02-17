@@ -137,12 +137,21 @@
             <% } %>
           </div>
 
-          <!-- Add to Cart Button -->
+          <!-- Add to Cart and wishlist Button -->
           <button
             class="btn btn-outline-dark mt-3 add-to-cart-btn"
+            style="border: none;"
             data-product-id="<%= product._id %>"
           >
-            Add to Cart
+            Add to Cart <i class="fa-solid fa-cart-shopping cart-icon"></i>
+          </button>
+
+          <button
+            class="btn btn-outline-danger mt-3 add-to-wish-btn"
+            style="border: none;"
+            data-product-id="<%= product._id %>"
+          >
+            Add to Wishlist <i class="fa-solid fa-heart wishlist-icon"></i>
           </button>
         </div>
       </div>
@@ -259,6 +268,9 @@
 
     <!-- Add to cart helper -->
     <script src="/user/helper/addToCartHelper.js"></script>
+
+     <!-- Add to wislist helper -->
+    <script src="/user/helper/addToWishlistHelper.js"></script>
 
     <!-- pending user clear -->
     <script src="/user/helper/removePendingUser.js"></script>
