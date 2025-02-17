@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Add Coupon</title>
+
+    <!-- css -->
+    <link rel="stylesheet" href="/admin/stylesheets/addCoupon.css" />
+
+    <!-- bootstrap -->
+    <%- include("../partials/admin/bootLink.ejs") %>
+
+    <!-- google fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Port+Lligat+Slab&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <!-- sidebar -->
+    <div class="col-3" style="width: 200px; position: fixed">
+      <%- include("../partials/admin/adminNavbar.ejs") %>
+    </div>
+
+    <section
+      class="main-section d-flex"
+      style="
+      position: relative;
+        margin-left: 210px;
+        justify-content: center;
+        min-height: calc(100vh - 60px);
+      "
+    >
+    <!-- alert -->
+    <%- include("../partials/user/alertMessage.ejs") %>
+
+      <div
+        class="d-flex mt-5"
+        style="
+          box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1),
+            0 1px 3px rgba(0, 0, 0, 0.08);
+            height: fit-content;
+        "
+      >
+        <div class="p-5">
+          <h2 class="text-center mb-4">Add Coupon</h2>
+
+          <form id="productForm">
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label for="coupon-code" class="form-label"></label>
+                  Coupon code
+                  <span style="color: red">*</span>
+                </label>
+                <input type="text" name="coupon-code" id="coupon-code" class="form-control" />
+              </div>
+              <div class="col-md-6 mb-3">
+                <label for="min-order-value" class="form-label">
+                  Min order value
+                  <span style="color: red">*</span>
+                </label>
+                <input
+                  type="number"
+                  name="min-order-value"
+                  id="min-order-value"
+                  class="form-control"
+                />
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label for="discount" class="form-label">
+                  Discount
+                  <span style="color: red">*</span>
+                </label>
+                <input
+                  type="number"
+                  name="discount"
+                  id="discount"
+                  class="form-control"
+                />
+              </div>
+                <div class="col-md-6 mb-3">
+                  <label for="discount_type" class="form-label">
+                    Discount Type
+                    <span style="color: red">*</span>
+                  </label>
+                  <select
+                    name="discount_type"
+                    id="discount_type"
+                    class="form-select"
+                  >
+                    <option value="">Select Discount Type</option>
+                    <option value="fixed">Fixed</option>
+                    <option value="percentage">Percentage</option>
+                  </select>
+                </div>
+            </div>
+            <div class="mb-3">
+              <label for="description" class="form-label">
+                Description
+                <span style="color: red">*</span>
+              </label>
+              <textarea
+                name="description"
+                id="description"
+                class="form-control"
+                rows="2"
+              ></textarea>
+            </div> 
+            <div class="d-flex justify-content-end">
+              <button type="submit" class="btn btn-success" id="submit">
+                Add Coupon
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </section>
+    <!-- footer -->
+    <%- include("../partials/admin/adminFooter.ejs") %>
+
+    <!-- js validation file -->
+    <script src="/admin/front-end-validation/couponFormValidation.js"></script>
+
+    <!-- js logout validation file -->
+    <script src="/admin/front-end-validation/logoutValidation.js"></script>
+
+    <!-- bootstrap -->
+    <%- include("../partials/admin/bootScript.ejs") %>
+
+    <!-- axios -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  </body>
+</html>

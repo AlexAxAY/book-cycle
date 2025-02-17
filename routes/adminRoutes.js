@@ -26,6 +26,9 @@ const {
   userDetailsPage,
 } = require("../controllers/admin/adminUserCtrl.js");
 
+// Requiring coupon controllers
+const { couponForm, addCoupon } = require("../controllers/admin/coupon.js");
+
 // Requiring auth controllers
 const {
   viewAdminLoginPage,
@@ -112,5 +115,8 @@ router.route("/user/details/:id").get(userDetailsPage);
 // Order routes
 router.route("/all-orders").get(allOrders);
 router.route("/order/:id").get(getSingleOrder).post(updateOrderStatus);
+
+// Coupon routes
+router.route("/add-coupon").get(couponForm).post(addCoupon);
 
 module.exports = router;
