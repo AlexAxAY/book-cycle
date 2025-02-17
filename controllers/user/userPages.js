@@ -1,6 +1,8 @@
 const Product = require("../../models/productSchema");
 const Banner = require("../../models/bannerSchema");
 const Category = require("../../models/categorySchema");
+const Review = require("../../models/ratingSchema");
+const moment = require("moment");
 
 // landing page get
 const landingPage = async (req, res) => {
@@ -132,6 +134,12 @@ const singlePage = async (req, res) => {
       });
     }
 
+    const reviews = await Review.find({ product_id: id }).populate("user_id");
+
+    reviews.forEach((review) => {
+      review.formattedDate = moment(review.createdAt).format("MMMM Do YYYY");
+    });
+
     const relatedProducts = await Product.find({
       $or: [{ category: product.category }, { author: product.author }],
       final_price: { $gte: 10, $lte: 2000 },
@@ -141,6 +149,7 @@ const singlePage = async (req, res) => {
     return res.status(200).render("user/singlePage", {
       product,
       relatedProducts,
+      reviews,
     });
   } catch (err) {
     console.log("Server error while fetching the product!", err);

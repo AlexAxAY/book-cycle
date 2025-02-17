@@ -44,6 +44,17 @@ const submitReview = async (req, res) => {
         .json({ success: false, message: "Rating must be between 1 and 5." });
     }
 
+    const existingReview = await Review.findOne({
+      product_id: productId,
+      user_id: userId,
+    });
+    if (existingReview) {
+      return res.status(400).json({
+        success: false,
+        message: "You have already submitted a review for this product.",
+      });
+    }
+
     const newReview = new Review({
       user_id: userId,
       product_id: productId,

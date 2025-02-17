@@ -159,13 +159,17 @@
                 <small class="text-success">
                   (<%= product.discount %> <% if (product.discount_type ===
                   'fixed') { %> ₹ <% } else if (product.discount_type ===
-                  'percentage') { %> % <% } %>) off
+                  'percentage') { %> % <% } %> off)
                 </small>
               </p>
-
-              <p class="card-text p-0 m-0">
-                <small><%= product.avg_rating || "Awaiting Review" %></small>
-              </p>
+              <% if (product.avg_rating) {%>
+              <div class="rating-badge">
+                <small><%= product.avg_rating %></small>
+                <span class="star-icon">★</span>
+              </div>
+              <% } else { %>
+              <p class="card-text p-0 m-0"><small>Awaiting review</small></p>
+              <% } %>
               <p class="card-text p-0">
                 <% if (product.stock === 'In stock') { %>
                 <strong style="color: green"><%= product.stock %></strong>

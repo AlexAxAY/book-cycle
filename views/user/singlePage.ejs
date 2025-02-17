@@ -86,12 +86,14 @@
           <p><strong style="color: red"><%= product.stock %></strong></p>
           <% } %>
           <!-- Rating Stars -->
+          <% if (product.avg_rating) {%>
           <div class="d-flex align-items-center mb-3">
-            <% for (let i = 1; i <= 5; i++) { %>
-            <span class="rating-star empty">&#9733;</span>
-            <% } %>
-            <span class="ms-2">(0)</span>
+              <div class="rating-badge">
+                <small><%= product.avg_rating %></small>
+                <span class="star-icon">★</span>
+              </div>
           </div>
+          <% } %>
 
           <!-- Price and Final Price with Discount -->
           <div class="price-container">
@@ -120,6 +122,7 @@
 
           <!-- Additional Product Details -->
           <div class="spec-container mt-3">
+            <p><strong>Language:</strong> <%= product.language %></p>
             <% if (product.publisher) { %>
             <p><strong>Publisher:</strong> <%= product.publisher %></p>
             <% } %> <% if (product.publish_date) { %>
@@ -147,10 +150,40 @@
       <!-- Reviews Section -->
       <div class="row mt-4">
         <div class="col-12">
-          <h5>Reviews (0)</h5>
+          <% if (product.rating_count) {%>
+          <h5>Review (<%= product.rating_count %>)</h5>
           <hr />
+          <% reviews.forEach((review) => { %>
+            <div class="review-sec px-3 pt-3 mb-1" style="border: 1px solid rgba(0, 0, 0, 0.2); border-radius: 5px;">
+              <p class="m-0">
+                <strong>
+                  <%= review.user_id.name %>
+                  <span class="review-stars" style="margin-left: 10px;">
+                    <% 
+                      const fullStars = review.rating;
+                      const emptyStars = 5 - review.rating;
+                    %>
+                    <% for (let i = 0; i < fullStars; i++) { %>
+                      <span class="star filled">★</span>
+                    <% } %>
+                    <% for (let i = 0; i < emptyStars; i++) { %>
+                      <span class="star">★</span>
+                    <% } %>
+                  </span>
+                </strong>
+              </p>
+              <p><small class="text-muted"><%= review.formattedDate %></small></p>
+              <p><%= review.description %></p>
+            </div>
+          <% }); %>
+          
+          
+
+          <% } else {%>
+            <h5>Review (0)</h5>
+            <hr />
           <p>No reviews yet</p>
-          <!-- Reviews content will be added here -->
+          <% } %> 
         </div>
       </div>
 

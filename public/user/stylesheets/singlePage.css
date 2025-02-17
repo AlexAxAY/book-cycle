@@ -111,6 +111,30 @@ body {
   background-color: green !important;
 }
 
+.rating-badge {
+  background-color: #2e7d32;
+  color: white;
+  display: inline-flex;
+  align-items: center;
+  padding: 1px 5px;
+  border-radius: 5px;
+  font-weight: bold;
+}
+.star-icon {
+  margin-left: 5px;
+  font-size: 12px;
+  color: white;
+}
+
+.review-stars .star {
+  font-size: 1.2rem;
+  color: #ddd;
+}
+
+.review-stars .star.filled {
+  color: #ffc107;
+}
+
 /* apply this on every user template */
 @media (max-width: 767px) {
   #contact-us {

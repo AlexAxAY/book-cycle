@@ -49,6 +49,7 @@
               id="productRating"
               class="rating-stars"
               data-product-id="<%= product._id %>"
+              data-rating="<%= parseInt(rating, 10) || 0 %>"
             >
               <% const userRating = parseInt(rating, 10) || 0; for (let i = 1; i
               <= 5; i++) { %>

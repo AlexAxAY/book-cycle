@@ -3,6 +3,7 @@ const Order = require("../../models/orderSchema");
 const Address = require("../../models/addressSchema");
 const Product = require("../../models/productSchema");
 const Cancel = require("../../models/cancelSchema");
+const Rating = require("../../models/ratingSchema");
 const moment = require("moment");
 
 const orderSummary = async (req, res) => {
@@ -16,13 +17,20 @@ const orderSummary = async (req, res) => {
       return console.log("order not found!");
     }
 
-    const cancel = await Cancel.findOne({ order_id: id }).populate("user_id");
-    let orderCancelled = null;
-    if (cancel) {
-      orderCancelled = moment(cancel.createdAt).format("MMMM Do YYYY, h:mm A");
-    }
+    const productIds = order.order_items.map((item) => item.products._id);
 
-    // Format dates on the backend
+    const ratings = await Rating.find({
+      user_id: req.user ? req.user.id : null,
+      product_id: { $in: productIds },
+    });
+
+    const ratedProducts = {};
+    ratings.forEach((rating) => {
+      ratedProducts[rating.product_id.toString()] = true;
+    });
+    console.log("rated products:", ratedProducts);
+
+    // Format order dates
     const orderCreated = moment(order.createdAt).format("MMMM Do YYYY, h:mm A");
     const orderInTransit = order.inTransitAt
       ? moment(order.inTransitAt).format("MMMM Do YYYY, h:mm A")
@@ -34,6 +42,12 @@ const orderSummary = async (req, res) => {
       ? moment(order.deliveredAt).format("MMMM Do YYYY, h:mm A")
       : null;
 
+    const cancel = await Cancel.findOne({ order_id: id }).populate("user_id");
+    let orderCancelled = null;
+    if (cancel) {
+      orderCancelled = moment(cancel.createdAt).format("MMMM Do YYYY, h:mm A");
+    }
+
     return res.render("user/orderSummary", {
       order,
       orderCreated,
@@ -42,9 +56,11 @@ const orderSummary = async (req, res) => {
       orderDelivered,
       orderCancelled,
       cancel,
+      ratedProducts,
     });
   } catch (err) {
     console.log("Error in orderSummary controller", err);
+    return res.status(500).send("server error!");
   }
 };
 

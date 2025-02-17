@@ -224,56 +224,81 @@ function updateProducts(products) {
   productsGrid.innerHTML = "";
 
   products.forEach((product) => {
-    const productHtml = `
-        <div class="col-12 col-sm-6 col-md-3 col-lg-3 col-xl-2 mb-4">
-          <div class="card">
-            <div id="carousel${
-              product._id
-            }" class="carousel slide to-product" data-bs-ride="carousel" data-id-info="${
-      product._id
-    }">
-              <div class="carousel-inner">
-                ${product.images
-                  .map(
-                    (img, index) => `
-                  <div class="carousel-item ${index === 0 ? "active" : ""}">
-                    <img src="${
-                      img.original_url
-                    }" class="d-block w-100" alt="Book Image"
-                      style="max-height: 300px; min-height: 300px; border-radius: 10px; object-fit: cover !important;">
-                  </div>
-                `
-                  )
-                  .join("")}
-              </div>
-            </div>
-            <div class="card-body text-center">
-              <p class="card-title p-0 m-0"><strong>${product.name}</strong></p>
-              <p class="card-text text-primary p-0 m-0">
-                ₹${product.final_price}
-                <small class="text-success">
-                  (${product.discount} ${
-      product.discount_type === "fixed" ? "₹" : "%"
-    } off)
-                </small>
-              </p>
-              <p class="card-text p-0 m-0">
-                <small>${product.avg_rating || "Awaiting Review"}</small>
-              </p>
-              <p class="card-text p-0">
-                <strong style="color: ${getStockColor(product.stock)}">${
-      product.stock
-    }</strong>
-              </p>
-              <button class="btn btn-dark btn-sm add-to-cart-btn" data-product-id="${
-                product._id
-              }">
-                Add to cart
-              </button>
-            </div>
-          </div>
+    // Build the rating section based on whether avg_rating exists
+    let ratingSection;
+    if (product.avg_rating) {
+      ratingSection = `
+        <div class="rating-badge">
+          <small>${product.avg_rating}</small>
+          <span class="star-icon">★</span>
         </div>
       `;
+    } else {
+      ratingSection = `
+        <p class="card-text p-0 m-0"><small>Awaiting review</small></p>
+      `;
+    }
+
+    const productHtml = `
+      <div class="col-12 col-sm-6 col-md-3 col-lg-3 col-xl-2 mb-4">
+        <div class="card">
+          <div
+            id="carousel${product._id}"
+            class="carousel slide to-product"
+            data-bs-ride="carousel"
+            data-id-info="${product._id}"
+          >
+            <div class="carousel-inner">
+              ${product.images
+                .map(
+                  (img, index) => `
+                    <div class="carousel-item ${index === 0 ? "active" : ""}">
+                      <img
+                        src="${img.original_url}"
+                        class="d-block w-100"
+                        alt="Book Image"
+                        style="
+                          max-height: 300px;
+                          min-height: 300px;
+                          border-radius: 10px;
+                          object-fit: cover !important;
+                        "
+                      />
+                    </div>
+                  `
+                )
+                .join("")}
+            </div>
+          </div>
+          <div class="card-body text-center">
+            <p class="card-title p-0 m-0">
+              <strong>${product.name}</strong>
+            </p>
+            <p class="card-text text-primary p-0 m-0">
+              ₹${product.final_price}
+              <small class="text-success">
+                (${product.discount} ${
+      product.discount_type === "fixed" ? "₹" : "%"
+    } off)
+              </small>
+            </p>
+            <!-- Insert our dynamic rating section here -->
+            ${ratingSection}
+            <p class="card-text p-0">
+              <strong style="color: ${getStockColor(product.stock)}">
+                ${product.stock}
+              </strong>
+            </p>
+            <button
+              class="btn btn-dark btn-sm add-to-cart-btn"
+              data-product-id="${product._id}"
+            >
+              Add to cart
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
     productsGrid.insertAdjacentHTML("beforeend", productHtml);
   });
 }

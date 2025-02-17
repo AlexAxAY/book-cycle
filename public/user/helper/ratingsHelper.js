@@ -1,14 +1,21 @@
 let currentRating = 0;
 
+const productRatingEl = document.getElementById("productRating");
+if (productRatingEl) {
+  const initialRating =
+    parseInt(productRatingEl.getAttribute("data-rating"), 10) || 0;
+  currentRating = initialRating;
+}
+
 const stars = document.querySelectorAll("#productRating i");
 stars.forEach((star) => {
   star.addEventListener("click", function () {
-    const selectedRating = parseInt(this.getAttribute("data-rating"));
+    const selectedRating = parseInt(this.getAttribute("data-rating"), 10);
     currentRating = selectedRating;
     stars.forEach((s) => {
       s.classList.toggle(
         "selected",
-        parseInt(s.getAttribute("data-rating")) <= selectedRating
+        parseInt(s.getAttribute("data-rating"), 10) <= selectedRating
       );
     });
   });
