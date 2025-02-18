@@ -30,23 +30,23 @@
               <div class="d-flex justify-content-between">
                 <div>
                   <h5 class="m-0">
-                    <%= item.products.name %> (<%= item.quantity %>)
+                    <%= item.product.name %> (<%= item.quantity %>)
                   </h5>
                   <p class="m-0 text-muted">
-                    <small>by <%= item.products.author %></small>
+                    <small>by <%= item.product.author %></small>
                   </p>
                   <p class="mb-2 text-muted">
-                    <small><%= item.products.category %></small>
+                    <small><%= item.product.category %></small>
                   </p>
-                  <h6>₹<%= item.products.price %></h6>
+                  <h6>₹<%= item.price_at_purchase%></h6>
                   
                   <% if (order.status === "Delivered") { %>
-                    <% if (!ratedProducts[item.products._id.toString()]) { %>
+                    <% if (!ratedProducts[item.product._id.toString()]) { %>
                       <hr>
                       <p class="mt-3 mb-0">Rate the product</p>
                       <div class="rating">
                         <% for (let i = 1; i <= 5; i++) { %>
-                          <a href="/user/review/<%= item.products._id %>?order_id=<%= order._id %>&rating=<%= i %>">
+                          <a href="/user/review/<%= item.product._id %>?order_id=<%= order._id %>&rating=<%= i %>">
                             <i class="fas fa-star"></i>
                           </a>
                         <% } %>
@@ -56,12 +56,14 @@
                         <small style="color: green;">Thank you for rating!</small>👍
                       </p>
                     <% } %>
+                    <hr>
+                    <button class="btn btn-outline-danger btn-sm" data-productId="<%= item.product._id %>">Return product</button>
                   <% } %>
                   
                 </div>
                 <img
                   style="max-width: 70px; max-height: 107px;"
-                  src="<%= item.products.images[0].cropped_url || item.products.images[0].original_url %>"
+                  src="<%= item.product.images[0].cropped_url || item.product.images[0].original_url %>"
                   alt="Book Cover"
                 />
               </div>

@@ -62,7 +62,7 @@
                 <p class="card-text">
                   <strong>Items:</strong>
                   <% order.order_items.forEach((item, index) => { %> <%=
-                  item.products.name %> (<%=item.quantity%>)<% if (index <
+                  item.product.name %> (<%=item.quantity%>)<% if (index <
                   order.order_items.length - 1) { %>, <% } %> <% }) %>
                 </p>
                 <p class="card-text">
@@ -102,7 +102,7 @@
                   <img
                     style="width: 70px; border-radius: 4px"
                     class="mb-2"
-                    src="<%= item.products.images[0].cropped_url || item.products.images[0].original_url %>"
+                    src="<%= item.product.images[0].cropped_url || item.product.images[0].original_url %>"
                     alt="product-image"
                   />
                 </div>

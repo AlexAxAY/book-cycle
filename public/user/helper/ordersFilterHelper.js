@@ -42,7 +42,7 @@ document.addEventListener("DOMContentLoaded", function () {
       orders.forEach((order) => {
         let orderItemsHTML = "";
         order.order_items.forEach((item) => {
-          orderItemsHTML += `<p class="m-0">🕮 ${item.products.name}(${item.quantity})</p>`;
+          orderItemsHTML += `<p class="m-0">🕮 ${item.product.name}(${item.quantity})</p>`;
         });
 
         const linkText =
@@ -72,8 +72,8 @@ document.addEventListener("DOMContentLoaded", function () {
           <div class="order-container row mb-2">
             <div class="col-auto">
               <img style="width: 70px" src="${
-                order.order_items[0].products.images[0].cropped_url ||
-                order.order_items[0].products.images[0].original_url
+                order.order_items[0].product.images[0].cropped_url ||
+                order.order_items[0].product.images[0].original_url
               }" alt="Book Image" class="order-image" />
             </div>
             <div class="col">

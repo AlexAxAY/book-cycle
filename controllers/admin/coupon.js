@@ -152,9 +152,10 @@ const editCoupon = async (req, res) => {
     coupon.discount_type = discount_type;
     coupon.description = description.trim();
     coupon.min_order_value = min_order_value;
-    (coupon.active = active === true || active === "true" ? true : false),
-      // Save the updated coupon
-      await coupon.save();
+    coupon.active = active !== undefined ? active : coupon.active;
+
+    // Save the updated coupon
+    await coupon.save();
 
     return res.status(200).json({
       success: true,

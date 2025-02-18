@@ -83,7 +83,7 @@
               <div class="col-auto">
                 <img
                   style="width: 70px"
-                  src="<%= order.order_items[0].products.images[0].cropped_url || order.order_items[0].products.images[0].original_url %>"
+                  src="<%= order.order_items[0].product.images[0].cropped_url || order.order_items[0].product.images[0].original_url %>"
                   alt="Book Image"
                   class="order-image"
                 />
@@ -95,7 +95,7 @@
                       <div class="row h-100" style="align-items: center">
                         <% order.order_items.forEach((item) => { %>
                         <p class="m-0">
-                          🕮 <%= item.products.name %>(<%= item.quantity %>)
+                          🕮 <%= item.product.name %>(<%= item.quantity %>)
                         </p>
                         <% }); %>
                       </div>
@@ -103,7 +103,7 @@
                     <div class="col-md-4">
                       <div class="row h-100" style="align-items: center">
                         <p class="m-0 text-center">
-                          ₹ <%= order.selling_price %>
+                          ₹ <%= order.total_selling_price %>
                         </p>
                       </div>
                     </div>

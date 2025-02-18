@@ -105,7 +105,7 @@
           </td>
           <td>
             <% order.order_items.forEach((item, index) => { %>
-              <%= item.products.name %><% if (index < order.order_items.length - 1) { %>, <% } %>
+              <%= item.product.name %><% if (index < order.order_items.length - 1) { %>, <% } %>
             <% }) %>
           </td>
           <td><%= order.total_items %></td>

@@ -19,7 +19,7 @@ const allOrders = async (req, res) => {
 
     if (name) {
       let allOrders = await Order.find(query)
-        .populate({ path: "order_items.products" })
+        .populate({ path: "order_items.product" })
         .populate("user_id")
         .sort({ _id: -1 });
 
@@ -33,7 +33,7 @@ const allOrders = async (req, res) => {
     } else {
       totalOrders = await Order.countDocuments(query);
       orders = await Order.find(query)
-        .populate({ path: "order_items.products" })
+        .populate({ path: "order_items.product" })
         .populate("user_id")
         .sort({ _id: -1 })
         .skip((page - 1) * limit)
@@ -60,7 +60,7 @@ const getSingleOrder = async (req, res) => {
     const { id } = req.params;
     const order = await Order.findById(id)
       .populate("user_id")
-      .populate({ path: "order_items.products" });
+      .populate({ path: "order_items.product" });
     if (!order) {
       return res.status(404).send("Order not found");
     }

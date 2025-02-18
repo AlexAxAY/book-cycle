@@ -8,12 +8,21 @@ const orderSchema = new mongoose.Schema(
     },
     order_items: [
       {
-        products: {
+        product: {
           type: mongoose.Schema.Types.ObjectId,
           ref: "Product",
           required: true,
         },
         quantity: { type: Number, required: true },
+        price_at_purchase: { type: Number, required: true },
+        discount_at_purchase: { type: Number, default: 0 },
+        final_price_at_purchase: { type: Number, required: true },
+        return_status: {
+          type: String,
+          enum: ["Not requested", "Requested", "Approved", "Rejected"],
+          default: "Not requested",
+        },
+        return_reason: { type: String, default: null },
       },
     ],
     address: {

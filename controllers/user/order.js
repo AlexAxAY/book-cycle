@@ -12,7 +12,7 @@ const orderSummary = async (req, res) => {
     const { id } = req.params;
     const order = await Order.findById(id)
       .populate({
-        path: "order_items.products",
+        path: "order_items.product",
       })
       .populate("coupon_applied");
 
@@ -20,7 +20,7 @@ const orderSummary = async (req, res) => {
       return console.log("order not found!");
     }
 
-    const productIds = order.order_items.map((item) => item.products._id);
+    const productIds = order.order_items.map((item) => item.product._id);
 
     const ratings = await Rating.find({
       user_id: req.user ? req.user.id : null,
@@ -200,16 +200,17 @@ const proceedToBuy = async (req, res) => {
       // Calculate coupon discount amount
       let couponDiscount = 0;
       if (coupon.discount_type === "percentage") {
-        couponDiscount = totalOriginalPrice * (coupon.discount_value / 100);
+        couponDiscount = totalAfterDiscount * (coupon.discount_value / 100);
       } else if (coupon.discount_type === "fixed") {
         couponDiscount = coupon.discount_value;
       }
-      // Add coupon discount on top of the existing product-level discount
-      totalDiscountAmount = totalDiscountAmount + couponDiscount;
+
+      // Apply coupon discount correctly on top of product-level discounts
+      totalDiscountAmount += couponDiscount;
+      totalAfterDiscount -= couponDiscount;
       couponApplied = coupon._id;
 
-      // Recalculate totals with the additional coupon discount
-      totalAfterDiscount = totalOriginalPrice - totalDiscountAmount;
+      // Recalculate final amounts
       deliveryCharge = totalAfterDiscount >= 500 ? 0 : 50;
       finalTotal = totalAfterDiscount + deliveryCharge;
     }
@@ -222,13 +223,28 @@ const proceedToBuy = async (req, res) => {
         .json({ success: false, message: "Shipping address not found." });
     }
 
-    // Create a new order
+    // Create a new order with updated order_items structure
     const newOrder = new Order({
       total_items: totalItems,
-      order_items: validCartItems.map((item) => ({
-        products: item.productId._id,
-        quantity: item.quantity,
-      })),
+      order_items: validCartItems.map((item) => {
+        const price = item.productId.price;
+        let discount = 0;
+        if (item.productId.discount_type === "percentage") {
+          discount = price * (item.productId.discount / 100);
+        } else if (item.productId.discount_type === "fixed") {
+          discount = item.productId.discount;
+        }
+        const finalPrice = price - discount;
+        return {
+          product: item.productId._id,
+          quantity: item.quantity,
+          price_at_purchase: price,
+          discount_at_purchase: discount,
+          final_price_at_purchase: finalPrice,
+          return_status: "Not requested",
+          return_reason: null,
+        };
+      }),
       address: {
         name: addressDoc.name,
         address_line: addressDoc.address_line,
@@ -259,7 +275,7 @@ const proceedToBuy = async (req, res) => {
         user_id: userId,
         order_id: newOrder._id,
         coupon_id: couponApplied,
-        used_at: new Date(), // Mark usage time
+        used_at: new Date(),
       });
       await newCouponUsage.save();
     }
@@ -324,7 +340,7 @@ const orders = async (req, res) => {
     const totalPages = Math.ceil(totalOrders / limit);
 
     const ordersData = await Order.find(query)
-      .populate({ path: "order_items.products" })
+      .populate({ path: "order_items.product" })
       .sort({ _id: -1 })
       .skip(skip)
       .limit(limit);
@@ -509,14 +525,14 @@ const applyCoupon = async (req, res) => {
       // Calculate coupon discount amount
       let couponDiscount = 0;
       if (coupon.discount_type === "percentage") {
-        couponDiscount = totalOriginalPrice * (coupon.discount_value / 100);
+        couponDiscount = totalAfterDiscount * (coupon.discount_value / 100);
       } else if (coupon.discount_type === "fixed") {
         couponDiscount = coupon.discount_value;
       }
 
-      totalDiscountAmount += couponDiscount;
+      // Deduct coupon discount
+      totalAfterDiscount -= couponDiscount;
 
-      totalAfterDiscount = totalOriginalPrice - totalDiscountAmount;
       deliveryCharge = totalAfterDiscount >= 500 ? 0 : 50;
       finalTotal = totalAfterDiscount + deliveryCharge;
     }

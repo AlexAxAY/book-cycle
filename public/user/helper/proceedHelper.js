@@ -22,6 +22,20 @@ document
       couponFeedback.textContent = "Please enter a coupon code.";
       couponFeedback.style.color = "red";
       couponFeedback.classList.remove("d-none");
+      document.getElementById("totalItems").textContent =
+        originalOrderSummary.totalItems;
+      document.getElementById("totalOriginalPrice").textContent =
+        originalOrderSummary.totalOriginalPrice;
+      document.getElementById("totalDiscountAmount").textContent =
+        originalOrderSummary.totalDiscountAmount;
+      document.getElementById("totalAfterDiscount").textContent =
+        originalOrderSummary.totalAfterDiscount;
+      document.getElementById("deliveryCharge").textContent =
+        originalOrderSummary.deliveryCharge;
+      document.getElementById("finalTotal").textContent =
+        originalOrderSummary.finalTotal;
+
+      window.appliedCoupon = ""; // Reset applied coupon
       return;
     }
 
