@@ -94,9 +94,9 @@
                     <div class="col-md-4">
                       <div class="row h-100" style="align-items: center">
                         <% order.order_items.forEach((item) => { %>
-                        <p class="m-0">
-                          🕮 <%= item.product.name %>(<%= item.quantity %>)
-                        </p>
+                          <p class="m-0">
+                            🕮 <%= item.product.name %> <small class="text-muted">(<%= item.quantity %> <%= item.quantity === 1 ? "book" : "books" %>)</small>
+                          </p>
                         <% }); %>
                       </div>
                     </div>

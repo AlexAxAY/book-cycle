@@ -50,13 +50,6 @@ const orderSchema = new mongoose.Schema(
     shippedAt: { type: Date },
     deliveredAt: { type: Date },
     payment_type: { type: String, enum: ["COD", "Razorpay"], require: true },
-    products: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Product",
-        require: true,
-      },
-    ],
     selling_price: { type: Number, required: true },
     total_selling_price: {
       type: Number,

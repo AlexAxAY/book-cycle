@@ -59,7 +59,6 @@
                     <hr>
                     <button class="btn btn-outline-danger btn-sm" data-productId="<%= item.product._id %>">Return product</button>
                   <% } %>
-                  
                 </div>
                 <img
                   style="max-width: 70px; max-height: 107px;"
@@ -191,6 +190,7 @@
                 <% if (order.coupon_applied) {%>
                 <P>Coupon used</P>
                 <p>Coupon discount</p>
+                <p>Product discount</p>
                 <% } %>
                 <p>Total discount</p>
                 <p>Price after discount</p>
@@ -201,10 +201,11 @@
                 <% if (order.coupon_applied) {%>
                   <p>yes</p>
                   <% if (order.coupon_applied.discount_type === "percentage") {%>
-                    <p class="text-success"><%= order.coupon_applied.discount_value %>%</p>
+                    <p class="text-success"><%= order.coupon_applied.discount_value %>% (₹<%= couponDiscountValue %>)</p>
                   <% } else {%>
                     <p class="text-success">₹<%= order.coupon_applied.discount_value %></p>
                    <% } %> 
+                   <p class="text-success">₹<%= totalProductDiscount %></p>
                   <% } %> 
                 <p class="text-success">
                   ₹<%= order.total_discount.toFixed(2) %>

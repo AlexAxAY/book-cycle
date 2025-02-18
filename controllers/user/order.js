@@ -50,6 +50,17 @@ const orderSummary = async (req, res) => {
       orderCancelled = moment(cancel.createdAt).format("MMMM Do YYYY, h:mm A");
     }
 
+    const totalBeforeCoupon = order.order_items.reduce(
+      (acc, item) => acc + item.quantity * item.final_price_at_purchase,
+      0
+    );
+    const couponDiscountValue = totalBeforeCoupon - order.final_amount;
+
+    const totalProductDiscount = order.order_items.reduce(
+      (acc, item) => acc + item.discount_at_purchase * item.quantity,
+      0
+    );
+
     return res.render("user/orderSummary", {
       order,
       orderCreated,
@@ -59,6 +70,8 @@ const orderSummary = async (req, res) => {
       orderCancelled,
       cancel,
       ratedProducts,
+      couponDiscountValue,
+      totalProductDiscount,
     });
   } catch (err) {
     console.log("Error in orderSummary controller", err);
