@@ -27,7 +27,14 @@ const {
 } = require("../controllers/admin/adminUserCtrl.js");
 
 // Requiring coupon controllers
-const { couponForm, addCoupon } = require("../controllers/admin/coupon.js");
+const {
+  couponForm,
+  addCoupon,
+  allCoupons,
+  editCoupon,
+  couponUpdateForm,
+  deleteCoupon,
+} = require("../controllers/admin/coupon.js");
 
 // Requiring auth controllers
 const {
@@ -118,5 +125,11 @@ router.route("/order/:id").get(getSingleOrder).post(updateOrderStatus);
 
 // Coupon routes
 router.route("/add-coupon").get(couponForm).post(addCoupon);
+router.route("/coupons").get(allCoupons);
+router
+  .route("/coupon/:id")
+  .put(editCoupon)
+  .get(couponUpdateForm)
+  .delete(deleteCoupon);
 
 module.exports = router;

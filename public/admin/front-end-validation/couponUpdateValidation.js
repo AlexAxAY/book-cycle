@@ -87,15 +87,18 @@ document.addEventListener("DOMContentLoaded", function () {
       description: descriptionInput.value.trim(),
       active: activeTrueInput.checked ? true : false,
     };
-
+    const id = window.location.pathname.split("/").pop();
     try {
-      const response = await axios.put("/admin/add-coupon", payload);
+      const response = await axios.put(`/admin/coupon/${id}`, payload);
       if (response.data.success) {
         showAlert(
           alertGood,
-          response.data.message || "Coupon added successfully!"
+          response.data.message || "Coupon updated successfully!"
         );
         form.reset();
+        setTimeout(() => {
+          window.location.href = "/admin/coupons";
+        }, 500);
       } else {
         showAlert(alertBad, response.data.message || "Something went wrong.");
       }

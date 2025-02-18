@@ -36,6 +36,7 @@ const {
   proceedToBuy,
   orders,
   cancelOrder,
+  applyCoupon,
 } = require("../controllers/user/order");
 
 // checkout
@@ -168,6 +169,9 @@ router
   .get(preventCache, checkingAuth, orderSummary)
   .post(checkingAuth, cancelOrder);
 router.route("/orders").get(checkingAuth, orders);
+
+// apply coupon route
+router.route("/apply-coupon").post(applyCoupon);
 
 // review routes
 router

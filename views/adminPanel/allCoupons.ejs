@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Coupons</title>
+
+    <!-- css -->
+    <link rel="stylesheet" href="/admin/stylesheets/allCoupons.css" />
+
+    <!-- bootstrap -->
+    <%- include("../partials/admin/bootLink.ejs") %>
+
+    <!-- google fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Port+Lligat+Slab&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <!-- sidebar -->
+    <div style="width: 200px; position: fixed">
+      <%- include("../partials/admin/adminNavbar.ejs") %>
+    </div>
+
+    <!-- alert -->
+    <%- include("../partials/user/alertMessage.ejs") %>
+
+    <section class="container" style="margin-left: 210px">
+      <div
+        class="main-section d-flex"
+        style="
+          min-height: calc(100vh - 60px);
+          align-items: center;
+          flex-direction: column;
+        "
+      >
+        <% if (coupons.length > 0) {%>
+        <h3 class="my-5">Coupons</h3>
+        <% coupons.forEach((coupon)=> { %>
+        <div
+          class="mb-2"
+          style="
+            background: linear-gradient(to right, #ff7e5f, #feb47b);
+            padding: 10px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            height: fit-content;
+            min-width: 730px;
+          "
+        >
+          <p><strong class="fs-5"><%= coupon.coupon_code %> <% if(coupon.active === true) {%>
+            <span class="text-success">(Active)</span>
+             <% } else {%>
+              <span class="text-danger">(Inactive)</span>
+             <% } %>
+             </strong>
+          </p>
+          <p class="m-0 mb-2"><%= coupon.description %></p>
+          <div style="display: flex; justify-content: end">
+            <a
+              href="/admin/coupon/<%= coupon._id %>"
+              class="mx-2"
+              style="
+                background-color: #007bff;
+                text-decoration: none;
+                color: white;
+                border: none;
+                padding: 5px 10px;
+                border-radius: 5px;
+              "
+            >
+              Edit
+            </a>
+            <button
+              class="mx-2 delete-btn"
+              data-id="<%= coupon._id %>"
+              style="
+                background-color: #dc3545;
+                color: white;
+                border: none;
+                padding: 5px 10px;
+                border-radius: 5px;
+              "
+            >
+              Delete
+            </button>
+          </div>
+        </div>
+        <% }) %> <% } else { %>
+        <p class="mt-5 fs-3">No coupons</p>
+        <% } %>
+      </div>
+    </section>
+
+    <!-- Confirmation Modal (Bootstrap 5 structure) -->
+    <div
+      class="modal fade"
+      id="confirmDeleteModal"
+      tabindex="-1"
+      aria-labelledby="confirmDeleteModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="confirmDeleteModalLabel">
+              Confirm Deletion
+            </h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            Are you sure you want to delete this coupon?
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-danger" id="confirmDelete">
+              Delete
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- footer -->
+    <%- include("../partials/admin/adminFooter.ejs") %>
+
+    <!-- js logout validation file -->
+    <script src="/admin/front-end-validation/logoutValidation.js"></script>
+
+    <!-- coupon delete helper -->
+    <script src="/admin/helper/couponDeleteHelper.js"></script>
+
+    <!-- bootstrap -->
+    <%- include("../partials/admin/bootScript.ejs") %>
+
+    <!-- axios -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  </body>
+</html>

@@ -222,42 +222,57 @@
 
         <!-- Order Summary Section -->
         <div class="col-md-4">
-          <div
-            class="card p-3 mb-3"
-            style="
-              border: none;
-              box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1),
-                0 6px 20px rgba(0, 0, 0, 0.1);
-            "
-          >
-            <h2 class="text-center mb-5">Order Summary</h2>
-
-            <div class="row">
-              <div class="col text-start">
-                <p>Total items</p>
-                <p>Total selling price</p>
-                <p>Total Discount</p>
-                <p>Sub total</p>
-                <p>Shipping fee</p>
-              </div>
-              <div class="col text-end">
-                <p><%= checkoutData.totalItems%></p>
-                <p>₹ <%= checkoutData.totalOriginalPrice%></p>
-                <p>₹ <%= checkoutData.totalDiscountAmount%></p>
-                <p>₹ <%= checkoutData.totalAfterDiscount %></p>
-                <p>₹ <%= checkoutData.deliveryCharge %></p>
-              </div>
+          <!-- coupon input -->
+          <div class="mb-3">
+            <label for="couponCode" class="form-label">Have a Coupon?</label>
+            <div class="input-group">
+              <input type="text" id="couponCode" class="form-control" placeholder="Enter coupon code" />
+              <button id="applyCouponBtn" class="btn btn-primary btn-sm">Apply Coupon</button>
             </div>
-            <hr />
-            <div class="row">
-              <div class="col text-start">
-                <p>Estimated total</p>
-              </div>
-              <div class="col text-end">
-                <p>₹ <%= checkoutData.finalTotal %></p>
-              </div>
-            </div>
+            <small id="couponFeedback" class="d-none"></small>
           </div>
+          <div class="mb-2">
+            <button 
+              class="btn btn-primary" 
+              style="border: none; background-color: white; color: #023e8a;" 
+              data-bs-toggle="modal" 
+              data-bs-target="#couponModal">
+              Check available coupons
+            </button>
+          </div>
+          <div 
+  class="card p-3 mb-3"
+  style="border: none; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 0 6px 20px rgba(0, 0, 0, 0.1);"
+>
+  <h2 class="text-center mb-5">Order Summary</h2>
+
+  <div class="row">
+    <div class="col text-start">
+      <p>Total items</p>
+      <p>Total selling price</p>
+      <p>Total Discount</p>
+      <p>Sub total</p>
+      <p>Shipping fee</p>
+    </div>
+    <div class="col text-end">
+      <p id="totalItems"><%= checkoutData.totalItems %></p>
+      <p id="totalOriginalPrice">₹ <%= checkoutData.totalOriginalPrice.toFixed(2) %></p>
+      <p id="totalDiscountAmount">₹ <%= checkoutData.totalDiscountAmount.toFixed(2) %></p>
+      <p id="totalAfterDiscount">₹ <%= checkoutData.totalAfterDiscount.toFixed(2) %></p>
+      <p id="deliveryCharge">₹ <%= checkoutData.deliveryCharge %></p>
+    </div>
+  </div>
+  <hr />
+  <div class="row">
+    <div class="col text-start">
+      <p>Estimated total</p>
+    </div>
+    <div class="col text-end">
+      <p id="finalTotal">₹ <%= checkoutData.finalTotal %></p>
+    </div>
+  </div>
+</div>
+
           <div
             class="card p-3 mb-3"
             style="
@@ -345,6 +360,43 @@
       </div>
     </div>
 
+    <!-- Coupon Modal -->
+<div class="modal fade" id="couponModal" tabindex="-1" aria-labelledby="couponModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="couponModalLabel">Available Coupons</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <% if (coupons && coupons.length > 0) { %>
+          <div class="list-group">
+            <% coupons.forEach((coupon) => { %>
+              <div class="list-group-item mb-2" style="background: linear-gradient(to right, #ff7e5f, #feb47b);">
+                <div class="d-flex w-100 justify-content-between">
+                  <h5 class="mb-1"><%= coupon.coupon_code %></h5>
+                  <small>Min Order: ₹<%= coupon.min_order_value %></small>
+                </div>
+                <p class="mb-1"><%= coupon.description %></p>
+                <small>
+                  Discount: 
+                  <% if(coupon.discount_type === 'percentage') { %>
+                    <%= coupon.discount_value %>%
+                  <% } else { %>
+                    ₹<%= coupon.discount_value %>
+                  <% } %>
+                </small>
+              </div>
+            <% }) %>
+          </div>
+        <% } else { %>
+          <p>No coupons available at the moment.</p>
+        <% } %>
+      </div>
+    </div>
+  </div>
+</div>
+
     <!-- footer partial -->
     <footer><%- include("../partials/user/userFooter.ejs") %></footer>
 
@@ -359,6 +411,8 @@
 
     <!-- checkout page -->
     <script src="/user/helper/checkoutPageHelper.js"></script>
+
+    <!-- proceed to buy helper -->
     <script src="/user/helper/proceedHelper.js"></script>
 
     <!-- remove the flash -->

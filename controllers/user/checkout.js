@@ -1,10 +1,11 @@
 const { Cart, CartItem } = require("../../models/cartSchemas");
+const { Coupon, CouponUsage } = require("../../models/couponSchemas");
 const Address = require("../../models/addressSchema");
 const State = require("../../models/stateSchema");
 
 const checkoutPage = async (req, res) => {
   try {
-    const userId = req.user ? req.user.id : null;
+    const userId = req.user.id;
 
     const cart = await Cart.findOne({ userId });
     if (!cart) {
@@ -95,6 +96,15 @@ const checkoutPage = async (req, res) => {
       console.log("No states found");
     }
 
+    // finding avaialble coupons
+    const usedCoupons = await CouponUsage.find({ user_id: userId });
+    const usedCouponIds = usedCoupons.map((usage) => usage.coupon_id);
+    const availableCoupons = await Coupon.find({
+      active: true,
+      is_deleted: false,
+      _id: { $nin: usedCouponIds },
+    });
+
     return res.render("user/checkoutPage", {
       checkoutData: {
         totalItems,
@@ -108,6 +118,7 @@ const checkoutPage = async (req, res) => {
       addresses,
       states,
       validCartItems,
+      coupons: availableCoupons,
     });
   } catch (error) {
     console.error("Error rendering checkout page:", error);

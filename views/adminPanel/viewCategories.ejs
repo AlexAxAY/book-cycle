@@ -49,7 +49,7 @@
       "
     ></div>
 
-    <section class="container mt-5">
+    <section class="container">
       <div
         class="main-section d-flex"
         style="
@@ -58,7 +58,7 @@
           justify-content: center;
         "
       >
-        <div class="row">
+        <div class="row mt-5">
           <h4 class="mb-5">All Categories</h4>
           <% datas.forEach((data) => { %> <% if (!data.is_deleted) { %>
           <!-- Check if is_deleted is false -->
@@ -72,8 +72,9 @@
                 <a
                   href="/admin/manage-category/<%= data._id %>"
                   class="btn btn-outline-primary btn-sm"
-                  >Update</a
                 >
+                  Update
+                </a>
 
                 <button
                   type="button"
@@ -108,10 +109,9 @@
                 ></button>
               </div>
               <div class="modal-body">
-                Are you sure you want to delete the category "<span
-                  id="categoryNamePlaceholder"
-                ></span
-                >"?
+                Are you sure you want to delete the category "
+                <span id="categoryNamePlaceholder"></span>
+                "?
               </div>
               <div class="modal-footer">
                 <button

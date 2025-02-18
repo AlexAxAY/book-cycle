@@ -54,7 +54,8 @@ const orderSchema = new mongoose.Schema(
       required: true,
     },
     coupon_applied: {
-      type: String,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Coupon",
       default: null,
     },
     delivery_charge: {
