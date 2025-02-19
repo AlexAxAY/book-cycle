@@ -48,6 +48,7 @@ const {
   allOrders,
   getSingleOrder,
   updateOrderStatus,
+  handleReturnDecision,
 } = require("../controllers/admin/orders.js");
 
 // Requiring product controllers
@@ -122,6 +123,7 @@ router.route("/user/details/:id").get(userDetailsPage);
 // Order routes
 router.route("/all-orders").get(allOrders);
 router.route("/order/:id").get(getSingleOrder).post(updateOrderStatus);
+router.route("/order/return/:id").post(handleReturnDecision);
 
 // Coupon routes
 router.route("/add-coupon").get(couponForm).post(addCoupon);

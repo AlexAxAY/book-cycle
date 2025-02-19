@@ -23,6 +23,12 @@ const { getProfile, updateProfile } = require("../controllers/user/profile");
 // user review
 const { reviewPage, submitReview } = require("../controllers/user/review");
 
+// user wallet
+const { viewWallet } = require("../controllers/user/wallet");
+
+// user coupons
+const { viewCoupons } = require("../controllers/user/coupon");
+
 // user wishlist
 const {
   wishlistPage,
@@ -37,6 +43,8 @@ const {
   orders,
   cancelOrder,
   applyCoupon,
+  requestReturn,
+  getWalletBalance,
 } = require("../controllers/user/order");
 
 // checkout
@@ -164,14 +172,14 @@ router
   .put(checkingAuth, checkoutAddressUpdate);
 
 // order routes
+router.route("/order/return/:id").post(checkingAuth, requestReturn);
 router
   .route("/order/:id")
   .get(preventCache, checkingAuth, orderSummary)
   .post(checkingAuth, cancelOrder);
 router.route("/orders").get(checkingAuth, orders);
-
-// apply coupon route
-router.route("/apply-coupon").post(applyCoupon);
+router.route("/apply-coupon").post(checkingAuth, applyCoupon);
+router.route("/wallet-balance").get(checkingAuth, getWalletBalance);
 
 // review routes
 router
@@ -185,5 +193,11 @@ router
   .route("/wishlist/:id")
   .post(checkingAuth, addToWishlist)
   .delete(checkingAuth, removeFromWishlist);
+
+// wallet routes
+router.route("/wallet").get(checkingAuth, viewWallet);
+
+// coupon route
+router.route("/coupons").get(checkingAuth, viewCoupons);
 
 module.exports = router;

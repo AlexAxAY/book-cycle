@@ -1,5 +1,6 @@
 const { Cart, CartItem } = require("../../models/cartSchemas");
 const { Coupon, CouponUsage } = require("../../models/couponSchemas");
+const { Wallet, WalletTransaction } = require("../../models/walletSchemas");
 const Order = require("../../models/orderSchema");
 const Address = require("../../models/addressSchema");
 const Product = require("../../models/productSchema");
@@ -122,7 +123,6 @@ const proceedToBuy = async (req, res) => {
     if (validCartItems.length === 0) {
       return res.status(400).json({
         success: false,
-        zero: true,
         message: "All items in your cart are out of stock.",
       });
     }
@@ -293,6 +293,32 @@ const proceedToBuy = async (req, res) => {
       await newCouponUsage.save();
     }
 
+    // **NEW WALLET LOGIC**
+    if (
+      req.body.walletApplied &&
+      req.body.walletAmount &&
+      req.body.walletAmount > 0
+    ) {
+      let wallet = await Wallet.findOne({ user: userId });
+      if (!wallet) {
+        // Create a wallet if it doesn't exist
+        wallet = await Wallet.create({ user: userId, balance: 0 });
+      }
+      // Deduct the applied wallet amount
+      wallet.balance -= req.body.walletAmount;
+      await wallet.save();
+
+      // Log the wallet transaction
+      await WalletTransaction.create({
+        wallet: wallet._id,
+        type: "debit",
+        amount: req.body.walletAmount,
+        order: newOrder._id,
+        description: "Wallet used for order payment",
+      });
+    }
+    // **END WALLET LOGIC**
+
     // Reduce stock for each valid item
     await Promise.all(
       validCartItems.map(async (item) => {
@@ -416,7 +442,7 @@ const cancelOrder = async (req, res) => {
     await Promise.all(
       order.order_items.map(async (item) => {
         const updatedProduct = await Product.findByIdAndUpdate(
-          item.products,
+          item.product,
           { $inc: { count: item.quantity } },
           { new: true }
         );
@@ -568,10 +594,95 @@ const applyCoupon = async (req, res) => {
   }
 };
 
+const requestReturn = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const { productId, reason } = req.body;
+
+    if (!reason) {
+      return res.status(400).json({
+        success: false,
+        message: "A valid reason is required",
+      });
+    }
+
+    const order = await Order.findById(id);
+    if (!order) {
+      return res.status(404).json({
+        success: false,
+        message: "Order not found",
+      });
+    }
+
+    // Check that the order's status is "Delivered"
+    if (order.status !== "Delivered") {
+      return res.status(400).json({
+        success: false,
+        message: "Return requests are only allowed for delivered orders",
+      });
+    }
+
+    // Find the order item for the given productId
+    const orderItem = order.order_items.find(
+      (item) => item.product.toString() === productId
+    );
+    if (!orderItem) {
+      return res.status(404).json({
+        success: false,
+        message: "Product not found in order.",
+      });
+    }
+
+    // Check that the product has not already had a return request made
+    if (orderItem.return_status !== "Not requested") {
+      return res.status(400).json({
+        success: false,
+        message:
+          "Return request has already been submitted or processed for this product",
+      });
+    }
+
+    // Update the order item with the return request details
+    orderItem.return_status = "Requested";
+    orderItem.return_reason = reason;
+
+    // Save the updated order document
+    await order.save();
+
+    return res.json({
+      success: true,
+      message: "Return request submitted successfully",
+    });
+  } catch (error) {
+    console.error("Error processing return request:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
+};
+
+const getWalletBalance = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const wallet = await Wallet.findOne({ user: userId });
+    const balance = wallet ? wallet.balance : 0;
+    return res.json({ balance });
+  } catch (error) {
+    console.error("Error fetching wallet balance:", error);
+    return res.status(500).json({
+      balance: 0,
+      message: "Error fetching wallet balance.",
+    });
+  }
+};
+
 module.exports = {
   orderSummary,
   proceedToBuy,
   orders,
   cancelOrder,
   applyCoupon,
+  requestReturn,
+  getWalletBalance,
 };

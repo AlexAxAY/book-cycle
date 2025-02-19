@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Profile</title>
+
+    <!-- css -->
+    <link rel="stylesheet" href="/user/stylesheets/allCouponsPage.css" />
+
+    <!-- icon link -->
+    <%- include("../partials/user/iconLink.ejs") %>
+
+    <!-- bootstrap link -->
+    <%- include("../partials/admin/bootLink.ejs") %>
+  </head>
+  <body>
+    <!-- navbar -->
+    <header><%- include("../partials/user/userNavbar.ejs") %></header>
+
+    <!-- alert -->
+    <%- include("../partials/user/alertMessage.ejs") %>
+
+    <section class="container-main">
+      <!-- Sidebar -->
+      <%- include("../partials/user/sideBar.ejs") %>
+
+      <div class="content">
+        <% if (coupons.length > 0) {%>
+        <h3 class="my-3">Coupons</h3>
+        <% coupons.forEach((coupon)=> { %>
+        <div
+          class="mb-2 coupon-sec"
+          style="
+            background: linear-gradient(to right, #ff7e5f, #feb47b);
+            padding: 10px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            height: fit-content;
+            max-width: 600px;
+          "
+        >
+          <p>
+            <strong class="fs-5"><%= coupon.coupon_code %></strong>
+          </p>
+          <p class="m-0 mb-2"><%= coupon.description %></p>
+        </div>
+        <% }) %> <% } else { %>
+        <p class="mt-5 fs-3">No coupons</p>
+        <% } %>
+      </div>
+    </section>
+
+    <!-- footer partial -->
+    <footer><%- include("../partials/user/userFooter.ejs") %></footer>
+
+    <!-- logout -->
+    <script src="/user/helper/logoutHelper.js"></script>
+
+    <!-- pending user clear -->
+    <script src="/user/helper/removePendingUser.js"></script>
+
+    <!-- Include Axios -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+    <!-- bootstrap -->
+    <%- include("../partials/admin/bootScript.ejs") %>
+  </body>
+</html>

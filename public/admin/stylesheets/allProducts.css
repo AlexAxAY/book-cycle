@@ -100,3 +100,7 @@ input[type="number"]::-webkit-inner-spin-button {
   float: right;
   margin-top: 4px;
 }
+
+.return-decision-form {
+  border: 1px solid rgba(0, 0, 0, 0.5);
+}

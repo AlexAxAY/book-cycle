@@ -23,6 +23,7 @@ const orderSchema = new mongoose.Schema(
           default: "Not requested",
         },
         return_reason: { type: String, default: null },
+        admin_message: { type: String, default: null },
       },
     ],
     address: {

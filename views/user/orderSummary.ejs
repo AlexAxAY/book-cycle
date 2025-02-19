@@ -56,9 +56,22 @@
                         <small style="color: green;">Thank you for rating!</small>👍
                       </p>
                     <% } %>
-                    <hr>
-                    <button class="btn btn-outline-danger btn-sm" data-productId="<%= item.product._id %>">Return product</button>
+                    
+                    <% if(item.return_status === "Not requested") {%>
+                      <hr>
+                    <button class="btn btn-outline-danger btn-sm return-order-btn" data-product-id="<%= item.product._id %>">
+                      Return product
+                    </button>
+                    <% } %>
                   <% } %>
+                  <% if (item.return_status === "Approved") {%>
+                    <hr>
+                    <p class="m-0">Your return request for this product is approved.</p>
+                    <p><small class="text-success">Amount has refunded to your wallet</small></p>
+                  <% } else { %>
+                    <p class="m-0">Your return request for this product is rejected.</p>
+                    <p><small class="text-danger"><%= item.admin_message %></small></p>
+                   <% } %> 
                 </div>
                 <img
                   style="max-width: 70px; max-height: 107px;"
@@ -201,7 +214,7 @@
                 <% if (order.coupon_applied) {%>
                   <p>yes</p>
                   <% if (order.coupon_applied.discount_type === "percentage") {%>
-                    <p class="text-success"><%= order.coupon_applied.discount_value %>% (₹<%= couponDiscountValue %>)</p>
+                    <p class="text-success"><%= order.coupon_applied.discount_value %>% (₹<%= couponDiscountValue.toFixed(2) %>)</p>
                   <% } else {%>
                     <p class="text-success">₹<%= order.coupon_applied.discount_value %></p>
                    <% } %> 
@@ -303,6 +316,19 @@
   </div>
 </div>
 
+<!-- Return Order Modal -->
+<div id="returnModal" class="custom-modal d-none" 
+style=
+"position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+ background: rgba(0,0,0,0.5); display: flex; align-items: center;
+ justify-content: center;">
+  <div class="modal-content" style="background: #fff; padding: 20px; border-radius: 5px; width: 500px; position: relative;">
+    <span id="returnCloseModal" style="cursor: pointer;">&times;</span>
+    <h3>Return Product</h3>
+    <textarea id="returnReason" placeholder="Enter a valid reason" style="width: 100%; height: 50px;"></textarea>
+    <button id="submitReturn" style="margin-top: 10px;">Submit Return</button>
+  </div>
+</div>
 
 
     <!-- footer partial -->
@@ -313,6 +339,9 @@
 
     <!-- pending user clear -->
     <script src="/user/helper/removePendingUser.js"></script>
+
+    <!-- return order helper -->
+    <script src="/user/helper/returnOrderHelper.js"></script>
 
     <!-- cancel order helper -->
     <script src="/user/helper/cancelOrderHelper.js"></script>

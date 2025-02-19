@@ -1,5 +1,6 @@
 <div class="sidebar">
   <h5>Hello, <%= user.name %></h5>
+
   <a
     href="/user/profile"
     class="<%= currentURL === '/user/profile' ? 'active' : '' %>"
@@ -29,6 +30,12 @@
     class="<%= currentURL === '/user/coupons' ? 'active' : '' %>"
   >
     My Coupons
+  </a>
+  <a
+    href="/user/wallet"
+    class="<%= currentURL === '/user/wallet' ? 'active' : '' %>"
+  >
+    My Wallet
   </a>
   <a
     href="/user/ratings-reviews"

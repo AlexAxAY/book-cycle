@@ -35,7 +35,7 @@
         <h2>Order details</h2>
 
         <!-- Order Details Card -->
-        <div class="card w-75 mt-4">
+        <div class="card w-75 my-4">
           <div class="card-body">
             <h5 class="card-title">Order ID: <%= order._id %></h5>
             <hr />
@@ -49,7 +49,12 @@
                   <strong>Order Date:</strong>
                   <%= orderCreated %>
                 </p>
-                <% if(order.status === "Cancelled") {%>
+                <% if(order.status === "Delivered") {%>
+                <p class="card-text">
+                  <strong>Deliver Date:</strong>
+                  <%= orderDelivered %>
+                </p>
+                <% } %> <% if(order.status === "Cancelled") {%>
                 <p class="card-text">
                   <strong>Order Cancel Date:</strong>
                   <%= orderCancelled %>
@@ -110,6 +115,25 @@
               </div>
             </div>
           </div>
+          
+          <div class="p-3">
+            <hr>
+            <% if (returnDecisions) {%>
+              <p class="fs-4"><strong>Return details</strong></p>
+              <% returnDecisions.forEach((item)=>{ %>
+                <p class="card-text">
+                  <strong>Product name:</strong>
+                  <%= item.product.name %> 
+                  <% if (item.return_status === "Approved") { %>
+                  <span style="color: green;">(Approved)</span>
+                  <% } else { %>
+                  <span style="color: red;">(Rejected)</span>
+                  <% } %>
+
+                </p>
+              <% }) %>
+              <% } %>
+          </div>
         </div>
 
         <!-- Status Update Form -->
@@ -130,6 +154,37 @@
           </form>
         </div>
         <% } %>
+
+        <% order.order_items.forEach((item) => { 
+          if(item.return_status === "Requested") { %>
+       <div class="return-decision-form p-3 my-3" data-product-id="<%= item.product._id %>">
+         <p class="fs-4">
+           Return request for <strong><%= item.product.name %></strong> (Quantity: <%= item.quantity %>)
+         </p>
+         <p>Reason for return: <%= item.return_reason %> </p>
+         <form class="return-decision-form-inner">
+           <div class="form-group">
+             <label for="returnDecision-<%= item.product._id %>">
+               Update Return Status:
+             </label>
+             <select name="decision" id="returnDecision-<%= item.product._id %>" class="form-control">
+               <option value="">Select Decision</option>
+               <option value="Approved">Approved</option>
+               <option value="Rejected">Rejected</option>
+             </select>
+           </div>
+           <!-- Textarea for providing a reason -->
+           <div class="form-group mt-2">
+             <label for="adminMessage-<%= item.product._id %>">Reason:</label>
+             <textarea name="adminMessage" id="adminMessage-<%= item.product._id %>" class="form-control" rows="2" placeholder="Enter reason..."></textarea>
+           </div>
+           <button type="submit" class="btn btn-primary mt-3">Submit</button>
+         </form>
+         <div class="return-decision-result mt-2" style="display: none;"></div>
+       </div>
+     <% } }); %>
+     
+     
       </div>
     </section>
 
@@ -182,7 +237,11 @@
     <!-- js logout validation file -->
     <script src="/admin/front-end-validation/logoutValidation.js"></script>
 
+    <!-- single order helper -->
     <script src="/admin/helper/singleOrderHelper.js"></script>
+
+    <!-- return order validation -->
+    <script src="/admin/front-end-validation/returnOrderValidation.js"></script>
 
     <!-- bootstrap -->
     <%- include("../partials/admin/bootScript.ejs") %>
