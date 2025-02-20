@@ -16,14 +16,25 @@ function showSuccessAlert(message) {
   }, 3000);
 }
 
-function openReturnModal(productId) {
+// Modified openReturnModal accepts extra parameters to show product info.
+function openReturnModal(productId, productName, productQuantity) {
   const modal = document.getElementById("returnModal");
   if (!modal) {
     console.error("Return modal not found.");
     return;
   }
-  modal.classList.remove("d-none");
+  // Store data in the modal's dataset.
   modal.dataset.productId = productId;
+  modal.dataset.productName = productName;
+  modal.dataset.productQuantity = productQuantity;
+
+  // Update the modal content to display product name and quantity.
+  const productInfoEl = document.getElementById("returnProductInfo");
+  if (productInfoEl) {
+    productInfoEl.textContent = `Returning: ${productName} (Quantity: ${productQuantity})`;
+  }
+
+  modal.classList.remove("d-none");
 }
 
 const id = window.location.pathname.split("/").pop();
@@ -44,15 +55,15 @@ document.addEventListener("DOMContentLoaded", () => {
     console.error("Return modal close element not found.");
   }
 
-  // Attach event listeners to all return-order buttons
   document.querySelectorAll(".return-order-btn").forEach((button) => {
     button.addEventListener("click", () => {
       const productId = button.getAttribute("data-product-id");
-      openReturnModal(productId);
+      const productName = button.getAttribute("data-product-name");
+      const productQuantity = button.getAttribute("data-product-quantity");
+      openReturnModal(productId, productName, productQuantity);
     });
   });
 
-  // Submit the return request
   document
     .getElementById("submitReturn")
     .addEventListener("click", async () => {
@@ -60,7 +71,6 @@ document.addEventListener("DOMContentLoaded", () => {
       const productId = modal.dataset.productId;
       const reason = document.getElementById("returnReason").value.trim();
 
-      // Ensure the return reason is provided
       if (!reason) {
         showErrorAlert("Return reason is required.");
         return;
@@ -90,7 +100,7 @@ document.addEventListener("DOMContentLoaded", () => {
         );
         console.error(error);
       } finally {
-        // Close modal and clear the textarea
+        // Close modal and clear the textarea.
         modal.classList.add("d-none");
         document.getElementById("returnReason").value = "";
       }

@@ -1,11 +1,13 @@
 const Product = require("../../models/productSchema");
 const Order = require("../../models/orderSchema");
 const Review = require("../../models/ratingSchema");
+const moment = require("moment");
 
 const reviewPage = async (req, res) => {
   try {
     const { id } = req.params;
     const { order_id, rating } = req.query;
+    const user_id = req.user.id;
 
     const product = await Product.findById(id);
     if (!product) {
@@ -21,6 +23,11 @@ const reviewPage = async (req, res) => {
       return res
         .status(403)
         .send("You cannot review this product until it is delivered.");
+    }
+
+    const existingReview = await Review.findOne({ user_id, product_id: id });
+    if (existingReview) {
+      return res.status(400).send("Product already reviewed");
     }
 
     return res.render("user/reviewPage", { product, rating });
@@ -84,4 +91,17 @@ const submitReview = async (req, res) => {
   }
 };
 
-module.exports = { reviewPage, submitReview };
+const allReviews = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const reviews = await Review.find({ user_id: userId }).populate(
+      "product_id"
+    );
+    return res.render("user/allReviews", { reviews, moment });
+  } catch (err) {
+    return console.log("Error from allReviews controller", err);
+    return res.status(500).send("An error occurred while fetching reviews");
+  }
+};
+
+module.exports = { reviewPage, submitReview, allReviews };

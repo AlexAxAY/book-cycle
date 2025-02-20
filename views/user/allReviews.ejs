@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Reviews</title>
+
+    <!-- css -->
+    <link rel="stylesheet" href="/user/stylesheets/allReviews.css" />
+
+    <!-- icon link -->
+    <%- include("../partials/user/iconLink.ejs") %>
+
+    <!-- bootstrap link -->
+    <%- include("../partials/admin/bootLink.ejs") %>
+  </head>
+  <body>
+    <!-- navbar -->
+    <header><%- include("../partials/user/userNavbar.ejs") %></header>
+
+    <!-- alert -->
+    <%- include("../partials/user/alertMessage.ejs") %>
+
+    <section class="container-main">
+      <!-- Sidebar -->
+      <%- include("../partials/user/sideBar.ejs") %>
+
+      <!-- Profile Section -->
+      <div class="content">
+        <h2 class="mb-4">Reviews</h2>
+        <% reviews.forEach((review)=> { %>
+        <div
+          class="row my-2 p-2"
+          style="
+            justify-content: space-around;
+            align-items: center;
+            border: 1px solid rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+          "
+        >
+          <div class="col-2">
+            <img
+              style="width: 70px"
+              src="<%= review.product_id.images[0].cropped_url || review.product_id.images[0].original_url %>"
+              alt="book cover"
+            />
+            <span><%= review.product_id.name %></span>
+          </div>
+          <div class="col-1">
+            <div class="rating-badge">
+              <small><%= review.rating %></small>
+              <span class="star-icon">★</span>
+            </div>
+          </div>
+          <div class="col-5">
+            <%= review.description %>
+            <p class="m-0">
+              <small class="text-muted" style="font-size: 12px">
+                <%= moment(review.createdAt).format( "MMMM Do YYYY" ); %>
+              </small>
+            </p>
+          </div>
+        </div>
+        <% }) %>
+      </div>
+    </section>
+    <!-- footer partial -->
+    <footer><%- include("../partials/user/userFooter.ejs") %></footer>
+
+    <!-- logout -->
+    <script src="/user/helper/logoutHelper.js"></script>
+
+    <!-- pending user clear -->
+    <script src="/user/helper/removePendingUser.js"></script>
+
+    <!-- Include Axios -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+    <!-- bootstrap -->
+    <%- include("../partials/admin/bootScript.ejs") %>
+  </body>
+</html>

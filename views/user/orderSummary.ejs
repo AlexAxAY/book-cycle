@@ -59,18 +59,25 @@
                     
                     <% if(item.return_status === "Not requested") {%>
                       <hr>
-                    <button class="btn btn-outline-danger btn-sm return-order-btn" data-product-id="<%= item.product._id %>">
+                      <button class="btn btn-outline-danger btn-sm return-order-btn" 
+                      data-product-id="<%= item.product._id %>" 
+                      data-product-name="<%= item.product.name %>" 
+                      data-product-quantity="<%= item.quantity %>">
                       Return product
-                    </button>
+                    </button>                    
                     <% } %>
                   <% } %>
                   <% if (item.return_status === "Approved") {%>
                     <hr>
                     <p class="m-0">Your return request for this product is approved.</p>
                     <p><small class="text-success">Amount has refunded to your wallet</small></p>
-                  <% } else { %>
+                  <% } else if (item.return_status === "Rejected") { %>
+                    <hr>
                     <p class="m-0">Your return request for this product is rejected.</p>
                     <p><small class="text-danger"><%= item.admin_message %></small></p>
+                   <% } else if (item.return_status === "Requested"){ %> 
+                    <hr>
+                    <p class="mt-2">You have placed a return request for this product</p>
                    <% } %> 
                 </div>
                 <img
@@ -317,14 +324,12 @@
 </div>
 
 <!-- Return Order Modal -->
-<div id="returnModal" class="custom-modal d-none" 
-style=
-"position: fixed; top: 0; left: 0; width: 100%; height: 100%;
- background: rgba(0,0,0,0.5); display: flex; align-items: center;
- justify-content: center;">
+<div id="returnModal" class="custom-modal d-none" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center;">
   <div class="modal-content" style="background: #fff; padding: 20px; border-radius: 5px; width: 500px; position: relative;">
     <span id="returnCloseModal" style="cursor: pointer;">&times;</span>
     <h3>Return Product</h3>
+    <!-- New element to display the product info -->
+    <p id="returnProductInfo" style="font-weight: bold;"></p>
     <textarea id="returnReason" placeholder="Enter a valid reason" style="width: 100%; height: 50px;"></textarea>
     <button id="submitReturn" style="margin-top: 10px;">Submit Return</button>
   </div>

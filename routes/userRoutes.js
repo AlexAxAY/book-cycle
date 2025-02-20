@@ -21,7 +21,11 @@ const {
 const { getProfile, updateProfile } = require("../controllers/user/profile");
 
 // user review
-const { reviewPage, submitReview } = require("../controllers/user/review");
+const {
+  reviewPage,
+  submitReview,
+  allReviews,
+} = require("../controllers/user/review");
 
 // user wallet
 const { viewWallet } = require("../controllers/user/wallet");
@@ -186,6 +190,7 @@ router
   .route("/review/:id")
   .get(checkingAuth, reviewPage)
   .post(checkingAuth, submitReview);
+router.route("/reviews").get(allReviews);
 
 // wishlist routes
 router.route("/wishlist").get(checkingAuth, wishlistPage);
