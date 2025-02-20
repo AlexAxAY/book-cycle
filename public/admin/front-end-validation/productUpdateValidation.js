@@ -131,7 +131,7 @@ document.addEventListener("DOMContentLoaded", () => {
         setTimeout(() => {
           alertBox.classList.add("d-none");
           window.location.href = "/admin/products";
-        }, 2000);
+        }, 3000);
       }
     } catch (error) {
       alertBox.classList.remove("d-none", "alert-success");
@@ -141,7 +141,7 @@ document.addEventListener("DOMContentLoaded", () => {
         "Something went wrong while submitting the form!";
       setTimeout(() => {
         alertBox.classList.add("d-none");
-      }, 2000);
+      }, 3000);
     }
   });
 

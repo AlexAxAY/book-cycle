@@ -87,3 +87,10 @@ body {
   float: right;
   margin-top: 4px;
 }
+
+/* Hide the up and down arrows */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}

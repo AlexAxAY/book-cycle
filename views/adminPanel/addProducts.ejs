@@ -32,16 +32,15 @@
       <%- include("../partials/admin/adminNavbar.ejs") %>
     </div>
     <section
-      class="main-section mt-5 d-flex"
+      class="main-section d-flex"
       style="
         margin-left: 210px;
         justify-content: center;
-        align-items: center;
         min-height: calc(100vh - 60px);
       "
     >
       <div
-        class="d-flex"
+        class="d-flex my-5"
         style="
           box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1),
             0 1px 3px rgba(0, 0, 0, 0.08);
@@ -80,15 +79,17 @@
           <form id="productForm" enctype="multipart/form-data">
             <div class="row">
               <div class="col-md-6 mb-3">
-                <label for="name" class="form-label"
-                  >Name of the Product<span style="color: red">*</span></label
-                >
+                <label for="name" class="form-label"></label>
+                  Name of the Product
+                  <span style="color: red">*</span>
+                </label>
                 <input type="text" name="name" id="name" class="form-control" />
               </div>
               <div class="col-md-6 mb-3">
-                <label for="author" class="form-label"
-                  >Author<span style="color: red">*</span></label
-                >
+                <label for="author" class="form-label">
+                  Author
+                  <span style="color: red">*</span>
+                </label>
                 <input
                   type="text"
                   name="author"
@@ -100,7 +101,8 @@
             <div class="row">
               <div class="col-md-6 mb-3">
                 <label for="category" class="form-label">
-                  Category<span style="color: red">*</span>
+                  Category
+                  <span style="color: red">*</span>
                 </label>
                 <select name="category" id="category" class="form-select">
                   <option value="">Select a Category</option>
@@ -115,9 +117,10 @@
               </div>
 
               <div class="col-md-6 mb-3">
-                <label for="price" class="form-label"
-                  >Price<span style="color: red">*</span></label
-                >
+                <label for="price" class="form-label">
+                  Price
+                  <span style="color: red">*</span>
+                </label>
                 <input
                   type="number"
                   name="price"
@@ -148,9 +151,10 @@
             </div>
             <div class="row">
               <div class="col-md-6 mb-3">
-                <label for="discount" class="form-label"
-                  >Discount<span style="color: red">*</span></label
-                >
+                <label for="discount" class="form-label">
+                  Discount
+                  <span style="color: red">*</span>
+                </label>
                 <input
                   type="number"
                   name="discount"
@@ -159,9 +163,10 @@
                 />
               </div>
               <div class="col-md-6 mb-3">
-                <label for="count" class="form-label"
-                  >Count<span style="color: red">*</span></label
-                >
+                <label for="count" class="form-label">
+                  Count
+                  <span style="color: red">*</span>
+                </label>
                 <input
                   type="number"
                   name="count"
@@ -185,9 +190,10 @@
                 </div>
               </div>
               <div class="mb-3">
-                <label for="language" class="form-label"
-                  >Language<span style="color: red">*</span></label
-                >
+                <label for="language" class="form-label">
+                  Language
+                  <span style="color: red">*</span>
+                </label>
                 <input
                   type="text"
                   name="language"
@@ -198,7 +204,8 @@
               <div class="row">
                 <div class="col-md-6 mb-3">
                   <label for="discount_type" class="form-label">
-                    Discount Type<span style="color: red">*</span>
+                    Discount Type
+                    <span style="color: red">*</span>
                   </label>
                   <select
                     name="discount_type"
@@ -212,7 +219,8 @@
                 </div>
                 <div class="col-md-6 mb-3">
                   <label for="publish_date" class="form-label">
-                    Publish Date<span style="color: red">*</span>
+                    Publish Date
+                    <span style="color: red">*</span>
                   </label>
                   <input
                     type="date"
@@ -224,9 +232,10 @@
               </div>
             </div>
             <div class="mb-3">
-              <label for="description" class="form-label"
-                >Description<span style="color: red">*</span></label
-              >
+              <label for="description" class="form-label">
+                Description
+                <span style="color: red">*</span>
+              </label>
               <textarea
                 name="description"
                 id="description"
@@ -235,9 +244,10 @@
               ></textarea>
             </div>
             <div class="mb-3">
-              <label for="images" class="form-label"
-                >Product Images<span style="color: red">*</span></label
-              >
+              <label for="images" class="form-label">
+                Product Images
+                <span style="color: red">*</span>
+              </label>
               <input
                 type="file"
                 name="images"
@@ -245,9 +255,9 @@
                 class="form-control"
                 multiple
               />
-              <small class="form-text text-muted"
-                >Maximum 3 images, each under 1 MB</small
-              >
+              <small class="form-text text-muted">
+                Maximum 3 images, each under 1 MB
+              </small>
             </div>
 
             <!-- Container for multiple image previews -->

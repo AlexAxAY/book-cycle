@@ -142,7 +142,7 @@ document
         originalOrderSummary.deliveryCharge;
       document.getElementById("finalTotal").textContent =
         originalOrderSummary.finalTotal;
-      window.appliedCoupon = ""; // Reset applied coupon
+      window.appliedCoupon = "";
       return;
     }
 
@@ -218,8 +218,34 @@ document
     }
   });
 
-// Proceed to Buy button remains unchanged.
-// It should send the applied wallet info (walletApplied, appliedWalletAmount) along with couponCode.
+// Clear coupon button functionality
+document
+  .getElementById("clearCouponBtn")
+  .addEventListener("click", function () {
+    // Clear coupon input field.
+    document.getElementById("couponCode").value = "";
+    // Clear coupon feedback.
+    const couponFeedback = document.getElementById("couponFeedback");
+    couponFeedback.textContent = "";
+    couponFeedback.classList.add("d-none");
+    // Reset applied coupon variable.
+    window.appliedCoupon = "";
+    // Revert order summary to original values.
+    document.getElementById("totalItems").textContent =
+      originalOrderSummary.totalItems;
+    document.getElementById("totalOriginalPrice").textContent =
+      originalOrderSummary.totalOriginalPrice;
+    document.getElementById("totalDiscountAmount").textContent =
+      originalOrderSummary.totalDiscountAmount;
+    document.getElementById("totalAfterDiscount").textContent =
+      originalOrderSummary.totalAfterDiscount;
+    document.getElementById("deliveryCharge").textContent =
+      originalOrderSummary.deliveryCharge;
+    document.getElementById("finalTotal").textContent =
+      originalOrderSummary.finalTotal;
+  });
+
+// Proceed to Buy section
 document
   .getElementById("proceedToBuyBtn")
   .addEventListener("click", function () {

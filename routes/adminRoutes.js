@@ -36,6 +36,12 @@ const {
   deleteCoupon,
 } = require("../controllers/admin/coupon.js");
 
+// Requiring offer module controllers
+const {
+  offerModulePage,
+  applyOffer,
+} = require("../controllers/admin/offers.js");
+
 // Requiring auth controllers
 const {
   viewAdminLoginPage,
@@ -133,5 +139,8 @@ router
   .put(editCoupon)
   .get(couponUpdateForm)
   .delete(deleteCoupon);
+
+// Offer routes
+router.route("/add-offer").get(offerModulePage).post(applyOffer);
 
 module.exports = router;

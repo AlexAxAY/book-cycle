@@ -117,8 +117,9 @@
           </div>
           
           <div class="p-3">
-            <hr>
-            <% if (returnDecisions) {%>
+            
+            <% if (returnDecisions.length > 0) {%>
+              <hr>
               <p class="fs-4"><strong>Return details</strong></p>
               <% returnDecisions.forEach((item)=>{ %>
                 <p class="card-text">

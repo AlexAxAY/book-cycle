@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Cart</title>
+    <title>Wishlist</title>
 
     <!-- bootstrap -->
     <%- include("../partials/admin/bootLink.ejs") %>
@@ -46,7 +46,9 @@
           </div>
 
           <!-- Unit price -->
-          <div class="col-2 text-center">₹<%= items.productId.final_price %></div>
+          <div class="col-2 text-center">
+            ₹<%= items.productId.final_price %>
+          </div>
 
           <!-- Stock status -->
           <% if (items.productId.stock === "In stock") {%>

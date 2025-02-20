@@ -46,9 +46,9 @@
           ></div>
 
           <!-- main section -->
-      <section class="main-section d-flex mt-5" style="margin-left: 210px;min-height: calc(100vh - 60px); justify-content: center; align-items: center;">
+      <section class="main-section d-flex" style="margin-left: 210px;min-height: calc(100vh - 60px); justify-content: center; align-items: center;">
         <div
-          class="container"
+          class="container my-5"
           style="
             
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1),
@@ -190,13 +190,11 @@
                       id="discount_type"
                       class="form-select"
                     >
-                      <option value="<%= product.discount_type %>">
-                        Select Discount Type
-                      </option>
-                      <option value="fixed">Fixed</option>
-                      <option value="percentage">Percentage</option>
+                      <option value="" disabled>Select Discount Type</option>
+                      <option value="fixed" <%= product.discount_type === 'fixed' ? 'selected' : '' %>>Fixed</option>
+                      <option value="percentage" <%= product.discount_type === 'percentage' ? 'selected' : '' %>>Percentage</option>
                     </select>
-                  </div>
+                  </div>                  
                   <div class="col-md-6 mb-3">
                     <label for="publish_date" class="form-label">
                       Publish Date<span style="color: red">*</span>

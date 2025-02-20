@@ -13,6 +13,31 @@ body {
   align-items: center;
 }
 
+.image-preview-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 300px;
+}
+
+.image-preview-container img {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 4px;
+  max-width: 100%;
+  height: auto;
+}
+
+.image-preview-container button {
+  margin-top: 8px;
+  margin-bottom: 4px;
+  width: 100px;
+}
+
+#image-previews {
+  justify-content: center; /* Center align the images */
+}
+
 /* alert */
 .alert-bad,
 .alert-good {
@@ -20,8 +45,8 @@ body {
   width: fit-content;
   border-radius: 5px !important;
   color: white !important;
-  position: absolute !important;
-  top: 20px;
+  position: absolute;
+  top: 50px;
   left: 50%;
   transform: translateX(-50%);
   z-index: 9999;
