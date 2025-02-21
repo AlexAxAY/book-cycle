@@ -87,7 +87,7 @@ document
         document.getElementById("walletAppliedInfo").textContent =
           "Wallet applied: ₹ " +
           walletToApply.toFixed(2) +
-          ". Remaining wallet balance: ₹ " +
+          ". Wallet balance: ₹ " +
           (walletBalance - walletToApply).toFixed(2);
 
         walletApplied = true;
@@ -230,7 +230,18 @@ document
     couponFeedback.classList.add("d-none");
     // Reset applied coupon variable.
     window.appliedCoupon = "";
-    // Revert order summary to original values.
+
+    // Get the base total from the original order summary (no coupon applied).
+    let baseTotal = parseFloat(
+      originalOrderSummary.finalTotal.replace("₹", "").trim()
+    );
+
+    // If wallet is applied, subtract the applied wallet amount.
+    let newFinalTotal = walletApplied
+      ? baseTotal - appliedWalletAmount
+      : baseTotal;
+
+    // Update the DOM with the original values except for finalTotal.
     document.getElementById("totalItems").textContent =
       originalOrderSummary.totalItems;
     document.getElementById("totalOriginalPrice").textContent =
@@ -242,13 +253,15 @@ document
     document.getElementById("deliveryCharge").textContent =
       originalOrderSummary.deliveryCharge;
     document.getElementById("finalTotal").textContent =
-      originalOrderSummary.finalTotal;
+      "₹ " + newFinalTotal.toFixed(2);
+
+    // Optionally, update the originalFinalTotal variable to the base total (no coupon)
+    originalFinalTotal = baseTotal;
   });
 
-// Proceed to Buy section
 document
   .getElementById("proceedToBuyBtn")
-  .addEventListener("click", function () {
+  .addEventListener("click", async function () {
     const addressId = getSelectedAddressId();
     const paymentMethod = getSelectedPaymentMethod();
 
@@ -257,85 +270,135 @@ document
       return;
     }
 
-    axios
-      .post("/user/checkout", {
+    // Read the final total from the DOM (removing the currency symbol)
+    const finalTotalDOM = document
+      .getElementById("finalTotal")
+      .textContent.replace("₹", "")
+      .trim();
+    const finalTotalNumber = parseFloat(finalTotalDOM);
+
+    // If the user selects Razorpay but final payable is zero, do not allow it.
+    if (paymentMethod === "Razorpay" && finalTotalNumber === 0) {
+      showAlert(
+        ".alert-bad",
+        "No amount left to pay online. Please choose Cash on Delivery."
+      );
+      return;
+    }
+
+    try {
+      const response = await axios.post("/user/checkout", {
         addressId,
         paymentMethod,
         couponCode: window.appliedCoupon,
         walletApplied: walletApplied,
         walletAmount: appliedWalletAmount,
-      })
-      .then((response) => {
-        if (response.data.success) {
-          showAlert(".alert-good", "Order placed successfully!");
-          setTimeout(() => {
-            window.location.replace(`/user/order/${response.data.orderId}`);
-          }, 500);
-        } else if (response.data.partial) {
-          const confirmModal = new bootstrap.Modal(
-            document.getElementById("confirmModal")
-          );
-          confirmModal.show();
+      });
 
-          document.getElementById("confirmProceed").onclick = function () {
-            axios
-              .post("/user/checkout", {
-                addressId,
-                confirm: true,
-                paymentMethod,
-                couponCode: window.appliedCoupon,
-                walletApplied: walletApplied,
-                walletAmount: appliedWalletAmount,
-              })
-              .then((resp) => {
-                if (resp.data.success) {
-                  showAlert(
-                    ".alert-good",
-                    "Order placed successfully with available items!"
-                  );
-                  setTimeout(() => {
-                    window.location.replace(`/user/order/${resp.data.orderId}`);
-                  }, 500);
-                } else {
-                  showAlert(".alert-bad", resp.data.message);
-                }
-              })
-              .catch((err) => {
-                console.error(err);
-                showAlert(
-                  ".alert-bad",
-                  "An error occurred. Please try again later."
-                );
+      if (response.data.razorpay) {
+        const options = {
+          key: response.data.key,
+          amount: response.data.amount,
+          currency: "INR",
+          name: "Book Cycle",
+          description: "Order Payment",
+          order_id: response.data.razorpayOrderId,
+          handler: async function (paymentResponse) {
+            try {
+              await axios.post("/user/verify-payment", {
+                orderId: response.data.orderId,
+                paymentId: paymentResponse.razorpay_payment_id,
+                orderIdRazor: paymentResponse.razorpay_order_id,
+                signature: paymentResponse.razorpay_signature,
               });
-          };
-        } else {
-          showAlert(".alert-bad", response.data.message);
-        }
-      })
-      .catch((error) => {
-        if (error.response && error.response.status === 400) {
-          const data = error.response.data;
-          if (data.zero) {
-            showAlert(".alert-bad", data.message);
-            setTimeout(() => {
-              window.location.href = "/user/cart";
-            }, 3000);
-          } else if (data.countError) {
-            showAlert(".alert-bad", data.message);
-            setTimeout(() => {
-              window.location.href = "/user/cart";
-            }, 3000);
-          } else {
+              showAlert(".alert-good", "Payment successful!");
+              setTimeout(() => {
+                window.location.replace(`/user/order/${response.data.orderId}`);
+              }, 500);
+            } catch (err) {
+              showAlert(".alert-bad", "Payment verification failed.");
+            }
+          },
+          prefill: {
+            name: "",
+            email: "",
+            contact: "",
+          },
+          theme: {
+            color: "#3399cc",
+          },
+        };
+
+        const rzp1 = new Razorpay(options);
+        rzp1.open();
+      } else if (response.data.success) {
+        showAlert(".alert-good", "Order placed successfully!");
+        setTimeout(() => {
+          window.location.replace(`/user/order/${response.data.orderId}`);
+        }, 500);
+      } else if (response.data.partial) {
+        // Handle partial confirmation logic
+        const confirmModal = new bootstrap.Modal(
+          document.getElementById("confirmModal")
+        );
+        confirmModal.show();
+
+        document.getElementById("confirmProceed").onclick = async function () {
+          try {
+            const resp = await axios.post("/user/checkout", {
+              addressId,
+              confirm: true,
+              paymentMethod,
+              couponCode: window.appliedCoupon,
+              walletApplied: walletApplied,
+              walletAmount: appliedWalletAmount,
+            });
+            if (resp.data.success) {
+              showAlert(
+                ".alert-good",
+                "Order placed successfully with available items!"
+              );
+              setTimeout(() => {
+                window.location.replace(`/user/order/${resp.data.orderId}`);
+              }, 500);
+            } else {
+              showAlert(".alert-bad", resp.data.message);
+            }
+          } catch (err) {
+            console.error(err);
             showAlert(
               ".alert-bad",
-              data.message || "An error occurred. Please try again later."
+              "An error occurred. Please try again later."
             );
           }
+        };
+      } else {
+        showAlert(".alert-bad", response.data.message);
+      }
+    } catch (error) {
+      if (error.response && error.response.status === 400) {
+        const data = error.response.data;
+        if (data.zero) {
+          showAlert(".alert-bad", data.message);
+          setTimeout(() => {
+            window.location.href = "/user/cart";
+          }, 3000);
+        } else if (data.countError) {
+          showAlert(".alert-bad", data.message);
+          setTimeout(() => {
+            window.location.href = "/user/cart";
+          }, 3000);
         } else {
-          console.error("Error placing order:", error);
-          showAlert(".alert-bad", "An error occurred. Please try again later.");
+          showAlert(
+            ".alert-bad",
+            data.message || "An error occurred. Please try again later."
+          );
         }
-      });
+      } else {
+        console.error("Error placing order:", error);
+        showAlert(".alert-bad", "An error occurred. Please try again later.");
+      }
+    }
   });
 
 function showAlert(selector, message) {

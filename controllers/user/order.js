@@ -7,6 +7,7 @@ const Product = require("../../models/productSchema");
 const Cancel = require("../../models/cancelSchema");
 const Rating = require("../../models/ratingSchema");
 const moment = require("moment");
+const razorpayInstance = require("../../services/razorpay");
 
 const orderSummary = async (req, res) => {
   try {
@@ -119,7 +120,6 @@ const proceedToBuy = async (req, res) => {
       const invalidIds = invalidCartItems.map((item) => item._id);
       await CartItem.deleteMany({ _id: { $in: invalidIds } });
     }
-
     if (validCartItems.length === 0) {
       return res.status(400).json({
         success: false,
@@ -144,7 +144,6 @@ const proceedToBuy = async (req, res) => {
         .status(400)
         .json({ success: false, message: errorMsg, countError: true });
     }
-
     if (invalidCartItems.length > 0 && !confirm) {
       return res.json({
         success: false,
@@ -163,7 +162,6 @@ const proceedToBuy = async (req, res) => {
       const quantity = item.quantity;
       totalOriginalPrice += price * quantity;
       totalItems += quantity;
-
       if (item.productId.discount_type === "percentage") {
         totalDiscountAmount +=
           price * (item.productId.discount / 100) * quantity;
@@ -189,7 +187,6 @@ const proceedToBuy = async (req, res) => {
           .status(400)
           .json({ success: false, message: "Coupon is not active." });
       }
-
       // Check if the user has already used this coupon
       const alreadyUsed = await CouponUsage.findOne({
         user_id: userId,
@@ -201,7 +198,6 @@ const proceedToBuy = async (req, res) => {
           message: "You have already used this coupon.",
         });
       }
-
       // Check order qualification: order final total must be at least the coupon's min order value
       if (finalTotal < coupon.min_order_value) {
         return res.status(400).json({
@@ -209,23 +205,36 @@ const proceedToBuy = async (req, res) => {
           message: `Order total must be at least ₹${coupon.min_order_value} to use this coupon.`,
         });
       }
-
-      // Calculate coupon discount amount
       let couponDiscount = 0;
       if (coupon.discount_type === "percentage") {
         couponDiscount = totalAfterDiscount * (coupon.discount_value / 100);
       } else if (coupon.discount_type === "fixed") {
         couponDiscount = coupon.discount_value;
       }
-
-      // Apply coupon discount correctly on top of product-level discounts
       totalDiscountAmount += couponDiscount;
       totalAfterDiscount -= couponDiscount;
       couponApplied = coupon._id;
-
-      // Recalculate final amounts
       deliveryCharge = totalAfterDiscount >= 500 ? 0 : 50;
       finalTotal = totalAfterDiscount + deliveryCharge;
+    }
+
+    // Adjust final amount based on wallet usage
+    if (
+      req.body.walletApplied &&
+      req.body.walletAmount &&
+      req.body.walletAmount > 0
+    ) {
+      finalTotal = finalTotal - req.body.walletAmount;
+      if (finalTotal < 0) finalTotal = 0;
+    }
+
+    // If payment method is Razorpay but final payable amount is zero, dont allow online payment.
+    if (paymentMethod === "Razorpay" && finalTotal === 0) {
+      return res.status(400).json({
+        success: false,
+        message:
+          "Final payable amount is zero. Please choose Cash on Delivery.",
+      });
     }
 
     // Fetch shipping address snapshot
@@ -236,8 +245,8 @@ const proceedToBuy = async (req, res) => {
         .json({ success: false, message: "Shipping address not found." });
     }
 
-    // Create a new order with updated order_items structure
-    const newOrder = new Order({
+    // Prepare the updated order data (used for both new and existing orders)
+    const orderData = {
       total_items: totalItems,
       order_items: validCartItems.map((item) => {
         const price = item.productId.price;
@@ -270,7 +279,7 @@ const proceedToBuy = async (req, res) => {
         address_type: addressDoc.address_type,
       },
       user_id: userId,
-      status: "Confirmed",
+      status: paymentMethod === "Razorpay" ? "Pending" : "Confirmed",
       selling_price: totalOriginalPrice,
       total_selling_price: totalAfterDiscount,
       coupon_applied: couponApplied,
@@ -278,11 +287,85 @@ const proceedToBuy = async (req, res) => {
       final_amount: finalTotal,
       total_discount: totalDiscountAmount,
       payment_type: paymentMethod,
-    });
+    };
 
+    // --- Razorpay Flow ---
+    if (paymentMethod === "Razorpay") {
+      // Looking for an existing pending Razorpay order for this user.
+      let existingOrder = await Order.findOne({
+        user_id: userId,
+        payment_type: "Razorpay",
+        status: "Pending",
+      });
+
+      if (existingOrder) {
+        // Update all fields from the latest cart data
+        existingOrder.total_items = orderData.total_items;
+        existingOrder.order_items = orderData.order_items;
+        existingOrder.address = orderData.address;
+        existingOrder.selling_price = orderData.selling_price;
+        existingOrder.total_selling_price = orderData.total_selling_price;
+        existingOrder.coupon_applied = orderData.coupon_applied;
+        existingOrder.delivery_charge = orderData.delivery_charge;
+        existingOrder.final_amount = orderData.final_amount;
+        existingOrder.total_discount = orderData.total_discount;
+        existingOrder.payment_type = orderData.payment_type;
+
+        await existingOrder.save();
+
+        // Create a Razorpay order if it not yet created.
+        if (!existingOrder.razorpay_order_id) {
+          const options = {
+            amount: finalTotal * 100,
+            currency: "INR",
+            receipt: `receipt_${existingOrder._id}`,
+            payment_capture: 1,
+          };
+          const razorpayOrder = await razorpayInstance.orders.create(options);
+          existingOrder.razorpay_order_id = razorpayOrder.id;
+          await existingOrder.save();
+        }
+
+        return res.json({
+          success: true,
+          razorpay: true,
+          orderId: existingOrder._id,
+          razorpayOrderId: existingOrder.razorpay_order_id,
+          amount: finalTotal * 100,
+          key: process.env.RAZORPAY_KEY_ID,
+        });
+      }
+
+      // If no pending order exists, create a new one.
+      const newOrder = new Order(orderData);
+      await newOrder.save();
+
+      const options = {
+        amount: finalTotal * 100,
+        currency: "INR",
+        receipt: `receipt_${newOrder._id}`,
+        payment_capture: 1,
+      };
+
+      const razorpayOrder = await razorpayInstance.orders.create(options);
+      newOrder.razorpay_order_id = razorpayOrder.id;
+      await newOrder.save();
+
+      return res.json({
+        success: true,
+        razorpay: true,
+        orderId: newOrder._id,
+        razorpayOrderId: razorpayOrder.id,
+        amount: options.amount,
+        key: process.env.RAZORPAY_KEY_ID,
+      });
+    }
+
+    // --- Cash on Delivery Flow ---
+    const newOrder = new Order(orderData);
     await newOrder.save();
 
-    // If a coupon was applied, create a coupon usage record
+    // Record coupon usage if applicable
     if (couponApplied) {
       const newCouponUsage = new CouponUsage({
         user_id: userId,
@@ -293,7 +376,7 @@ const proceedToBuy = async (req, res) => {
       await newCouponUsage.save();
     }
 
-    // **NEW WALLET LOGIC**
+    // Deduct wallet amount if applied
     if (
       req.body.walletApplied &&
       req.body.walletAmount &&
@@ -301,14 +384,11 @@ const proceedToBuy = async (req, res) => {
     ) {
       let wallet = await Wallet.findOne({ user: userId });
       if (!wallet) {
-        // Create a wallet if it doesn't exist
         wallet = await Wallet.create({ user: userId, balance: 0 });
       }
-      // Deduct the applied wallet amount
       wallet.balance -= req.body.walletAmount;
       await wallet.save();
 
-      // Log the wallet transaction
       await WalletTransaction.create({
         wallet: wallet._id,
         type: "debit",
@@ -317,9 +397,8 @@ const proceedToBuy = async (req, res) => {
         description: "Wallet used for order payment",
       });
     }
-    // **END WALLET LOGIC**
 
-    // Reduce stock for each valid item
+    // Reduce stock for each valid item and clear cart items
     await Promise.all(
       validCartItems.map(async (item) => {
         const updatedProduct = await Product.findByIdAndUpdate(

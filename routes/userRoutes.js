@@ -30,6 +30,8 @@ const {
 // user wallet
 const { viewWallet } = require("../controllers/user/wallet");
 
+const { verifyPayment } = require("../controllers/user/payment");
+
 // user coupons
 const { viewCoupons } = require("../controllers/user/coupon");
 
@@ -190,7 +192,7 @@ router
   .route("/review/:id")
   .get(checkingAuth, reviewPage)
   .post(checkingAuth, submitReview);
-router.route("/reviews").get(allReviews);
+router.route("/reviews").get(checkingAuth, allReviews);
 
 // wishlist routes
 router.route("/wishlist").get(checkingAuth, wishlistPage);
@@ -204,5 +206,6 @@ router.route("/wallet").get(checkingAuth, viewWallet);
 
 // coupon route
 router.route("/coupons").get(checkingAuth, viewCoupons);
+router.route("/verify-payment").post(checkingAuth, verifyPayment);
 
 module.exports = router;
