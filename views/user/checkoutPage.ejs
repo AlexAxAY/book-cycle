@@ -272,16 +272,18 @@
     <div class="col text-start">
       <p>Total items</p>
       <p>Total selling price</p>
-      <p>Total Discount</p>
+      <p>Total Product Discount</p>
+      <p id="couponDiscountLabel" class="d-none">Coupon Discount</p>
       <p>Sub total</p>
       <p>Shipping fee</p>
     </div>
     <div class="col text-end">
       <p id="totalItems"><%= checkoutData.totalItems %></p>
-      <p id="totalOriginalPrice">₹ <%= checkoutData.totalOriginalPrice.toFixed(2) %></p>
-      <p id="totalDiscountAmount">₹ <%= checkoutData.totalDiscountAmount.toFixed(2) %></p>
-      <p id="totalAfterDiscount">₹ <%= checkoutData.totalAfterDiscount.toFixed(2) %></p>
-      <p id="deliveryCharge">₹ <%= checkoutData.deliveryCharge %></p>
+      <p id="totalOriginalPrice">₹<%= checkoutData.totalOriginalPrice.toFixed(2) %></p>
+      <p id="totalDiscountAmount" class="text-success">₹<%= checkoutData.totalDiscountAmount.toFixed(2) %></p>
+      <p id="couponDiscount" class="d-none text-success">₹0.00</p>
+      <p id="totalAfterDiscount">₹<%= checkoutData.totalAfterDiscount.toFixed(2) %></p>
+      <p id="deliveryCharge">₹<%= checkoutData.deliveryCharge %></p>
     </div>
   </div>
   <hr />
@@ -290,7 +292,7 @@
       <p>Estimated total</p>
     </div>
     <div class="col text-end">
-      <p id="finalTotal">₹ <%= checkoutData.finalTotal %></p>
+      <p id="finalTotal">₹<%= checkoutData.finalTotal %></p>
     </div>
   </div>
 </div>

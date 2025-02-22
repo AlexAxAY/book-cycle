@@ -490,6 +490,7 @@ const cancelOrder = async (req, res) => {
     const { reason } = req.body;
     const { id } = req.params;
 
+    // Find the order by its ID.
     let order = await Order.findById(id);
     if (!order) {
       return res
@@ -517,7 +518,42 @@ const cancelOrder = async (req, res) => {
     order.status = "Cancelled";
     await order.save();
 
-    // Return the purchased quantity back to the product's stock.
+    // --- Wallet Refund Logic ---
+    let refundAmount = 0;
+    if (order.payment_type === "Razorpay") {
+      // For Razorpay orders, refund the entire final amount.
+      refundAmount = order.final_amount;
+    } else {
+      // For COD orders, refund only the wallet amount applied.
+      const walletDebits = await WalletTransaction.find({
+        order: order._id,
+        type: "debit",
+      });
+      walletDebits.forEach((txn) => {
+        refundAmount += txn.amount;
+      });
+    }
+
+    if (refundAmount > 0) {
+      let wallet = await Wallet.findOne({ user: order.user_id });
+      if (!wallet) {
+        // Create a wallet record if it doesn't exist.
+        wallet = await Wallet.create({ user: order.user_id, balance: 0 });
+      }
+      wallet.balance += refundAmount;
+      await wallet.save();
+
+      // Log a wallet credit transaction.
+      await WalletTransaction.create({
+        wallet: wallet._id,
+        type: "credit",
+        amount: refundAmount,
+        order: order._id,
+        description: "Refund on order cancellation",
+      });
+    }
+
+    // --- Stock Restoration ---
     await Promise.all(
       order.order_items.map(async (item) => {
         const updatedProduct = await Product.findByIdAndUpdate(
@@ -534,7 +570,6 @@ const cancelOrder = async (req, res) => {
         } else {
           newStock = "In stock";
         }
-
         if (updatedProduct.stock !== newStock) {
           await Product.findByIdAndUpdate(updatedProduct._id, {
             stock: newStock,
@@ -608,6 +643,7 @@ const applyCoupon = async (req, res) => {
     let totalAfterDiscount = totalOriginalPrice - totalDiscountAmount;
     let deliveryCharge = totalAfterDiscount >= 500 ? 0 : 50;
     let finalTotal = totalAfterDiscount + deliveryCharge;
+    let couponDiscount = 0;
 
     // If a coupon code is provided, validate and apply it
     if (couponCode && couponCode.trim() !== "") {
@@ -641,7 +677,6 @@ const applyCoupon = async (req, res) => {
         });
       }
       // Calculate coupon discount amount
-      let couponDiscount = 0;
       if (coupon.discount_type === "percentage") {
         couponDiscount = totalAfterDiscount * (coupon.discount_value / 100);
       } else if (coupon.discount_type === "fixed") {
@@ -662,6 +697,7 @@ const applyCoupon = async (req, res) => {
         totalItems,
         totalOriginalPrice,
         totalDiscountAmount,
+        couponDiscount,
         totalAfterDiscount,
         deliveryCharge,
         finalTotal,

@@ -142,6 +142,11 @@ document
         originalOrderSummary.deliveryCharge;
       document.getElementById("finalTotal").textContent =
         originalOrderSummary.finalTotal;
+
+      // Hide coupon discount elements if visible
+      document.getElementById("couponDiscount").classList.add("d-none");
+      document.getElementById("couponDiscountLabel").classList.add("d-none");
+
       window.appliedCoupon = "";
       return;
     }
@@ -161,6 +166,24 @@ document
           "₹ " + data.deliveryCharge;
         document.getElementById("finalTotal").textContent =
           "₹ " + data.finalTotal;
+
+        // **New:** Update coupon discount if provided
+        if (
+          typeof data.couponDiscount !== "undefined" &&
+          data.couponDiscount > 0
+        ) {
+          document.getElementById("couponDiscount").textContent =
+            "₹ " + data.couponDiscount.toFixed(2);
+          document.getElementById("couponDiscount").classList.remove("d-none");
+          document
+            .getElementById("couponDiscountLabel")
+            .classList.remove("d-none");
+        } else {
+          document.getElementById("couponDiscount").classList.add("d-none");
+          document
+            .getElementById("couponDiscountLabel")
+            .classList.add("d-none");
+        }
 
         // **Key change:** Update the base total to be the coupon-applied total.
         originalFinalTotal = parseFloat(data.finalTotal);
@@ -183,6 +206,11 @@ document
           originalOrderSummary.deliveryCharge;
         document.getElementById("finalTotal").textContent =
           originalOrderSummary.finalTotal;
+
+        // Hide coupon discount elements if visible
+        document.getElementById("couponDiscount").classList.add("d-none");
+        document.getElementById("couponDiscountLabel").classList.add("d-none");
+
         window.appliedCoupon = "";
         couponFeedback.textContent = response.data.message;
         couponFeedback.style.color = "red";
@@ -231,6 +259,11 @@ document
     // Reset applied coupon variable.
     window.appliedCoupon = "";
 
+    // Hide the coupon discount elements
+    document.getElementById("couponDiscount").textContent = "";
+    document.getElementById("couponDiscount").classList.add("d-none");
+    document.getElementById("couponDiscountLabel").classList.add("d-none");
+
     // Get the base total from the original order summary (no coupon applied).
     let baseTotal = parseFloat(
       originalOrderSummary.finalTotal.replace("₹", "").trim()
@@ -255,7 +288,7 @@ document
     document.getElementById("finalTotal").textContent =
       "₹ " + newFinalTotal.toFixed(2);
 
-    // Optionally, update the originalFinalTotal variable to the base total (no coupon)
+    // updating the originalFinalTotal variable to the base total (no coupon)
     originalFinalTotal = baseTotal;
   });
 
