@@ -26,6 +26,9 @@ const {
   userDetailsPage,
 } = require("../controllers/admin/adminUserCtrl.js");
 
+// Requiring user controllers
+const { salesReportPage } = require("../controllers/admin/salesReport.js");
+
 // Requiring coupon controllers
 const {
   couponForm,
@@ -142,5 +145,8 @@ router
 
 // Offer routes
 router.route("/add-offer").get(offerModulePage).post(applyOffer);
+
+// sales report route
+router.route("/sales-report").get(salesReportPage);
 
 module.exports = router;

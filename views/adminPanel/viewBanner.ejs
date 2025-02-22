@@ -37,12 +37,8 @@
       ></div>
     </div>
 
-    <!-- For logout -->
-    <!-- error alert -->
-    <div class="alert-bad d-none text-center" style="position: fixed"></div>
-
-    <!-- success alert -->
-    <div class="alert-good d-none text-center" style="position: fixed"></div>
+    <!-- alert -->
+    <%- include("../partials/user/alertMessage.ejs") %>
 
     <section
       class="main-section d-flex"
@@ -109,7 +105,7 @@
     <!-- axios -->
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 
-    <!-- banner dlete validation  -->
+    <!-- banner delete validation  -->
     <script src="/admin/front-end-validation/bannerDeleteValidation.js"></script>
 
     <!-- js logout validation file -->

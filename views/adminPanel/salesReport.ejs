@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sales Report</title>
+
+    <!-- css -->
+    <link rel="stylesheet" href="/admin/stylesheets/salesReport.css" />
+
+    <!-- bootstrap -->
+    <%- include("../partials/admin/bootLink.ejs") %>
+
+    <!-- font link -->
+    <%- include("../partials/user/iconLink.ejs") %>
+
+    <!-- google fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Port+Lligat+Slab&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <!-- sidebar -->
+    <div style="width: 200px; position: fixed">
+      <%- include("../partials/admin/adminNavbar.ejs") %>
+    </div>
+
+    <!-- alert -->
+    <%- include("../partials/user/alertMessage.ejs") %>
+
+    <section
+      class="main-section d-flex"
+      style="
+        min-height: calc(100vh - 60px);
+        justify-content: center;
+        margin-left: 200px;
+      "
+    >
+      <div class="container mx-2 mt-5">
+        <div class="row mb-5" style="justify-content: space-around">
+          <div class="col-2 boxes">
+            <p class="fs-3 text-center price text-success">
+              ₹<%= totalRevenue %>
+            </p>
+            <p class="text-center"><small>Total Revenue</small></p>
+          </div>
+          <div class="col-2 boxes">
+            <p class="fs-3 text-center price text-danger">
+              ₹<%= totalDiscount %>
+            </p>
+            <p class="text-center"><small>Total Discount</small></p>
+          </div>
+          <div class="col-2 boxes">
+            <p class="fs-3 text-center price text-primary">
+              ₹<%= totalRefund %>
+            </p>
+            <p class="text-center"><small>Total Refund</small></p>
+          </div>
+          <div class="col-2 boxes">
+            <p class="fs-3 text-center price text-warning">
+              <%= totalOrders %>
+            </p>
+            <p class="text-center"><small>Total Orders</small></p>
+          </div>
+        </div>
+        <div class="row">
+          <div class="table-wrapper table-responsive">
+            <!-- filter -->
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <div class="input-group">
+                <select class="form-select" aria-label="Filter by time period">
+                  <option selected disabled>Choose time period</option>
+                  <option value="1">Today</option>
+                  <option value="2">Yesterday</option>
+                  <option value="3">This Week</option>
+                  <option value="4">This Month</option>
+                  <option value="5">This Year</option>
+                </select>
+              </div>
+              <div class="input-group mx-2">
+                <label class="input-group-text" for="fromDate">From</label>
+                <input type="date" id="fromDate" class="form-control" />
+              </div>
+              <div class="input-group">
+                <label class="input-group-text" for="toDate">To</label>
+                <input type="date" id="toDate" class="form-control" />
+              </div>
+              <div class="input-group ms-2">
+                <button id="clearFilters" class="btn btn-secondary">
+                  Clear
+                </button>
+              </div>
+            </div>
+
+            <table class="table table-striped table-hover text-center">
+              <thead class="thead-dark">
+                <tr>
+                  <th scope="col">Order ID</th>
+                  <th scope="col">Date</th>
+                  <th scope="col">User</th>
+                  <th scope="col">Product Count</th>
+                  <th scope="col">Price</th>
+                  <th scope="col">Payment Method</th>
+                  <th scope="col">Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% orders.forEach((order)=> { %>
+                <tr>
+                  <td><%= order._id %></td>
+                  <td><%= moment(order.createdAt).format("DD/MM/YY") %></td>
+                  <td><%= order.user_id.name %></td>
+                  <td><%= order.order_items.length %></td>
+                  <td>₹<%= order.final_amount %></td>
+                  <td><%= order.payment_type %></td>
+                  <td><%= order.status %></td>
+                </tr>
+                <% }) %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- footer -->
+    <%- include("../partials/admin/adminFooter.ejs") %>
+
+    <!-- bootstrap -->
+    <%- include("../partials/admin/bootScript.ejs") %>
+
+    <!-- axios -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+    <!-- sales report helper -->
+    <script src="/admin/helper/salesReportHelper.js"></script>
+
+    <!-- moment -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
+
+    <!-- js logout validation file -->
+    <script src="/admin/front-end-validation/logoutValidation.js"></script>
+  </body>
+</html>
