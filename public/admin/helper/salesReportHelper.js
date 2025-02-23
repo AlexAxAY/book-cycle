@@ -32,10 +32,11 @@ document.addEventListener("DOMContentLoaded", () => {
       // Update the orders table.
       const orders = response.data.orders;
       tableBody.innerHTML = "";
-      orders.forEach((order) => {
-        const formattedDate = moment(order.createdAt).format("DD/MM/YY");
-        const row = document.createElement("tr");
-        row.innerHTML = `
+      if (orders.length > 0) {
+        orders.forEach((order) => {
+          const formattedDate = moment(order.createdAt).format("DD/MM/YY");
+          const row = document.createElement("tr");
+          row.innerHTML = `
             <td>${order._id}</td>
             <td>${formattedDate}</td>
             <td>${order.user_id.name}</td>
@@ -44,8 +45,14 @@ document.addEventListener("DOMContentLoaded", () => {
             <td>${order.payment_type}</td>
             <td>${order.status}</td>
           `;
-        tableBody.appendChild(row);
-      });
+          tableBody.appendChild(row);
+        });
+      } else {
+        // Insert a row with a message if no orders are found.
+        const noDataRow = document.createElement("tr");
+        noDataRow.innerHTML = `<td colspan="7" class="text-center">No details available</td>`;
+        tableBody.appendChild(noDataRow);
+      }
 
       // Update aggregate metrics.
       if (totalRevenueEl) {
