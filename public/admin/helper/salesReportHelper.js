@@ -16,6 +16,13 @@ document.addEventListener("DOMContentLoaded", () => {
     const fromDate = fromDateInput.value;
     const toDate = toDateInput.value;
 
+    const downloadPDFButton = document.getElementById("downloadPDF");
+    const downloadExcelButton = document.getElementById("downloadExcel");
+
+    const params = new URLSearchParams({ filter, fromDate, toDate });
+    downloadPDFButton.href = `/admin/sales-report/pdf-download?${params.toString()}`;
+    downloadExcelButton.href = `/admin/sales-report/excel-download?${params.toString()}`;
+
     try {
       const response = await axios.get("/admin/sales-report", {
         params: { filter, fromDate, toDate },

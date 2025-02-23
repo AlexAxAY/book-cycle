@@ -27,7 +27,11 @@ const {
 } = require("../controllers/admin/adminUserCtrl.js");
 
 // Requiring user controllers
-const { salesReportPage } = require("../controllers/admin/salesReport.js");
+const {
+  salesReportPage,
+  downloadSalesReportExcel,
+  downloadSalesReportPDF,
+} = require("../controllers/admin/salesReport.js");
 
 // Requiring coupon controllers
 const {
@@ -148,5 +152,7 @@ router.route("/add-offer").get(offerModulePage).post(applyOffer);
 
 // sales report route
 router.route("/sales-report").get(salesReportPage);
+router.get("/sales-report/pdf-download", downloadSalesReportPDF);
+router.get("/sales-report/excel-download", downloadSalesReportExcel);
 
 module.exports = router;
