@@ -42,30 +42,31 @@
       <div class="container mx-2 mt-5">
         <div class="row mb-5" style="justify-content: space-around">
           <div class="col-2 boxes">
-            <p class="fs-3 text-center price text-success">
+            <p id="totalRevenue" class="fs-3 text-center price text-success">
               ₹<%= totalRevenue %>
             </p>
             <p class="text-center"><small>Total Revenue</small></p>
           </div>
           <div class="col-2 boxes">
-            <p class="fs-3 text-center price text-danger">
+            <p id="totalDiscount" class="fs-3 text-center price text-danger">
               ₹<%= totalDiscount %>
             </p>
             <p class="text-center"><small>Total Discount</small></p>
           </div>
           <div class="col-2 boxes">
-            <p class="fs-3 text-center price text-primary">
+            <p id="totalRefund" class="fs-3 text-center price text-primary">
               ₹<%= totalRefund %>
             </p>
             <p class="text-center"><small>Total Refund</small></p>
           </div>
           <div class="col-2 boxes">
-            <p class="fs-3 text-center price text-warning">
+            <p id="totalOrders" class="fs-3 text-center price text-warning">
               <%= totalOrders %>
             </p>
             <p class="text-center"><small>Total Orders</small></p>
           </div>
         </div>
+
         <div class="row">
           <div class="table-wrapper table-responsive">
             <!-- filter -->

@@ -5,6 +5,12 @@ document.addEventListener("DOMContentLoaded", () => {
   const clearFiltersBtn = document.getElementById("clearFilters");
   const tableBody = document.querySelector("table tbody");
 
+  // Get DOM elements for aggregate metrics.
+  const totalRevenueEl = document.getElementById("totalRevenue");
+  const totalDiscountEl = document.getElementById("totalDiscount");
+  const totalRefundEl = document.getElementById("totalRefund");
+  const totalOrdersEl = document.getElementById("totalOrders");
+
   async function fetchOrders() {
     const filter = filterSelect.value;
     const fromDate = fromDateInput.value;
@@ -16,11 +22,9 @@ document.addEventListener("DOMContentLoaded", () => {
         headers: { "X-Requested-With": "XMLHttpRequest" },
       });
 
+      // Update the orders table.
       const orders = response.data.orders;
-
       tableBody.innerHTML = "";
-
-      // Dynamically build and append each row.
       orders.forEach((order) => {
         const formattedDate = moment(order.createdAt).format("DD/MM/YY");
         const row = document.createElement("tr");
@@ -35,6 +39,20 @@ document.addEventListener("DOMContentLoaded", () => {
           `;
         tableBody.appendChild(row);
       });
+
+      // Update aggregate metrics.
+      if (totalRevenueEl) {
+        totalRevenueEl.textContent = "₹" + response.data.totalRevenue;
+      }
+      if (totalDiscountEl) {
+        totalDiscountEl.textContent = "₹" + response.data.totalDiscount;
+      }
+      if (totalRefundEl) {
+        totalRefundEl.textContent = "₹" + response.data.totalRefund;
+      }
+      if (totalOrdersEl) {
+        totalOrdersEl.textContent = response.data.totalOrders;
+      }
     } catch (error) {
       console.error("Error fetching filtered orders:", error);
     }
