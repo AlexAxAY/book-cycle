@@ -61,15 +61,48 @@
             </div>
           </div>
 
-          <!-- Year Filter (Hardcoded to 2025) -->
+          <!-- Time Filter (Relative) -->
+          <div class="mb-3">
+            <label class="form-label text-muted">Time</label>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="timeFilter"
+              id="thisWeek" value="thisWeek" <%= selectedTime === "thisWeek" ?
+              "checked" : "" %> />
+              <label class="form-check-label" for="thisWeek">This Week</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="timeFilter"
+              id="thisMonth" value="thisMonth" <%= selectedTime === "thisMonth"
+              ? "checked" : "" %> />
+              <label class="form-check-label" for="thisMonth">This Month</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="timeFilter"
+              id="thisYear" value="thisYear" <%= selectedTime === "thisYear" ?
+              "checked" : "" %> />
+              <label class="form-check-label" for="thisYear">This Year</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="timeFilter"
+              id="previous" value="previous" <%= selectedTime === "previous" ?
+              "checked" : "" %> />
+              <label class="form-check-label" for="previous">Previous</label>
+            </div>
+          </div>
+
+          <!-- Year Filter (Dynamic) -->
           <div>
             <label class="form-label text-muted">Year</label>
+            <% for (let y = userCreatedYear; y <= currentYear; y++) { %>
             <div class="form-check">
               <input class="form-check-input" type="radio" name="yearFilter"
-              id="year2025" value="2025" <%= selectedYear === "2025" ? "checked"
-              : "" %> />
-              <label class="form-check-label" for="year2025">2025</label>
+              id="year<%= y %>" value="<%= y %>" <%= selectedYear == y ?
+              "checked" : "" %> />
+              <label class="form-check-label" for="year<%= y %>">
+                <%= y %>
+              </label>
             </div>
+            <% } %>
           </div>
           <button class="btn btn-dark btn-sm mt-3 clear-btn">Clear</button>
         </div>
@@ -94,9 +127,13 @@
                     <div class="col-md-4">
                       <div class="row h-100" style="align-items: center">
                         <% order.order_items.forEach((item) => { %>
-                          <p class="m-0">
-                            🕮 <%= item.product.name %> <small class="text-muted">(<%= item.quantity %> <%= item.quantity === 1 ? "book" : "books" %>)</small>
-                          </p>
+                        <p class="m-0">
+                          🕮 <%= item.product.name %>
+                          <small class="text-muted">
+                            (<%= item.quantity %> <%= item.quantity === 1 ?
+                            "book" : "books" %>)
+                          </small>
+                        </p>
                         <% }); %>
                       </div>
                     </div>

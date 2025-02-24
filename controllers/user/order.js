@@ -2,6 +2,7 @@ const { Cart, CartItem } = require("../../models/cartSchemas");
 const { Coupon, CouponUsage } = require("../../models/couponSchemas");
 const { Wallet, WalletTransaction } = require("../../models/walletSchemas");
 const Order = require("../../models/orderSchema");
+const User = require("../../models/userSchema");
 const Address = require("../../models/addressSchema");
 const Product = require("../../models/productSchema");
 const Cancel = require("../../models/cancelSchema");
@@ -438,6 +439,7 @@ const proceedToBuy = async (req, res) => {
 const orders = async (req, res) => {
   try {
     const userId = req.user ? req.user.id : null;
+    const user = await User.findById({ _id: userId });
     const page = parseInt(req.query.page) || 1;
     const limit = 20;
     const skip = (page - 1) * limit;
@@ -448,10 +450,42 @@ const orders = async (req, res) => {
       query.status = req.query.statusFilter;
     }
 
-    if (req.query.yearFilter && req.query.yearFilter === "2025") {
-      const start = new Date(2025, 0, 1);
-      const end = new Date(2025, 11, 31, 23, 59, 59, 999);
-      query.createdAt = { $gte: start, $lte: end };
+    // If a time filter is provided, apply that (this takes precedence over yearFilter)
+    if (req.query.timeFilter) {
+      switch (req.query.timeFilter) {
+        case "thisWeek": {
+          const start = moment().startOf("week").toDate();
+          const end = moment().endOf("week").toDate();
+          query.createdAt = { $gte: start, $lte: end };
+          break;
+        }
+        case "thisMonth": {
+          const start = moment().startOf("month").toDate();
+          const end = moment().endOf("month").toDate();
+          query.createdAt = { $gte: start, $lte: end };
+          break;
+        }
+        case "thisYear": {
+          const start = moment().startOf("year").toDate();
+          const end = moment().endOf("year").toDate();
+          query.createdAt = { $gte: start, $lte: end };
+          break;
+        }
+        case "previous": {
+          // Example: orders before the start of this year
+          const end = moment().startOf("year").toDate();
+          query.createdAt = { $lt: end };
+          break;
+        }
+      }
+    } else if (req.query.yearFilter) {
+      // If a year filter is provided (and no time filter), filter by that year
+      const year = parseInt(req.query.yearFilter);
+      if (!isNaN(year)) {
+        const start = new Date(year, 0, 1);
+        const end = new Date(year, 11, 31, 23, 59, 59, 999);
+        query.createdAt = { $gte: start, $lte: end };
+      }
     }
 
     const totalOrders = await Order.countDocuments(query);
@@ -477,6 +511,9 @@ const orders = async (req, res) => {
       currentPage: page,
       selectedStatus: req.query.statusFilter || "",
       selectedYear: req.query.yearFilter || "",
+      selectedTime: req.query.timeFilter || "",
+      userCreatedYear: user.createdAt.getFullYear(),
+      currentYear: new Date().getFullYear(),
     });
   } catch (err) {
     console.log("Error in orders controller", err);

@@ -14,6 +14,8 @@ const offerSchema = new mongoose.Schema(
       required: true,
     },
     discountValue: { type: Number, required: true },
+    allProducts: { type: Boolean, default: null },
+    allCategories: { type: Boolean, default: null },
   },
   { timestamps: true }
 );

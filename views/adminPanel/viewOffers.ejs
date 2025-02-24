@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Offers</title>
+
+    <!-- css -->
+    <link rel="stylesheet" href="/admin/stylesheets/viewOffer.css" />
+
+    <!-- bootstrap -->
+    <%- include("../partials/admin/bootLink.ejs") %>
+
+    <!-- font link -->
+    <%- include("../partials/user/iconLink.ejs") %>
+
+    <!-- google fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Port+Lligat+Slab&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <!-- sidebar -->
+    <div style="width: 200px; position: fixed">
+      <%- include("../partials/admin/adminNavbar.ejs") %>
+    </div>
+
+    <!-- alert -->
+    <%- include("../partials/user/alertMessage.ejs") %>
+
+    <section
+      class="main-section d-flex"
+      style="
+        min-height: calc(100vh - 60px);
+        justify-content: center;
+        margin-left: 200px;
+      "
+    >
+      <div class="container mx-2 mt-5">
+        <h2>Offers</h2>
+        <div class="row">
+          <div class="table-wrapper table-responsive">
+            <!-- filter -->
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <div class="input-group">
+                <select class="form-select" aria-label="Filter by time period">
+                  <option selected disabled>Choose time period</option>
+                  <option value="1">Today</option>
+                  <option value="2">Yesterday</option>
+                  <option value="3">This Week</option>
+                  <option value="4">This Month</option>
+                  <option value="5">This Year</option>
+                </select>
+              </div>
+              <div class="input-group mx-2">
+                <label class="input-group-text" for="fromDate">From</label>
+                <input type="date" id="fromDate" class="form-control" />
+              </div>
+              <div class="input-group">
+                <label class="input-group-text" for="toDate">To</label>
+                <input type="date" id="toDate" class="form-control" />
+              </div>
+              <div class="input-group ms-2" style="width: fit-content">
+                <button id="clearFilters" class="btn btn-secondary">
+                  Clear
+                </button>
+              </div>
+            </div>
+
+            <!-- table contents -->
+            <table class="table table-striped table-hover text-center">
+              <thead class="thead-dark">
+                <tr>
+                  <th scope="col">Offer date</th>
+                  <th scope="col">Discount type</th>
+                  <th scope="col">Discount value</th>
+                  <th scope="col">Applied to</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% if (offers.length > 0) { %> <% offers.forEach((offer) => { %>
+                <tr>
+                  <td><%= moment(offer.createdAt).format("DD/MM/YY") %></td>
+                  <% if(offer.discountType === "percentage") { %>
+                  <td>%</td>
+                  <% } else { %>
+                  <td>₹</td>
+                  <% } %>
+                  <td><%= offer.discountValue %></td>
+                  <% if (offer.product) { %>
+                  <td><%= offer.product.name %></td>
+                  <% } else if (offer.category) { %>
+                  <td><%= offer.category.category %></td>
+                  <% } else if (offer.allProducts) { %>
+                  <td>All products</td>
+                  <% } else if (offer.allCategories) { %>
+                  <td>All categories</td>
+                  <% } %>
+                </tr>
+                <% }) %> <% } else { %>
+                <tr>
+                  <td colspan="4">No offer details</td>
+                </tr>
+                <% } %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- footer -->
+    <%- include("../partials/admin/adminFooter.ejs") %>
+
+    <!-- bootstrap -->
+    <%- include("../partials/admin/bootScript.ejs") %>
+
+    <!-- axios -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+    <!-- moment -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
+
+    <!-- filtering helper -->
+    <script src="/admin/helper/allOrdersHelper.js"></script>
+
+    <!-- js logout validation file -->
+    <script src="/admin/front-end-validation/logoutValidation.js"></script>
+  </body>
+</html>

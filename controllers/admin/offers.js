@@ -1,6 +1,7 @@
 const Category = require("../../models/categorySchema");
 const Product = require("../../models/productSchema");
 const Offer = require("../../models/offerSchema");
+const moment = require("moment");
 
 const offerModulePage = async (req, res) => {
   try {
@@ -77,13 +78,11 @@ const applyOffer = async (req, res) => {
     const processProducts = async (products) => {
       let failedProducts = [];
       for (const product of products) {
-        // Use product.price if final_price is missing (null or undefined)
         const effectiveFinalPrice =
           product.final_price !== undefined && product.final_price !== null
             ? product.final_price
             : product.price;
 
-        // For fixed discount, check if the entered discount exceeds effective final price
         if (discountType === "fixed" && discVal > effectiveFinalPrice) {
           failedProducts.push(product.name);
           continue; // Skip updating this product
@@ -100,7 +99,6 @@ const applyOffer = async (req, res) => {
         );
 
         if (action === "increase") {
-          // Only update if the new discount is greater than the current one
           if (newDiscountAmt > currentDiscountAmt) {
             await Product.findByIdAndUpdate(product._id, {
               discount: discVal,
@@ -109,7 +107,6 @@ const applyOffer = async (req, res) => {
             });
           }
         } else if (action === "decrease") {
-          // Unconditionally update for a decrease
           await Product.findByIdAndUpdate(product._id, {
             discount: discVal,
             discount_type: discountType,
@@ -134,8 +131,8 @@ const applyOffer = async (req, res) => {
           });
         }
         offerData.product = null;
+        offerData.allProducts = true; // Set flag for all products
       } else {
-        // Single product by name
         const product = await Product.findOne({ name: productName });
         if (!product) {
           return res
@@ -186,12 +183,13 @@ const applyOffer = async (req, res) => {
         if (failedProducts.length > 0) {
           return res.status(400).json({
             success: false,
-            message: `The following products/product have a final price lower than the offered discount: ${failedProducts.join(
+            message: `The following products have a final price lower than the offered discount: ${failedProducts.join(
               ", "
             )}`,
           });
         }
         offerData.category = null;
+        offerData.allCategories = true; // Set flag for all categories
       } else {
         const products = await Product.find({ category: category });
         if (!products || products.length === 0) {
@@ -204,7 +202,7 @@ const applyOffer = async (req, res) => {
         if (failedProducts.length > 0) {
           return res.status(400).json({
             success: false,
-            message: `The following product/products have a final price lower than the offered discount: ${failedProducts.join(
+            message: `The following products have a final price lower than the offered discount: ${failedProducts.join(
               ", "
             )}`,
           });
@@ -227,4 +225,67 @@ const applyOffer = async (req, res) => {
   }
 };
 
-module.exports = { offerModulePage, applyOffer };
+const viewOffers = async (req, res) => {
+  try {
+    let query = {};
+
+    if (req.query.ajax) {
+      if (req.query.filterPeriod) {
+        const now = moment();
+        let startDate, endDate;
+        switch (req.query.filterPeriod) {
+          case "1": // Today
+            startDate = now.clone().startOf("day");
+            endDate = now.clone().endOf("day");
+            break;
+          case "2": // Yesterday
+            startDate = now.clone().subtract(1, "days").startOf("day");
+            endDate = now.clone().subtract(1, "days").endOf("day");
+            break;
+          case "3": // This Week
+            startDate = now.clone().startOf("week");
+            endDate = now.clone().endOf("week");
+            break;
+          case "4": // This Month
+            startDate = now.clone().startOf("month");
+            endDate = now.clone().endOf("month");
+            break;
+          case "5": // This Year
+            startDate = now.clone().startOf("year");
+            endDate = now.clone().endOf("year");
+            break;
+        }
+        if (startDate && endDate) {
+          query.createdAt = {
+            $gte: startDate.toDate(),
+            $lte: endDate.toDate(),
+          };
+        }
+      }
+
+      // If both fromDate and toDate are provided, they take precedence
+      if (req.query.fromDate && req.query.toDate) {
+        query.createdAt = {
+          $gte: new Date(req.query.fromDate),
+          $lte: new Date(req.query.toDate),
+        };
+      }
+    }
+
+    const offers = await Offer.find(query)
+      .populate("product")
+      .populate("category")
+      .sort({ createdAt: -1 });
+
+    if (req.query.ajax) {
+      return res.json({ offers, moment });
+    } else {
+      return res.render("adminPanel/viewOffers", { offers, moment });
+    }
+  } catch (err) {
+    console.error("Error from viewOffers controller", err);
+    return res.status(500).send("Server error");
+  }
+};
+
+module.exports = { offerModulePage, applyOffer, viewOffers };

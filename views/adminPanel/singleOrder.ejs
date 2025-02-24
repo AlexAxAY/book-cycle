@@ -27,12 +27,12 @@
     <div class="alert-good d-none text-center" style="position: fixed"></div>
 
     <!-- main section -->
-    <section class="container mt-5">
+    <section class="container">
       <div
         class="d-flex flex-column align-items-center"
         style="min-height: calc(100vh - 60px); margin-left: 210px"
       >
-        <h2>Order details</h2>
+        <h2 class="mt-5">Order details</h2>
 
         <!-- Order Details Card -->
         <div class="card w-75 my-4">
@@ -115,25 +115,22 @@
               </div>
             </div>
           </div>
-          
-          <div class="p-3">
-            
-            <% if (returnDecisions.length > 0) {%>
-              <hr>
-              <p class="fs-4"><strong>Return details</strong></p>
-              <% returnDecisions.forEach((item)=>{ %>
-                <p class="card-text">
-                  <strong>Product name:</strong>
-                  <%= item.product.name %> 
-                  <% if (item.return_status === "Approved") { %>
-                  <span style="color: green;">(Approved)</span>
-                  <% } else { %>
-                  <span style="color: red;">(Rejected)</span>
-                  <% } %>
 
-                </p>
-              <% }) %>
+          <div class="p-3">
+            <% if (returnDecisions.length > 0) {%>
+            <hr />
+            <p class="fs-4"><strong>Return details</strong></p>
+            <% returnDecisions.forEach((item)=>{ %>
+            <p class="card-text">
+              <strong>Product name:</strong>
+              <%= item.product.name %> <% if (item.return_status === "Approved")
+              { %>
+              <span style="color: green">(Approved)</span>
+              <% } else { %>
+              <span style="color: red">(Rejected)</span>
               <% } %>
+            </p>
+            <% }) %> <% } %>
           </div>
         </div>
 
@@ -154,38 +151,49 @@
             </button>
           </form>
         </div>
-        <% } %>
-
-        <% order.order_items.forEach((item) => { 
-          if(item.return_status === "Requested") { %>
-       <div class="return-decision-form p-3 my-3" data-product-id="<%= item.product._id %>">
-         <p class="fs-4">
-           Return request for <strong><%= item.product.name %></strong> (Quantity: <%= item.quantity %>)
-         </p>
-         <p>Reason for return: <%= item.return_reason %> </p>
-         <form class="return-decision-form-inner">
-           <div class="form-group">
-             <label for="returnDecision-<%= item.product._id %>">
-               Update Return Status:
-             </label>
-             <select name="decision" id="returnDecision-<%= item.product._id %>" class="form-control">
-               <option value="">Select Decision</option>
-               <option value="Approved">Approved</option>
-               <option value="Rejected">Rejected</option>
-             </select>
-           </div>
-           <!-- Textarea for providing a reason -->
-           <div class="form-group mt-2">
-             <label for="adminMessage-<%= item.product._id %>">Reason:</label>
-             <textarea name="adminMessage" id="adminMessage-<%= item.product._id %>" class="form-control" rows="2" placeholder="Enter reason..."></textarea>
-           </div>
-           <button type="submit" class="btn btn-primary mt-3">Submit</button>
-         </form>
-         <div class="return-decision-result mt-2" style="display: none;"></div>
-       </div>
-     <% } }); %>
-     
-     
+        <% } %> <% order.order_items.forEach((item) => { if(item.return_status
+        === "Requested") { %>
+        <div
+          class="return-decision-form p-3 my-3"
+          data-product-id="<%= item.product._id %>"
+        >
+          <p class="fs-4">
+            Return request for
+            <strong><%= item.product.name %></strong>
+            (Quantity: <%= item.quantity %>)
+          </p>
+          <p>Reason for return: <%= item.return_reason %></p>
+          <form class="return-decision-form-inner">
+            <div class="form-group">
+              <label for="returnDecision-<%= item.product._id %>">
+                Update Return Status:
+              </label>
+              <select
+                name="decision"
+                id="returnDecision-<%= item.product._id %>"
+                class="form-control"
+              >
+                <option value="">Select Decision</option>
+                <option value="Approved">Approved</option>
+                <option value="Rejected">Rejected</option>
+              </select>
+            </div>
+            <!-- Textarea for providing a reason -->
+            <div class="form-group mt-2">
+              <label for="adminMessage-<%= item.product._id %>">Reason:</label>
+              <textarea
+                name="adminMessage"
+                id="adminMessage-<%= item.product._id %>"
+                class="form-control"
+                rows="2"
+                placeholder="Enter reason..."
+              ></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary mt-3">Submit</button>
+          </form>
+          <div class="return-decision-result mt-2" style="display: none"></div>
+        </div>
+        <% } }); %>
       </div>
     </section>
 

@@ -88,7 +88,7 @@ body {
 }
 
 .address-card:hover {
-  border: 2px solid blue;
+  border: 1px solid blue;
 }
 
 .address-header {

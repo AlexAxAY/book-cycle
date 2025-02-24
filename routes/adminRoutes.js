@@ -47,6 +47,7 @@ const {
 const {
   offerModulePage,
   applyOffer,
+  viewOffers,
 } = require("../controllers/admin/offers.js");
 
 // Requiring auth controllers
@@ -149,6 +150,7 @@ router
 
 // Offer routes
 router.route("/add-offer").get(offerModulePage).post(applyOffer);
+router.route("/offers").get(viewOffers);
 
 // sales report route
 router.route("/sales-report").get(salesReportPage);
