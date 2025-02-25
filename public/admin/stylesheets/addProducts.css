@@ -60,6 +60,7 @@ body {
   background-color: green !important;
 }
 
+/* sidebar */
 #sidebar .sidebar-header {
   padding: 1rem;
   background: #fff;
@@ -93,4 +94,20 @@ input[type="number"]::-webkit-outer-spin-button,
 input[type="number"]::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
+}
+
+/* apply every where */
+@media (max-width: 767px) {
+  .burger-icon {
+    display: inline !important;
+  }
+  .sidebar {
+    display: none;
+  }
+}
+
+@media (max-width: 358px) {
+  .footer-div p {
+    font-size: smaller;
+  }
 }

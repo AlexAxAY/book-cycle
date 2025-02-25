@@ -11,6 +11,9 @@
     <!-- bootstrap -->
     <%- include("../partials/admin/bootLink.ejs") %>
 
+    <!-- icon link -->
+    <%- include("../partials/user/iconLink.ejs") %>
+
     <!-- cropper js CDN -->
     <link
       href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css"
@@ -27,20 +30,29 @@
     />
   </head>
   <body>
-    <!-- sidebar -->
-    <div class="col-3" style="width: 200px; position: fixed">
-      <%- include("../partials/admin/adminNavbar.ejs") %>
-    </div>
+    <!-- header nav -->
+    <%- include("../partials/admin/adminHeader.ejs") %>
+
     <section
-      class="main-section d-flex"
+      class="main-section"
       style="
-        margin-left: 210px;
         justify-content: center;
-        min-height: calc(100vh - 60px);
+        min-height: calc(100vh - 130px);
       "
     >
+    <div class="wrapper container-fluid d-flex">
+     <!-- sidebar -->
+     <div class="sidebar" style="min-width: 170px">
+      <%- include("../partials/admin/adminNavbar.ejs") %>
+     </div>
+
+     <!-- offcanvas -->
+     <%- include("../partials/admin/offCanvas.ejs") %>
+
+     <!-- main section -->
+     <div class="content p-3" style="flex-grow: 1">
       <div
-        class="d-flex my-5"
+        class="d-flex justify-content-center"
         style="
           box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1),
             0 1px 3px rgba(0, 0, 0, 0.08);
@@ -48,6 +60,7 @@
       >
         <div class="p-5">
           <h2 class="text-center mb-4">Add Product</h2>
+
           <!-- alert message -->
           <div
             class="alert alert-warning alert-dismissible fade show d-none"
@@ -63,18 +76,8 @@
             ></button>
           </div>
 
-          <!-- For logout -->
-          <!-- error alert -->
-          <div
-            class="alert-bad d-none text-center"
-            style="position: fixed"
-          ></div>
-
-          <!-- success alert -->
-          <div
-            class="alert-good d-none text-center"
-            style="position: fixed"
-          ></div>
+          <!-- alert (for logout)-->
+         <%- include("../partials/user/alertMessage.ejs") %>
 
           <form id="productForm" enctype="multipart/form-data">
             <div class="row">
@@ -275,6 +278,8 @@
           </form>
         </div>
       </div>
+    </div>
+    </div>
     </section>
     <!-- footer -->
     <%- include("../partials/admin/adminFooter.ejs") %>

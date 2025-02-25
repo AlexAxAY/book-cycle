@@ -11,6 +11,9 @@
     <!-- bootstrap -->
     <%- include("../partials/admin/bootLink.ejs") %>
 
+    <!-- icon link -->
+    <%- include("../partials/user/iconLink.ejs") %>
+
     <!-- google fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -20,25 +23,32 @@
     />
   </head>
   <body>
-    <!-- sidebar -->
-    <div class="col-3" style="width: 200px; position: fixed">
-      <%- include("../partials/admin/adminNavbar.ejs") %>
-    </div>
+    <!-- header nav -->
+    <%- include("../partials/admin/adminHeader.ejs") %>
 
-    <section
-      class="main-section d-flex"
-      style="
-      position: relative;
-        margin-left: 210px;
-        justify-content: center;
-        min-height: calc(100vh - 60px);
-      "
-    >
     <!-- alert -->
     <%- include("../partials/user/alertMessage.ejs") %>
 
+    <section
+      class="main-section"
+      style="
+        min-height: calc(100vh - 130px);
+      "
+    >
+    <div class="wrapper container-fluid d-flex">
+
+      <!-- sidebar -->
+      <div class="sidebar" style="min-width: 170px">
+        <%- include("../partials/admin/adminNavbar.ejs") %>
+      </div>
+
+      <!-- offcanvas -->
+      <%- include("../partials/admin/offCanvas.ejs") %>
+
+      <!-- main section -->
+      <div class="content p-3" style="flex-grow: 1">
       <div
-        class="d-flex mt-5"
+        class="d-flex justify-content-center"
         style="
           box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1),
             0 1px 3px rgba(0, 0, 0, 0.08);
@@ -132,6 +142,8 @@
           </form>
         </div>
       </div>
+    </div>
+    </div>
     </section>
     <!-- footer -->
     <%- include("../partials/admin/adminFooter.ejs") %>

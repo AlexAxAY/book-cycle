@@ -69,3 +69,25 @@ input[type="number"]::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
+
+/* apply every where */
+@media (max-width: 767px) {
+  .burger-icon {
+    display: inline !important;
+  }
+  .sidebar {
+    display: none;
+  }
+  #productForm {
+    text-align: center;
+  }
+  #productForm div:last-child {
+    justify-content: center !important;
+  }
+}
+
+@media (max-width: 358px) {
+  .footer-div p {
+    font-size: smaller;
+  }
+}
