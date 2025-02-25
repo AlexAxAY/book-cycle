@@ -1,0 +1,135 @@
+<div
+  class="offcanvas offcanvas-start"
+  style="
+    width: 300px;
+    background: linear-gradient(135deg, #f7f8fa, #e1e8ed);
+    border: none;
+  "
+  tabindex="-1"
+  id="offcanvasExample"
+  aria-labelledby="offcanvasExampleLabel"
+>
+  <div class="offcanvas-header">
+    <h5 class="offcanvas-title" id="offcanvasExampleLabel">
+      <img
+        class="ms-3"
+        src="/images/—Pngtree—cycling logo design vector icon_5149980-Photoroom.png"
+        alt="logo"
+        style="width: 60px"
+      />
+    </h5>
+    <button
+      type="button"
+      class="btn-close"
+      data-bs-dismiss="offcanvas"
+      aria-label="Close"
+    ></button>
+  </div>
+  <div class="offcanvas-body">
+    <nav id="sidebar">
+      <ul class="components">
+        <li>
+          <a href="#">Dashboard</a>
+        </li>
+        <li>
+          <a href="/admin/users">Customers</a>
+        </li>
+        <li>
+          <a
+            href="#productsSubmenu"
+            data-bs-toggle="collapse"
+            aria-expanded="false"
+            class="dropdown-toggle"
+          >
+            Products
+          </a>
+          <ul class="collapse list-unstyled" id="productsSubmenu">
+            <li><a href="/admin/products">All Products</a></li>
+            <hr class="m-0" />
+            <li><a href="/admin/add-products">Add Products</a></li>
+            <hr class="m-0" />
+            <li><a href="/admin/manage-category">Manage Category</a></li>
+            <hr class="m-0" />
+            <li><a href="/admin/view-categories">View Categories</a></li>
+            <hr class="m-0" />
+          </ul>
+        </li>
+        <li>
+          <a href="/admin/all-orders">Order History</a>
+        </li>
+        <li>
+          <a href="#">Reviews</a>
+        </li>
+        <li>
+          <a
+            href="#couponsSubmenu"
+            data-bs-toggle="collapse"
+            aria-expanded="false"
+            class="dropdown-toggle"
+          >
+            Coupons
+          </a>
+          <ul class="collapse list-unstyled" id="couponsSubmenu">
+            <li><a href="/admin/coupons">All Coupons</a></li>
+            <hr class="m-0" />
+            <li><a href="/admin/add-coupon">Add Coupon</a></li>
+            <hr class="m-0" />
+          </ul>
+        </li>
+        <li>
+          <a
+            href="#offerSubmenu"
+            data-bs-toggle="collapse"
+            aria-expanded="false"
+            class="dropdown-toggle"
+          >
+            Offers
+          </a>
+          <ul class="collapse list-unstyled" id="offerSubmenu">
+            <li><a href="/admin/offers">View Offers</a></li>
+            <hr class="m-0" />
+            <li><a href="/admin/add-offer">Add Offers</a></li>
+            <hr class="m-0" />
+          </ul>
+        </li>
+        <li>
+          <a
+            href="#bannersSubmenu"
+            data-bs-toggle="collapse"
+            aria-expanded="false"
+            class="dropdown-toggle"
+          >
+            Banners
+          </a>
+          <ul class="collapse list-unstyled" id="bannersSubmenu">
+            <li><a href="/admin/all-banners">All Banners</a></li>
+            <hr class="m-0" />
+            <li><a href="/admin/banner-management">Add Banner</a></li>
+            <hr class="m-0" />
+          </ul>
+        </li>
+        <li>
+          <a href="/admin/sales-report">Sales Report</a>
+        </li>
+        <li>
+          <a
+            href="#adminSubmenu"
+            data-bs-toggle="collapse"
+            aria-expanded="false"
+            class="dropdown-toggle"
+          >
+            Admin
+          </a>
+          <ul class="collapse list-unstyled" id="adminSubmenu">
+            <li><a href="#">Change Password</a></li>
+            <hr class="m-0" />
+            <% if(user && user.isAdmin) { %>
+            <li><button class="dropdown-item logout-btn">Logout</button></li>
+            <hr class="m-0" />
+            <% } %>
+          </ul>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</div>

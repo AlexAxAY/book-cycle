@@ -89,7 +89,7 @@ document.addEventListener("DOMContentLoaded", function () {
     };
 
     try {
-      const response = await axios.put("/admin/add-coupon", payload);
+      const response = await axios.post("/admin/add-coupon", payload);
       if (response.data.success) {
         showAlert(
           alertGood,

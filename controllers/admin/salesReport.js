@@ -79,6 +79,12 @@ const salesReportPage = async (req, res) => {
       0
     );
 
+    // Calculate total delivery charge from orders.
+    const totalDeliveryCharge = orders.reduce(
+      (acc, order) => acc + order.delivery_charge,
+      0
+    );
+
     let walletTransactionQuery = { type: "credit", order: { $ne: null } };
     if (startDate && endDate) {
       walletTransactionQuery.createdAt = { $gte: startDate, $lte: endDate };
@@ -91,7 +97,8 @@ const salesReportPage = async (req, res) => {
     const totalRefund =
       refundAggregate.length > 0 ? refundAggregate[0].total : 0;
 
-    const totalRevenue = totalFinalAmount - totalRefund;
+    // Subtract total refund and total delivery charge from total final amount.
+    const totalRevenue = totalFinalAmount - totalRefund - totalDeliveryCharge;
 
     if (req.xhr) {
       return res.json({

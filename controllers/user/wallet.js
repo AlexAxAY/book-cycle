@@ -26,7 +26,7 @@ const viewWallet = async (req, res) => {
       .populate("order")
       .sort(sortOptions);
 
-    // If the request is an AJAX (XHR) request, return JSON
+    // If the request is an AJAX request
     if (req.xhr) {
       return res.json({ transactions, moment });
     }

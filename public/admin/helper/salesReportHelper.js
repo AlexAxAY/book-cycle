@@ -56,13 +56,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
       // Update aggregate metrics.
       if (totalRevenueEl) {
-        totalRevenueEl.textContent = "₹" + response.data.totalRevenue;
+        totalRevenueEl.textContent =
+          "₹" + response.data.totalRevenue.toFixed(2);
       }
       if (totalDiscountEl) {
-        totalDiscountEl.textContent = "₹" + response.data.totalDiscount;
+        totalDiscountEl.textContent =
+          "₹" + response.data.totalDiscount.toFixed(2);
       }
       if (totalRefundEl) {
-        totalRefundEl.textContent = "₹" + response.data.totalRefund;
+        totalRefundEl.textContent = "₹" + response.data.totalRefund.toFixed(2);
       }
       if (totalOrdersEl) {
         totalOrdersEl.textContent = response.data.totalOrders;

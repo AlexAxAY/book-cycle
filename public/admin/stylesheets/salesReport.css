@@ -34,6 +34,8 @@ body {
   background-color: green !important;
 }
 
+/* sidebar */
+
 #sidebar .sidebar-header {
   padding: 1rem;
   background: #fff;
@@ -56,6 +58,7 @@ body {
   background: #e9ecef;
   text-decoration: none;
 }
+
 /* Style for dropdown toggles */
 #sidebar ul li a.dropdown-toggle::after {
   float: right;
@@ -66,6 +69,9 @@ body {
   height: 100px;
   border-radius: 5px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+.total-status {
+  width: 100%;
 }
 
 .price {
@@ -86,7 +92,99 @@ body {
   text-align: center;
   color: #343a40;
 }
+
 /* Hover effect for table rows */
 .table-hover tbody tr:hover {
   background-color: #f1f1f1;
+}
+
+/* media queries */
+@media (max-width: 991px) {
+  .content {
+    flex-grow: 0;
+    width: 500px;
+  }
+}
+
+@media (max-width: 767px) {
+  .total-status {
+    width: 400px !important;
+  }
+  .boxes {
+    margin-bottom: 2px;
+  }
+  .sidebar {
+    display: none;
+  }
+  .burger-icon {
+    display: inline !important;
+  }
+}
+
+@media (max-width: 634px) {
+  .content {
+    flex-grow: 0;
+    width: 400px;
+  }
+  .total-status {
+    width: 300px !important;
+  }
+  .boxes p:first-child {
+    margin-top: 20px;
+    font-size: 18px !important;
+  }
+  .components a {
+    font-size: smaller;
+  }
+  .sidebar {
+    width: 130px !important;
+  }
+  .table th,
+  td {
+    font-size: smaller;
+  }
+  .download-buttons small {
+    font-size: small;
+  }
+  .download-buttons a {
+    margin: 0 !important;
+    border: none !important;
+    width: 115px !important;
+  }
+  #clearFilters {
+    font-size: x-small;
+  }
+}
+
+@media (max-width: 521px) {
+  .content {
+    flex-grow: 0;
+    width: 300px;
+  }
+  .total-status {
+    width: 200px !important;
+  }
+  .boxes p:first-child {
+    margin-top: 20px;
+    font-size: 18px !important;
+  }
+  .components a {
+    font-size: smaller;
+  }
+  .sidebar {
+    width: 110px !important;
+  }
+  .offcanvas {
+    width: 200px !important;
+  }
+}
+
+@media (max-width: 421px) {
+  .content {
+    flex-grow: 0;
+    width: 200px;
+  }
+  .download-buttons a {
+    margin-bottom: 3px !important;
+  }
 }
