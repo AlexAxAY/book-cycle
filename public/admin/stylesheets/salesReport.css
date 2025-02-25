@@ -35,7 +35,6 @@ body {
 }
 
 /* sidebar */
-
 #sidebar .sidebar-header {
   padding: 1rem;
   background: #fff;
@@ -116,6 +115,7 @@ body {
   .sidebar {
     display: none;
   }
+  /* apply every where */
   .burger-icon {
     display: inline !important;
   }
@@ -135,9 +135,6 @@ body {
   }
   .components a {
     font-size: smaller;
-  }
-  .sidebar {
-    width: 130px !important;
   }
   .table th,
   td {
@@ -170,9 +167,6 @@ body {
   }
   .components a {
     font-size: smaller;
-  }
-  .sidebar {
-    width: 110px !important;
   }
   .offcanvas {
     width: 200px !important;

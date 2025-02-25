@@ -104,3 +104,23 @@ input[type="number"]::-webkit-inner-spin-button {
 .return-decision-form {
   border: 1px solid rgba(0, 0, 0, 0.5);
 }
+
+/* apply every where */
+@media (max-width: 767px) {
+  .burger-icon {
+    display: inline !important;
+  }
+  .sidebar {
+    display: none;
+  }
+}
+
+@media (max-width: 358px) {
+  .content {
+    flex-grow: 0;
+    width: 250px;
+  }
+  .footer-div p {
+    font-size: smaller;
+  }
+}

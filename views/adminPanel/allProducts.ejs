@@ -10,378 +10,480 @@
 
     <!-- bootstrap -->
     <%- include("../partials/admin/bootLink.ejs") %>
+
+    <!-- icon link -->
+    <%- include("../partials/user/iconLink.ejs") %>
   </head>
   <body>
-    <!-- sidebar -->
-    <div class="col-3" style="width: 200px; position: fixed">
-      <%- include("../partials/admin/adminNavbar.ejs") %>
-    </div>
+    <!-- header nav -->
+    <%- include("../partials/admin/adminHeader.ejs") %>
 
-    <!-- error alert -->
-    <div class="alert-bad d-none text-center" style="position: fixed"></div>
-
-    <!-- success alert -->
-    <div class="alert-good d-none text-center" style="position: fixed"></div>
-
-    <!-- main section -->
-    <% if (products.length > 0 && !products.is_deleted) { %>
-    <section
-      class="d-flex mt-5"
-      style="
-        margin-left: 200px;
-        min-height: calc(100vh - 60px);
-        justify-content: center;
-      "
-    >
-      <div class="col-9">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-          <h1>All Products</h1>
-          <form
-            class="d-flex align-items-center"
-            id="search-form"
-            method="GET"
-            action="/admin/products"
-          >
-            <input
-              type="text"
-              name="search"
-              class="form-control m-2"
-              style="border-radius: 20px"
-              placeholder="Search.."
-            />
-            <button
-              type="submit"
-              class="btn btn-outline-dark btn-sm"
-              style="height: fit-content"
-            >
-              Go
-            </button>
-          </form>
-          <button class="btn btn-secondary" id="filter-btn">Filter</button>
+    <!-- alert -->
+    <%- include("../partials/user/alertMessage.ejs") %> <% if (products.length >
+    0 && !products.is_deleted) { %>
+    <section style="min-height: calc(100vh - 130px)">
+      <div class="wrapper container-fluid d-flex">
+        <!-- sidebar -->
+        <div class="sidebar" style="min-width: 170px">
+          <%- include("../partials/admin/adminNavbar.ejs") %>
         </div>
 
-        <!-- Filter Dropdown (Hidden by Default, toggled by the button) -->
-        <div id="filter-options" class="mb-4 d-none">
-          <form
-            action="/admin/products"
-            method="GET"
-            id="filterForm"
-            class="row g-3"
-            novalidate
-          >
-            <div class="col-md-3">
-              <label for="date" class="form-label">Date Added</label>
-              <input type="date" class="form-control" id="date" name="date" />
-            </div>
-            <div class="col-md-3">
-              <label for="max-price" class="form-label">Max-Price (₹)</label>
-              <input
-                type="number"
-                class="form-control"
-                id="max-price"
-                name="max-price"
-                placeholder="Enter a price"
-                min="0"
-                max="5000"
-              />
-            </div>
-            <div class="col-md-3">
-              <label for="min-price" class="form-label">Min-Price (₹)</label>
-              <input
-                type="number"
-                class="form-control"
-                id="min-price"
-                name="min-price"
-                placeholder="Enter a price"
-                min="0"
-              />
-            </div>
-            <div class="col-md-3">
-              <label for="used" class="form-label">Used</label>
-              <select class="form-select" id="used" name="used">
-                <option value="">Any</option>
-                <option value="true">Used</option>
-                <option value="false">New</option>
-              </select>
-            </div>
+        <!-- offcanvas -->
+        <%- include("../partials/admin/offCanvas.ejs") %>
 
-            <div class="col-md-3">
-              <label for="rating" class="form-label">Rating</label>
-              <input
-                type="number"
-                class="form-control"
-                id="rating"
-                name="rating"
-                placeholder="Min rating (1-5)"
-                min="0"
-                max="5"
-              />
-            </div>
-            <div class="col-md-6">
-              <label for="discount" class="form-label">Discount (%)</label>
-              <input
-                type="number"
-                class="form-control"
-                id="discount"
-                name="discount"
-                placeholder="Enter discount percentage"
-                min="0"
-                max="100"
-              />
-              <small class="text-muted">
-                Show products with discount greater than or equal to the entered
-                value.
-              </small>
-            </div>
-            <div class="col-md-3">
-              <label for="category" class="form-label">Category</label>
-              <select class="form-select" id="category" name="category">
-                <option value="">All Categories</option>
-                <% categories.forEach(category => { %>
-                <option value="<%= category.category %>">
-                  <%= category.category %>
-                </option>
-                <% }) %>
-              </select>
-            </div>
-
-            <div class="col-12">
-              <button type="submit" class="btn btn-primary">
-                Apply Filters
-              </button>
-            </div>
-          </form>
-        </div>
-
-        <!-- Product Cards -->
-        <div
-          class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5 g-3"
-        >
-          <% products.forEach(product => { %>
-          <div class="col">
-            <div class="card product-card">
-              <!-- Image Carousel -->
-              <% if (product.images.length > 1) { %>
-              <div
-                id="carouselExampleControls<%= product._id %>"
-                class="carousel slide"
-                data-bs-ride="carousel"
-              >
-                <div class="carousel-inner">
-                  <% product.images.forEach((image, index) => { %>
-                  <div class="carousel-item <%= index === 0 ? 'active' : '' %>">
-                    <img
-                      src="<%= image.cropped_url || image.original_url %>"
-                      class="d-block w-100"
-                      alt="<%= product.name %>"
-                      id="my-image"
-                      onerror="this.src='<%= image.original_url %>';this.onerror=null;"
+        <!-- main section -->
+        <div class="content p-3" style="flex-grow: 1">
+          <div class="d-flex" style="justify-content: center">
+            <div class="col-9">
+              <div class="row justify-content-between align-items-center mb-4">
+                <div class="col-lg-auto col-md-12 text-center">
+                  <h1>All Products</h1>
+                </div>
+                <div class="col-lg-auto col-sm-12 col-md-6">
+                  <form
+                    class="d-flex align-items-center"
+                    id="search-form"
+                    method="GET"
+                    action="/admin/products"
+                  >
+                    <input
+                      type="text"
+                      name="search"
+                      class="form-control m-2"
+                      style="border-radius: 20px"
+                      placeholder="Search.."
                     />
+                    <button
+                      type="submit"
+                      class="btn btn-outline-dark btn-sm"
+                      style="height: fit-content"
+                    >
+                      Go
+                    </button>
+                  </form>
+                </div>
+                <div class="col-lg-auto col-sm-12 col-md-6 text-center">
+                  <button class="btn btn-secondary" id="filter-btn">
+                    Filter
+                  </button>
+                </div>
+              </div>
+
+              <!-- Filter Dropdown (Hidden by Default, toggled by the button) -->
+              <div id="filter-options" class="mb-4 d-none">
+                <form
+                  action="/admin/products"
+                  method="GET"
+                  id="filterForm"
+                  class="row g-3"
+                  novalidate
+                >
+                  <div class="col-md-3">
+                    <label for="date" class="form-label">Date Added</label>
+                    <input
+                      type="date"
+                      class="form-control"
+                      id="date"
+                      name="date"
                     />
                   </div>
-                  <% }) %>
-                </div>
-                <button
-                  class="carousel-control-prev"
-                  type="button"
-                  data-bs-target="#carouselExampleControls<%= product._id %>"
-                  data-bs-slide="prev"
-                >
-                  <span
-                    class="carousel-control-prev-icon"
-                    aria-hidden="true"
-                  ></span>
-                  <span class="visually-hidden">Previous</span>
-                </button>
-                <button
-                  class="carousel-control-next"
-                  type="button"
-                  data-bs-target="#carouselExampleControls<%= product._id %>"
-                  data-bs-slide="next"
-                >
-                  <span
-                    class="carousel-control-next-icon"
-                    aria-hidden="true"
-                  ></span>
-                  <span class="visually-hidden">Next</span>
-                </button>
+                  <div class="col-md-3">
+                    <label for="max-price" class="form-label">
+                      Max-Price (₹)
+                    </label>
+                    <input
+                      type="number"
+                      class="form-control"
+                      id="max-price"
+                      name="max-price"
+                      placeholder="Enter a price"
+                      min="0"
+                      max="5000"
+                    />
+                  </div>
+                  <div class="col-md-3">
+                    <label for="min-price" class="form-label">
+                      Min-Price (₹)
+                    </label>
+                    <input
+                      type="number"
+                      class="form-control"
+                      id="min-price"
+                      name="min-price"
+                      placeholder="Enter a price"
+                      min="0"
+                    />
+                  </div>
+                  <div class="col-md-3">
+                    <label for="used" class="form-label">Used</label>
+                    <select class="form-select" id="used" name="used">
+                      <option value="">Any</option>
+                      <option value="true">Used</option>
+                      <option value="false">New</option>
+                    </select>
+                  </div>
+
+                  <div class="col-md-3">
+                    <label for="rating" class="form-label">Rating</label>
+                    <input
+                      type="number"
+                      class="form-control"
+                      id="rating"
+                      name="rating"
+                      placeholder="Min rating (1-5)"
+                      min="0"
+                      max="5"
+                    />
+                  </div>
+                  <div class="col-md-6">
+                    <label for="discount" class="form-label">
+                      Discount (%)
+                    </label>
+                    <input
+                      type="number"
+                      class="form-control"
+                      id="discount"
+                      name="discount"
+                      placeholder="Enter discount percentage"
+                      min="0"
+                      max="100"
+                    />
+                    <small class="text-muted">
+                      Show products with discount greater than or equal to the
+                      entered value.
+                    </small>
+                  </div>
+                  <div class="col-md-3">
+                    <label for="category" class="form-label">Category</label>
+                    <select class="form-select" id="category" name="category">
+                      <option value="">All Categories</option>
+                      <% categories.forEach(category => { %>
+                      <option value="<%= category.category %>">
+                        <%= category.category %>
+                      </option>
+                      <% }) %>
+                    </select>
+                  </div>
+
+                  <div class="col-12">
+                    <button type="submit" class="btn btn-primary">
+                      Apply Filters
+                    </button>
+                  </div>
+                </form>
               </div>
-              <% } else { %>
-              <img
-                src="<%= product.images[0]?.cropped_url || product.images[0]?.original_url || '/default-image.jpg' %>"
-                class="card-img-top"
-                alt="<%= product.name %>"
-              />
-              <% } %>
 
-              <div class="card-body">
-                <h5 class="card-title"><%= product.name %></h5>
+              <!-- Product Cards -->
+              <div
+                class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5 g-3"
+              >
+                <% products.forEach(product => { %>
+                <div class="col">
+                  <div class="card product-card">
+                    <!-- Image Carousel -->
+                    <% if (product.images.length > 1) { %>
+                    <div
+                      id="carouselExampleControls<%= product._id %>"
+                      class="carousel slide"
+                      data-bs-ride="carousel"
+                    >
+                      <div class="carousel-inner">
+                        <% product.images.forEach((image, index) => { %>
+                        <div
+                          class="carousel-item <%= index === 0 ? 'active' : '' %>"
+                        >
+                          <img
+                            src="<%= image.cropped_url || image.original_url %>"
+                            class="d-block w-100"
+                            alt="<%= product.name %>"
+                            id="my-image"
+                            onerror="this.src='<%= image.original_url %>';this.onerror=null;"
+                          />
+                          />
+                        </div>
+                        <% }) %>
+                      </div>
+                      <button
+                        class="carousel-control-prev"
+                        type="button"
+                        data-bs-target="#carouselExampleControls<%= product._id %>"
+                        data-bs-slide="prev"
+                      >
+                        <span
+                          class="carousel-control-prev-icon"
+                          aria-hidden="true"
+                        ></span>
+                        <span class="visually-hidden">Previous</span>
+                      </button>
+                      <button
+                        class="carousel-control-next"
+                        type="button"
+                        data-bs-target="#carouselExampleControls<%= product._id %>"
+                        data-bs-slide="next"
+                      >
+                        <span
+                          class="carousel-control-next-icon"
+                          aria-hidden="true"
+                        ></span>
+                        <span class="visually-hidden">Next</span>
+                      </button>
+                    </div>
+                    <% } else { %>
+                    <img
+                      src="<%= product.images[0]?.cropped_url || product.images[0]?.original_url || '/default-image.jpg' %>"
+                      class="card-img-top"
+                      alt="<%= product.name %>"
+                    />
+                    <% } %>
 
-                <!-- Rating -->
-                <p class="text-warning mb-2">
-                  <i class="bi bi-star-fill"></i> <%= product.avg_rating ||
-                  'N/A' %>
-                  <small>(<%= product.rating_count || 0 %>)</small>
-                </p>
+                    <div class="card-body">
+                      <h5 class="card-title"><%= product.name %></h5>
 
-                <!-- Price, Discount, and Final Price -->
-                <p class="card-text">
-                  <strong>Price:</strong> ₹<%= product.price %><br />
-                  <strong>Final Price:</strong> ₹<%= product.final_price ||
-                  product.price %> <% if (product.discount) { %>
-                  <span class="text-success">
-                    (<%= product.discount %><%= product.discount_type ===
-                    'percentage' ? '%' : '₹' %> off)
-                  </span>
-                  <% } %>
-                </p>
+                      <!-- Rating -->
+                      <p class="text-warning mb-2">
+                        <i class="bi bi-star-fill"></i>
+                        <%= product.avg_rating || 'N/A' %>
+                        <small>(<%= product.rating_count || 0 %>)</small>
+                      </p>
 
-                <!-- Publisher and Dates -->
-                <p class="card-text">
-                  <strong>Published by:</strong> <%= product.publisher ||
-                  'Unknown' %><br />
-                  <strong>Created on:</strong> <%=
-                  product.createdAt.toLocaleDateString() %><br />
-                  <% if (product.updatedAt) { %>
-                  <strong>Updated on:</strong> <%=
-                  product.updatedAt.toLocaleDateString() %> <% } %>
-                </p>
-                <% if (product.used) { %>
-                <p class="card-text text-warning">
-                  <strong>Pre-loved Books</strong>
-                </p>
-                <% } else { %>
-                <p class="card-text text-success">
-                  <strong>Yet to be loved</strong>
-                </p>
-                <% } %>
+                      <!-- Price, Discount, and Final Price -->
+                      <p class="card-text">
+                        <strong>Price:</strong>
+                        ₹<%= product.price %>
+                        <br />
+                        <strong>Final Price:</strong>
+                        ₹<%= product.final_price || product.price %> <% if
+                        (product.discount) { %>
+                        <span class="text-success">
+                          (<%= product.discount %><%= product.discount_type ===
+                          'percentage' ? '%' : '₹' %> off)
+                        </span>
+                        <% } %>
+                      </p>
 
-                <!-- Product Actions -->
-                <div class="product-actions d-flex">
-                  <a
-                    class="btn btn-success btn-sm"
-                    href="/admin/product-view/<%= product._id %>"
-                    >View</a
+                      <!-- Publisher and Dates -->
+                      <p class="card-text">
+                        <strong>Published by:</strong>
+                        <%= product.publisher || 'Unknown' %>
+                        <br />
+                        <strong>Created on:</strong>
+                        <%= product.createdAt.toLocaleDateString() %>
+                        <br />
+                        <% if (product.updatedAt) { %>
+                        <strong>Updated on:</strong>
+                        <%= product.updatedAt.toLocaleDateString() %> <% } %>
+                      </p>
+                      <% if (product.used) { %>
+                      <p class="card-text text-warning">
+                        <strong>Pre-loved Books</strong>
+                      </p>
+                      <% } else { %>
+                      <p class="card-text text-success">
+                        <strong>Yet to be loved</strong>
+                      </p>
+                      <% } %>
+
+                      <!-- Product Actions -->
+                      <div class="product-actions d-flex">
+                        <a
+                          class="btn btn-success btn-sm"
+                          href="/admin/product-view/<%= product._id %>"
+                        >
+                          View
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <% }) %>
+              </div>
+
+              <!-- Pagination -->
+              <nav class="mt-4">
+                <ul class="pagination justify-content-center">
+                  <li
+                    class="page-item <%= currentPage === 1 ? 'disabled' : '' %>"
                   >
-                </div>
-              </div>
+                    <a class="page-link" href="?page=<%= currentPage - 1 %>">
+                      Previous
+                    </a>
+                  </li>
+                  <% for (let i = 1; i <= totalPages; i++) { %>
+                  <li
+                    class="page-item <%= i === currentPage ? 'active' : '' %>"
+                  >
+                    <a class="page-link" href="?page=<%= i %>"><%= i %></a>
+                  </li>
+                  <% } %>
+                  <li
+                    class="page-item <%= currentPage === totalPages ? 'disabled' : '' %>"
+                  >
+                    <a class="page-link" href="?page=<%= currentPage + 1 %>">
+                      Next
+                    </a>
+                  </li>
+                </ul>
+              </nav>
             </div>
           </div>
-          <% }) %>
         </div>
-
-        <!-- Pagination -->
-        <nav class="mt-4">
-          <ul class="pagination justify-content-center">
-            <li class="page-item <%= currentPage === 1 ? 'disabled' : '' %>">
-              <a class="page-link" href="?page=<%= currentPage - 1 %>"
-                >Previous</a
-              >
-            </li>
-            <% for (let i = 1; i <= totalPages; i++) { %>
-            <li class="page-item <%= i === currentPage ? 'active' : '' %>">
-              <a class="page-link" href="?page=<%= i %>"><%= i %></a>
-            </li>
-            <% } %>
-            <li
-              class="page-item <%= currentPage === totalPages ? 'disabled' : '' %>"
-            >
-              <a class="page-link" href="?page=<%= currentPage + 1 %>">Next</a>
-            </li>
-          </ul>
-        </nav>
       </div>
     </section>
     <% } else { %>
-    <section>
-      <div class="container py-5" style="min-height: calc(100vh - 146px)">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-          <h1>No products found!</h1>
-          <button class="btn btn-secondary" id="filter-btn">Filter</button>
+    <section style="min-height: calc(100vh - 130px)">
+      <div class="wrapper container-fluid d-flex">
+        <!-- sidebar -->
+        <div class="sidebar" style="min-width: 170px">
+          <%- include("../partials/admin/adminNavbar.ejs") %>
         </div>
 
-        <div id="filter-options" class="mb-4 d-none">
-          <form
-            action="/admin/products"
-            method="GET"
-            id="filterForm"
-            class="row g-3"
-            novalidate
-          >
-            <div class="col-md-3">
-              <label for="date" class="form-label">Date Added</label>
-              <input type="date" class="form-control" id="date" name="date" />
-            </div>
-            <div class="col-md-6">
-              <label for="price" class="form-label">Price (₹)</label>
-              <input
-                type="number"
-                class="form-control"
-                id="price"
-                name="price"
-                placeholder="Enter a price"
-                min="0"
-              />
-              <small class="text-muted">
-                Show products with price less than or equal to the entered
-                value.
-              </small>
-            </div>
-            <div class="col-md-3">
-              <label for="used" class="form-label">Used</label>
-              <select class="form-select" id="used" name="used">
-                <option value="">Any</option>
-                <option value="true">Used</option>
-                <option value="false">New</option>
-              </select>
-            </div>
+        <!-- offcanvas -->
+        <%- include("../partials/admin/offCanvas.ejs") %>
+        <div class="content p-3" style="flex-grow: 1">
+          <div class="d-flex" style="justify-content: center">
+            <div class="col-9">
+              <div class="row justify-content-between align-items-center mb-4">
+                <div class="col-lg-auto col-md-12 text-center">
+                  <h1>All Products</h1>
+                </div>
+                <div class="col-lg-auto col-sm-12 col-md-6">
+                  <form
+                    class="d-flex align-items-center"
+                    id="search-form"
+                    method="GET"
+                    action="/admin/products"
+                  >
+                    <input
+                      type="text"
+                      name="search"
+                      class="form-control m-2"
+                      style="border-radius: 20px"
+                      placeholder="Search.."
+                    />
+                    <button
+                      type="submit"
+                      class="btn btn-outline-dark btn-sm"
+                      style="height: fit-content"
+                    >
+                      Go
+                    </button>
+                  </form>
+                </div>
+                <div class="col-lg-auto col-sm-12 col-md-6 text-center">
+                  <button class="btn btn-secondary" id="filter-btn">
+                    Filter
+                  </button>
+                </div>
+              </div>
 
-            <div class="col-md-3">
-              <label for="rating" class="form-label">Rating</label>
-              <input
-                type="number"
-                class="form-control"
-                id="rating"
-                name="rating"
-                placeholder="Min rating (1-5)"
-                min="0"
-                max="5"
-              />
-            </div>
-            <div class="col-md-6">
-              <label for="discount" class="form-label">Discount (%)</label>
-              <input
-                type="number"
-                class="form-control"
-                id="discount"
-                name="discount"
-                placeholder="Enter discount percentage"
-                min="0"
-                max="100"
-              />
-              <small class="text-muted">
-                Show products with discount greater than or equal to the entered
-                value.
-              </small>
-            </div>
-            <div class="col-md-3">
-              <label for="category" class="form-label">Category</label>
-              <select class="form-select" id="category" name="category">
-                <option value="">All Categories</option>
-                <% categories.forEach(category => { %>
-                <option value="<%= category.category %>">
-                  <%= category.category %>
-                </option>
-                <% }) %>
-              </select>
-            </div>
+              <!-- Filter Dropdown (Hidden by Default, toggled by the button) -->
+              <div id="filter-options" class="mb-4 d-none">
+                <form
+                  action="/admin/products"
+                  method="GET"
+                  id="filterForm"
+                  class="row g-3"
+                  novalidate
+                >
+                  <div class="col-md-3">
+                    <label for="date" class="form-label">Date Added</label>
+                    <input
+                      type="date"
+                      class="form-control"
+                      id="date"
+                      name="date"
+                    />
+                  </div>
+                  <div class="col-md-3">
+                    <label for="max-price" class="form-label">
+                      Max-Price (₹)
+                    </label>
+                    <input
+                      type="number"
+                      class="form-control"
+                      id="max-price"
+                      name="max-price"
+                      placeholder="Enter a price"
+                      min="0"
+                      max="5000"
+                    />
+                  </div>
+                  <div class="col-md-3">
+                    <label for="min-price" class="form-label">
+                      Min-Price (₹)
+                    </label>
+                    <input
+                      type="number"
+                      class="form-control"
+                      id="min-price"
+                      name="min-price"
+                      placeholder="Enter a price"
+                      min="0"
+                    />
+                  </div>
+                  <div class="col-md-3">
+                    <label for="used" class="form-label">Used</label>
+                    <select class="form-select" id="used" name="used">
+                      <option value="">Any</option>
+                      <option value="true">Used</option>
+                      <option value="false">New</option>
+                    </select>
+                  </div>
 
-            <div class="col-12">
-              <button type="submit" class="btn btn-primary">
-                Apply Filters
-              </button>
+                  <div class="col-md-3">
+                    <label for="rating" class="form-label">Rating</label>
+                    <input
+                      type="number"
+                      class="form-control"
+                      id="rating"
+                      name="rating"
+                      placeholder="Min rating (1-5)"
+                      min="0"
+                      max="5"
+                    />
+                  </div>
+                  <div class="col-md-6">
+                    <label for="discount" class="form-label">
+                      Discount (%)
+                    </label>
+                    <input
+                      type="number"
+                      class="form-control"
+                      id="discount"
+                      name="discount"
+                      placeholder="Enter discount percentage"
+                      min="0"
+                      max="100"
+                    />
+                    <small class="text-muted">
+                      Show products with discount greater than or equal to the
+                      entered value.
+                    </small>
+                  </div>
+                  <div class="col-md-3">
+                    <label for="category" class="form-label">Category</label>
+                    <select class="form-select" id="category" name="category">
+                      <option value="">All Categories</option>
+                      <% categories.forEach(category => { %>
+                      <option value="<%= category.category %>">
+                        <%= category.category %>
+                      </option>
+                      <% }) %>
+                    </select>
+                  </div>
+
+                  <div class="col-12">
+                    <button type="submit" class="btn btn-primary">
+                      Apply Filters
+                    </button>
+                  </div>
+                </form>
+              </div>
+              <div>
+                <p class="text-center">Sorry no products found!</p>
+              </div>
             </div>
-          </form>
+          </div>
         </div>
       </div>
     </section>
