@@ -11,6 +11,9 @@
     <!-- bootstrap -->
     <%- include("../partials/admin/bootLink.ejs") %>
 
+    <!-- icon link -->
+    <%- include("../partials/user/iconLink.ejs") %>
+
     <!-- google fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -20,78 +23,87 @@
     />
   </head>
   <body>
-    <!-- sidebar -->
-    <div style="width: 200px; position: fixed">
-      <%- include("../partials/admin/adminNavbar.ejs") %>
-    </div>
+    <!-- header nav -->
+    <%- include("../partials/admin/adminHeader.ejs") %>
 
     <!-- alert -->
     <%- include("../partials/user/alertMessage.ejs") %>
 
-    <section class="container" style="margin-left: 210px">
-      <div
-        class="main-section d-flex"
-        style="
-          min-height: calc(100vh - 60px);
-          align-items: center;
-          flex-direction: column;
-        "
-      >
-        <% if (coupons.length > 0) {%>
-        <h3 class="my-5">Coupons</h3>
-        <% coupons.forEach((coupon)=> { %>
-        <div
-          class="mb-2"
-          style="
-            background: linear-gradient(to right, #ff7e5f, #feb47b);
-            padding: 10px;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            height: fit-content;
-            min-width: 730px;
-          "
-        >
-          <p><strong class="fs-5"><%= coupon.coupon_code %> <% if(coupon.active === true) {%>
-            <span class="text-success">(Active)</span>
-             <% } else {%>
-              <span class="text-danger">(Inactive)</span>
-             <% } %>
-             </strong>
-          </p>
-          <p class="m-0 mb-2"><%= coupon.description %></p>
-          <div style="display: flex; justify-content: end">
-            <a
-              href="/admin/coupon/<%= coupon._id %>"
-              class="mx-2"
+    <section style="min-height: calc(100vh - 130px)">
+      <div class="wrapper container-fluid d-flex">
+        <!-- sidebar -->
+        <div class="sidebar" style="min-width: 170px">
+          <%- include("../partials/admin/adminNavbar.ejs") %>
+        </div>
+
+        <!-- offcanvas -->
+        <%- include("../partials/admin/offCanvas.ejs") %>
+
+        <!-- main section -->
+        <div class="content p-3" style="flex-grow: 1">
+          <div
+            class="main-section d-flex"
+            style="align-items: center; flex-direction: column"
+          >
+            <% if (coupons.length > 0) {%>
+            <h3>Coupons</h3>
+            <% coupons.forEach((coupon)=> { %>
+            <div
+              class="mb-2 the-coupon"
               style="
-                background-color: #007bff;
-                text-decoration: none;
-                color: white;
-                border: none;
-                padding: 5px 10px;
-                border-radius: 5px;
+                background: linear-gradient(to right, #ff7e5f, #feb47b);
+                padding: 10px;
+                border-radius: 10px;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                height: fit-content;
+                width: 730px;
               "
             >
-              Edit
-            </a>
-            <button
-              class="mx-2 delete-btn"
-              data-id="<%= coupon._id %>"
-              style="
-                background-color: #dc3545;
-                color: white;
-                border: none;
-                padding: 5px 10px;
-                border-radius: 5px;
-              "
-            >
-              Delete
-            </button>
+              <p>
+                <strong class="fs-5">
+                  <%= coupon.coupon_code %> <% if(coupon.active === true) {%>
+                  <span class="text-success">(Active)</span>
+                  <% } else {%>
+                  <span class="text-danger">(Inactive)</span>
+                  <% } %>
+                </strong>
+              </p>
+              <p class="m-0 mb-2"><%= coupon.description %></p>
+              <div class="btnss" style="display: flex; justify-content: end">
+                <a
+                  href="/admin/coupon/<%= coupon._id %>"
+                  class="mx-2 edit"
+                  style="
+                    background-color: #007bff;
+                    text-decoration: none;
+                    color: white;
+                    border: none;
+                    padding: 5px 10px;
+                    border-radius: 5px;
+                  "
+                >
+                  Edit
+                </a>
+                <button
+                  class="mx-2 delete-btn"
+                  data-id="<%= coupon._id %>"
+                  style="
+                    background-color: #dc3545;
+                    color: white;
+                    border: none;
+                    padding: 5px 10px;
+                    border-radius: 5px;
+                  "
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
+            <% }) %> <% } else { %>
+            <p class="mt-5 fs-3">No coupons</p>
+            <% } %>
           </div>
         </div>
-        <% }) %> <% } else { %>
-        <p class="mt-5 fs-3">No coupons</p>
-        <% } %>
       </div>
     </section>
 

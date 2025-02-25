@@ -62,3 +62,47 @@ body {
   float: right;
   margin-top: 4px;
 }
+
+/* apply every where */
+@media (max-width: 1086px) {
+  .the-coupon {
+    width: 500px !important;
+  }
+}
+
+@media (max-width: 767px) {
+  .burger-icon {
+    display: inline !important;
+  }
+  .sidebar {
+    display: none;
+  }
+}
+
+@media (max-width: 620px) {
+  .the-coupon p strong {
+    font-size: medium !important;
+  }
+  .the-coupon p:not(:first-child) {
+    font-size: small;
+  }
+  .edit,
+  .delete-btn {
+    font-size: small;
+  }
+  .the-coupon {
+    width: 300px !important;
+  }
+}
+
+@media (max-width: 358px) {
+  .footer-div p {
+    font-size: smaller;
+  }
+  .the-coupon {
+    width: 200px !important;
+  }
+  .btnss {
+    justify-content: center !important;
+  }
+}

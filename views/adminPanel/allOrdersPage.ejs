@@ -16,21 +16,28 @@
   </head>
 
   <body>
-    <!-- sidebar -->
-    <div class="col-3" style="width: 200px; position: fixed">
-      <%- include("../partials/admin/adminNavbar.ejs") %>
-    </div>
+    <!-- header nav -->
+    <%- include("../partials/admin/adminHeader.ejs") %>
 
-    <!-- error alert -->
-    <div class="alert-bad d-none text-center" style="position: fixed"></div>
-    <!-- success alert -->
-    <div class="alert-good d-none text-center" style="position: fixed"></div>
+    <!-- alert -->
+    <%- include("../partials/user/alertMessage.ejs") %>
 
     <!-- main section -->
-<section class="container mt-5">
+    <section style="min-height: calc(100vh - 130px)">
+      <div class="wrapper container-fluid d-flex">
+        <!-- sidebar -->
+        <div class="sidebar" style="min-width: 170px">
+          <%- include("../partials/admin/adminNavbar.ejs") %>
+        </div>
+
+        <!-- offcanvas -->
+        <%- include("../partials/admin/offCanvas.ejs") %>
+
+        <!-- main section -->
+        <div class="content p-3" style="flex-grow: 1">
   <div
-    class="d-flex"
-    style="min-height: calc(100vh - 60px); margin-left: 210px; flex-direction: column; align-items: center;"
+    class="sec d-flex"
+    style="flex-direction: column; align-items: center;"
   >
     <h2>Orders</h2>
 
@@ -44,7 +51,7 @@
         <form
           action="/admin/all-orders"
           method="GET"
-          class="d-flex flex-wrap align-items-center"
+          class="fltr-form d-flex flex-wrap align-items-center"
         >
           <!-- Status Filter -->
           <div class="form-group mx-2 d-flex align-items-center">
@@ -86,8 +93,8 @@
 
     <!-- User Table -->
      <% if (orders.length > 0) {%>
-      <div class="table-responsive my-4">
-        <table class="table table-striped table-hover table-bordered shadow-sm" style="max-width: 1200px; margin: auto; background: #fff;">
+      <div class="table-wrapper table-responsive my-4">
+        <table class="table table-striped table-hover table-bordered shadow-sm" style=" margin: auto; background: #fff;">
           <thead class="thead-dark">
             <tr>
               <th>Order Id</th>
@@ -143,6 +150,8 @@
       <p class="text-center">No orders found</p>
     <% } %>
   </div>
+</div>
+</div>
 </section>
 
 
