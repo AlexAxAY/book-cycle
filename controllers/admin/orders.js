@@ -307,7 +307,7 @@ const handleReturnDecision = async (req, res) => {
       type: "credit",
       amount: refundAmount,
       order: order._id,
-      description: `Refund for return of product ${productId}`,
+      description: `Refund for return of product ${product.name}`,
     });
 
     return res.json({

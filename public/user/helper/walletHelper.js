@@ -59,7 +59,7 @@ document.addEventListener("DOMContentLoaded", () => {
               minute: "2-digit",
             })}</td>
             <td>${transaction.type}</td>
-            <td>₹${transaction.amount}</td>
+            <td>₹${transaction.amount.toFixed(2)}</td>
             <td>${transaction.description || ""}</td>
           `;
         tableBody.appendChild(tr);

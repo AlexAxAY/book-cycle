@@ -68,23 +68,41 @@ const salesReportPage = async (req, res) => {
     // Fetch orders based on the query.
     const orders = await Order.find(query).populate("user_id");
 
-    // Calculate total orders, total discount, and total final amount.
-    const totalOrders = orders.length;
-    const totalDiscount = orders.reduce(
-      (acc, order) => acc + order.total_discount,
-      0
+    // For revenue calculation, exclude orders that are cancelled and paid via COD
+    const validOrders = orders.filter(
+      (order) => !(order.status === "Cancelled" && order.payment_type === "COD")
     );
-    const totalFinalAmount = orders.reduce(
+
+    // Calculate total orders (you might still want the full count)
+    const totalOrders = orders.length;
+
+    // Calculate total discount across all orders.
+    // For cancelled COD orders, subtract the product discount portion.
+    const totalDiscount = orders.reduce((acc, order) => {
+      let discount = order.total_discount;
+      if (order.status === "Cancelled" && order.payment_type === "COD") {
+        // Sum the individual product discounts for this order.
+        const productDiscount = order.order_items.reduce(
+          (sum, item) => sum + item.discount_at_purchase,
+          0
+        );
+        // Only the coupon discount should count.
+        discount = discount - productDiscount;
+      }
+      return acc + discount;
+    }, 0);
+
+    // Sum up final amount and delivery charge only from valid orders.
+    const totalFinalAmount = validOrders.reduce(
       (acc, order) => acc + order.final_amount,
       0
     );
-
-    // Calculate total delivery charge from orders.
-    const totalDeliveryCharge = orders.reduce(
+    const totalDeliveryCharge = validOrders.reduce(
       (acc, order) => acc + order.delivery_charge,
       0
     );
 
+    // Only include refunds for orders where money actually moved (e.g., wallet/razorpay).
     let walletTransactionQuery = { type: "credit", order: { $ne: null } };
     if (startDate && endDate) {
       walletTransactionQuery.createdAt = { $gte: startDate, $lte: endDate };
@@ -97,7 +115,7 @@ const salesReportPage = async (req, res) => {
     const totalRefund =
       refundAggregate.length > 0 ? refundAggregate[0].total : 0;
 
-    // Subtract total refund and total delivery charge from total final amount.
+    // Calculate total revenue
     const totalRevenue = totalFinalAmount - totalRefund - totalDeliveryCharge;
 
     if (req.xhr) {
@@ -183,11 +201,28 @@ const downloadSalesReportPDF = async (req, res) => {
     // Fetch orders based on the query.
     const orders = await Order.find(query).populate("user_id");
     const totalOrders = orders.length;
-    const totalDiscount = orders.reduce(
-      (acc, order) => acc + order.total_discount,
-      0
+
+    // For revenue, exclude orders that are cancelled and paid via COD.
+    const validOrders = orders.filter(
+      (order) => !(order.status === "Cancelled" && order.payment_type === "COD")
     );
-    const totalFinalAmount = orders.reduce(
+
+    // Calculate total discount across all orders.
+    // For cancelled COD orders, subtract the individual product discounts.
+    const totalDiscount = orders.reduce((acc, order) => {
+      let discount = order.total_discount;
+      if (order.status === "Cancelled" && order.payment_type === "COD") {
+        const productDiscount = order.order_items.reduce(
+          (sum, item) => sum + item.discount_at_purchase,
+          0
+        );
+        discount = discount - productDiscount;
+      }
+      return acc + discount;
+    }, 0);
+
+    // Sum up final amount only from valid orders.
+    const totalFinalAmount = validOrders.reduce(
       (acc, order) => acc + order.final_amount,
       0
     );
@@ -203,6 +238,8 @@ const downloadSalesReportPDF = async (req, res) => {
     ]);
     const totalRefund =
       refundAggregate.length > 0 ? refundAggregate[0].total : 0;
+
+    // Calculate total revenue.
     const totalRevenue = totalFinalAmount - totalRefund;
 
     // Prepare data for the PDF.
@@ -285,11 +322,26 @@ const downloadSalesReportExcel = async (req, res) => {
     // Fetch orders and calculate aggregates.
     const orders = await Order.find(query).populate("user_id");
     const totalOrders = orders.length;
-    const totalDiscount = orders.reduce(
-      (acc, order) => acc + order.total_discount,
-      0
+
+    // Calculate total discount.
+    // For orders that are cancelled and paid via COD, subtract the sum of individual product discounts.
+    const totalDiscount = orders.reduce((acc, order) => {
+      let discount = order.total_discount;
+      if (order.status === "Cancelled" && order.payment_type === "COD") {
+        const productDiscount = order.order_items.reduce(
+          (sum, item) => sum + item.discount_at_purchase,
+          0
+        );
+        discount = discount - productDiscount;
+      }
+      return acc + discount;
+    }, 0);
+
+    // For revenue calculation, exclude orders that are cancelled and paid via COD.
+    const validOrders = orders.filter(
+      (order) => !(order.status === "Cancelled" && order.payment_type === "COD")
     );
-    const totalFinalAmount = orders.reduce(
+    const totalFinalAmount = validOrders.reduce(
       (acc, order) => acc + order.final_amount,
       0
     );
@@ -305,6 +357,7 @@ const downloadSalesReportExcel = async (req, res) => {
     ]);
     const totalRefund =
       refundAggregate.length > 0 ? refundAggregate[0].total : 0;
+
     const totalRevenue = totalFinalAmount - totalRefund;
 
     // Use the separate module to generate the Excel report.

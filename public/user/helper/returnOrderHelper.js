@@ -23,16 +23,26 @@ function openReturnModal(productId, productName, productQuantity) {
     console.error("Return modal not found.");
     return;
   }
-  // Store data in the modal's dataset.
+  // Store product data in the modal's dataset.
   modal.dataset.productId = productId;
   modal.dataset.productName = productName;
   modal.dataset.productQuantity = productQuantity;
 
-  // Update the modal content to display product name and quantity.
+  // Update modal content to display product info.
   const productInfoEl = document.getElementById("returnProductInfo");
   if (productInfoEl) {
     productInfoEl.textContent = `Returning: ${productName} (Quantity: ${productQuantity})`;
   }
+
+  // Reset radio selection and hide the textarea.
+  document
+    .querySelectorAll('input[name="returnReasonOption"]')
+    .forEach((radio) => {
+      radio.checked = false;
+    });
+  const textarea = document.getElementById("returnReason");
+  textarea.value = "";
+  textarea.style.display = "none";
 
   modal.classList.remove("d-none");
 }
@@ -41,6 +51,7 @@ const id = window.location.pathname.split("/").pop();
 console.log("Extracted order id:", id);
 
 document.addEventListener("DOMContentLoaded", () => {
+  // Close modal on click.
   const closeModalBtn = document.getElementById("returnCloseModal");
   if (closeModalBtn) {
     closeModalBtn.addEventListener("click", () => {
@@ -55,6 +66,7 @@ document.addEventListener("DOMContentLoaded", () => {
     console.error("Return modal close element not found.");
   }
 
+  // Set up click event on return-order buttons.
   document.querySelectorAll(".return-order-btn").forEach((button) => {
     button.addEventListener("click", () => {
       const productId = button.getAttribute("data-product-id");
@@ -64,16 +76,46 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
+  // Listen for changes on the radio buttons to show/hide the textarea.
+  document
+    .querySelectorAll('input[name="returnReasonOption"]')
+    .forEach((radio) => {
+      radio.addEventListener("change", (e) => {
+        if (e.target.value === "other") {
+          document.getElementById("returnReason").style.display = "block";
+        } else {
+          document.getElementById("returnReason").style.display = "none";
+          document.getElementById("returnReason").value = "";
+        }
+      });
+    });
+
+  // Update submit event to validate based on radio selection.
   document
     .getElementById("submitReturn")
     .addEventListener("click", async () => {
       const modal = document.getElementById("returnModal");
       const productId = modal.dataset.productId;
-      const reason = document.getElementById("returnReason").value.trim();
+      const selectedRadio = document.querySelector(
+        'input[name="returnReasonOption"]:checked'
+      );
 
-      if (!reason) {
-        showErrorAlert("Return reason is required.");
+      // Validate that a reason has been selected.
+      if (!selectedRadio) {
+        showErrorAlert("Please select a return reason.");
         return;
+      }
+
+      let reason;
+      // If "Other" is selected, require a non-empty description.
+      if (selectedRadio.value === "other") {
+        reason = document.getElementById("returnReason").value.trim();
+        if (!reason) {
+          showErrorAlert("Please provide a reason in the text box.");
+          return;
+        }
+      } else {
+        reason = selectedRadio.value;
       }
 
       try {
@@ -100,7 +142,7 @@ document.addEventListener("DOMContentLoaded", () => {
         );
         console.error(error);
       } finally {
-        // Close modal and clear the textarea.
+        // Close modal and clear the custom reason textarea.
         modal.classList.add("d-none");
         document.getElementById("returnReason").value = "";
       }

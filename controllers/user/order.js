@@ -82,6 +82,26 @@ const orderSummary = async (req, res) => {
   }
 };
 
+// Helper function to record wallet deduction.
+async function recordWalletDeduction(userId, orderId, walletAmount) {
+  if (walletAmount && walletAmount > 0) {
+    let wallet = await Wallet.findOne({ user: userId });
+    if (!wallet) {
+      wallet = await Wallet.create({ user: userId, balance: 0 });
+    }
+    wallet.balance -= walletAmount;
+    await wallet.save();
+
+    await WalletTransaction.create({
+      wallet: wallet._id,
+      type: "debit",
+      amount: walletAmount,
+      order: orderId,
+      description: "Wallet used for order payment",
+    });
+  }
+}
+
 const proceedToBuy = async (req, res) => {
   try {
     const userId = req.user ? req.user.id : null;
@@ -93,7 +113,7 @@ const proceedToBuy = async (req, res) => {
         .json({ success: false, message: "Address is required." });
     }
 
-    // Fetch the user's cart
+    // Fetch the user's cart.
     const cart = await Cart.findOne({ userId });
     if (!cart) {
       return res
@@ -110,7 +130,7 @@ const proceedToBuy = async (req, res) => {
         .json({ success: false, message: "Your cart is empty." });
     }
 
-    // Partition items into valid and invalid based on product stock
+    // Partition items into valid and invalid based on product stock.
     const validCartItems = cartItems.filter(
       (item) => item.productId && item.productId.count > 0
     );
@@ -128,7 +148,7 @@ const proceedToBuy = async (req, res) => {
       });
     }
 
-    // Check for items with insufficient stock
+    // Check for items with insufficient stock.
     const insufficientItems = validCartItems.filter(
       (item) => item.quantity > item.productId.count
     );
@@ -154,7 +174,7 @@ const proceedToBuy = async (req, res) => {
       });
     }
 
-    // Calculate totals for valid items
+    // Calculate totals for valid items.
     let totalOriginalPrice = 0;
     let totalDiscountAmount = 0;
     let totalItems = 0;
@@ -174,7 +194,7 @@ const proceedToBuy = async (req, res) => {
     let deliveryCharge = totalAfterDiscount >= 500 ? 0 : 50;
     let finalTotal = totalAfterDiscount + deliveryCharge;
 
-    // Coupon processing (if couponCode is provided)
+    // Coupon processing (if couponCode is provided).
     let couponApplied = null;
     if (couponCode && couponCode.trim() !== "") {
       const coupon = await Coupon.findOne({ coupon_code: couponCode.trim() });
@@ -188,7 +208,7 @@ const proceedToBuy = async (req, res) => {
           .status(400)
           .json({ success: false, message: "Coupon is not active." });
       }
-      // Check if the user has already used this coupon
+      // Check if the user has already used this coupon.
       const alreadyUsed = await CouponUsage.findOne({
         user_id: userId,
         coupon_id: coupon._id,
@@ -199,7 +219,7 @@ const proceedToBuy = async (req, res) => {
           message: "You have already used this coupon.",
         });
       }
-      // Check order qualification: order final total must be at least the coupon's min order value
+      // Check order qualification.
       if (finalTotal < coupon.min_order_value) {
         return res.status(400).json({
           success: false,
@@ -219,26 +239,11 @@ const proceedToBuy = async (req, res) => {
       finalTotal = totalAfterDiscount + deliveryCharge;
     }
 
-    // Adjust final amount based on wallet usage
-    if (
-      req.body.walletApplied &&
-      req.body.walletAmount &&
-      req.body.walletAmount > 0
-    ) {
-      finalTotal = finalTotal - req.body.walletAmount;
-      if (finalTotal < 0) finalTotal = 0;
-    }
+    // Do NOT adjust finalTotal by wallet usage.
+    // The order's final_amount remains as the original estimated total,
+    // but wallet deduction will be recorded separately.
 
-    // If payment method is Razorpay but final payable amount is zero, dont allow online payment.
-    if (paymentMethod === "Razorpay" && finalTotal === 0) {
-      return res.status(400).json({
-        success: false,
-        message:
-          "Final payable amount is zero. Please choose Cash on Delivery.",
-      });
-    }
-
-    // Fetch shipping address snapshot
+    // Fetch shipping address snapshot.
     const addressDoc = await Address.findById(addressId).lean();
     if (!addressDoc) {
       return res
@@ -246,7 +251,7 @@ const proceedToBuy = async (req, res) => {
         .json({ success: false, message: "Shipping address not found." });
     }
 
-    // Prepare the updated order data (used for both new and existing orders)
+    // Prepare the updated order data.
     const orderData = {
       total_items: totalItems,
       order_items: validCartItems.map((item) => {
@@ -285,14 +290,23 @@ const proceedToBuy = async (req, res) => {
       total_selling_price: totalAfterDiscount,
       coupon_applied: couponApplied,
       delivery_charge: deliveryCharge,
-      final_amount: finalTotal,
+      final_amount: finalTotal, // Remains as the original estimated total.
       total_discount: totalDiscountAmount,
       payment_type: paymentMethod,
     };
 
+    // For Razorpay orders, calculate the actual amount to charge.
+    // If a wallet is applied, the online payable amount = finalTotal - walletAmount.
+    let walletAppliedAmount =
+      req.body.walletApplied && req.body.walletAmount
+        ? req.body.walletAmount
+        : 0;
+    let razorpayAmount = finalTotal - walletAppliedAmount;
+    if (razorpayAmount < 0) razorpayAmount = 0;
+
     // --- Razorpay Flow ---
     if (paymentMethod === "Razorpay") {
-      // Looking for an existing pending Razorpay order for this user.
+      // Look for an existing pending Razorpay order.
       let existingOrder = await Order.findOne({
         user_id: userId,
         payment_type: "Razorpay",
@@ -300,7 +314,7 @@ const proceedToBuy = async (req, res) => {
       });
 
       if (existingOrder) {
-        // Update all fields from the latest cart data
+        // Update order details.
         existingOrder.total_items = orderData.total_items;
         existingOrder.order_items = orderData.order_items;
         existingOrder.address = orderData.address;
@@ -311,13 +325,12 @@ const proceedToBuy = async (req, res) => {
         existingOrder.final_amount = orderData.final_amount;
         existingOrder.total_discount = orderData.total_discount;
         existingOrder.payment_type = orderData.payment_type;
-
         await existingOrder.save();
 
-        // Create a Razorpay order if it not yet created.
+        // Create a Razorpay order if not already created.
         if (!existingOrder.razorpay_order_id) {
           const options = {
-            amount: finalTotal * 100,
+            amount: razorpayAmount * 100, // Charge the difference after wallet deduction.
             currency: "INR",
             receipt: `receipt_${existingOrder._id}`,
             payment_capture: 1,
@@ -327,30 +340,43 @@ const proceedToBuy = async (req, res) => {
           await existingOrder.save();
         }
 
+        // Record wallet deduction if applicable.
+        if (walletAppliedAmount > 0) {
+          await recordWalletDeduction(
+            userId,
+            existingOrder._id,
+            walletAppliedAmount
+          );
+        }
+
         return res.json({
           success: true,
           razorpay: true,
           orderId: existingOrder._id,
           razorpayOrderId: existingOrder.razorpay_order_id,
-          amount: finalTotal * 100,
+          amount: razorpayAmount * 100,
           key: process.env.RAZORPAY_KEY_ID,
         });
       }
 
-      // If no pending order exists, create a new one.
+      // No pending order exists—create a new one.
       const newOrder = new Order(orderData);
       await newOrder.save();
 
       const options = {
-        amount: finalTotal * 100,
+        amount: razorpayAmount * 100, // Charge the remaining amount.
         currency: "INR",
         receipt: `receipt_${newOrder._id}`,
         payment_capture: 1,
       };
-
       const razorpayOrder = await razorpayInstance.orders.create(options);
       newOrder.razorpay_order_id = razorpayOrder.id;
       await newOrder.save();
+
+      // Record wallet deduction for the new Razorpay order.
+      if (walletAppliedAmount > 0) {
+        await recordWalletDeduction(userId, newOrder._id, walletAppliedAmount);
+      }
 
       return res.json({
         success: true,
@@ -366,7 +392,7 @@ const proceedToBuy = async (req, res) => {
     const newOrder = new Order(orderData);
     await newOrder.save();
 
-    // Record coupon usage if applicable
+    // Record coupon usage if applicable.
     if (couponApplied) {
       const newCouponUsage = new CouponUsage({
         user_id: userId,
@@ -377,29 +403,12 @@ const proceedToBuy = async (req, res) => {
       await newCouponUsage.save();
     }
 
-    // Deduct wallet amount if applied
-    if (
-      req.body.walletApplied &&
-      req.body.walletAmount &&
-      req.body.walletAmount > 0
-    ) {
-      let wallet = await Wallet.findOne({ user: userId });
-      if (!wallet) {
-        wallet = await Wallet.create({ user: userId, balance: 0 });
-      }
-      wallet.balance -= req.body.walletAmount;
-      await wallet.save();
-
-      await WalletTransaction.create({
-        wallet: wallet._id,
-        type: "debit",
-        amount: req.body.walletAmount,
-        order: newOrder._id,
-        description: "Wallet used for order payment",
-      });
+    // Record wallet deduction for COD orders.
+    if (walletAppliedAmount > 0) {
+      await recordWalletDeduction(userId, newOrder._id, walletAppliedAmount);
     }
 
-    // Reduce stock for each valid item and clear cart items
+    // Reduce stock for each valid item and clear cart items.
     await Promise.all(
       validCartItems.map(async (item) => {
         const updatedProduct = await Product.findByIdAndUpdate(

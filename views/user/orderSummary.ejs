@@ -127,57 +127,63 @@
             </div>
 
             <!-- Cancel Order Modal (hidden by default) -->
-            <div
-              id="cancelModal"
-              class="modal"
-              style="
-                display: none;
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background: rgba(0, 0, 0, 0.5);
-              "
-            >
-              <div
-                class="modal-content"
-                style="
-                  max-width: 500px;
-                  margin: 15% auto;
-                  padding: 20px;
-                  background: #fff;
-                  position: relative;
-                "
-              >
-                <span
-                  id="closeModal"
-                  style="
-                    position: absolute;
-                    right: 10px;
-                    top: 10px;
-                    cursor: pointer;
-                  "
-                >
-                  &times;
-                </span>
-                <h3>Cancel Order</h3>
-                <p>Please provide a reason for cancellation:</p>
-                <textarea
-                  id="cancelReason"
-                  rows="3"
-                  style="width: 100%"
-                  placeholder="Reason for cancellation (optional)"
-                ></textarea>
-                <button
-                  id="confirmCancelBtn"
-                  class="btn btn-danger"
-                  style="margin-top: 10px"
-                >
-                  Confirm Cancellation
-                </button>
-              </div>
-            </div>
+<div
+  id="cancelModal"
+  class="modal"
+  style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5);"
+>
+  <div
+    class="modal-content"
+    style="max-width: 500px; margin: 15% auto; padding: 20px; background: #fff; position: relative;"
+  >
+    <span
+      id="closeModal"
+      style="position: absolute; right: 10px; top: 10px; cursor: pointer;"
+    >
+      &times;
+    </span>
+    <h3>Cancel Order</h3>
+    <p>Please select a reason for cancellation:</p>
+    <!-- Built-in cancellation reasons -->
+    <div id="cancelReasonOptions">
+      <label>
+        <input type="radio" name="cancelReasonOption" value="Found a better price">
+        Found a better price
+      </label><br>
+      <label>
+        <input type="radio" name="cancelReasonOption" value="Order delayed">
+        Order delayed
+      </label><br>
+      <label>
+        <input type="radio" name="cancelReasonOption" value="Changed my mind">
+        Changed my mind
+      </label><br>
+      <label>
+        <input type="radio" name="cancelReasonOption" value="Incorrect order details">
+        Incorrect order details
+      </label><br>
+      <label>
+        <input type="radio" id="cancelReasonOther" name="cancelReasonOption" value="other">
+        Other
+      </label>
+    </div>
+    <!-- Custom reason textarea (only shown when "Other" is selected) -->
+    <textarea
+      id="cancelReason"
+      rows="3"
+      style="width: 100%; display: none;"
+      placeholder="Enter your cancellation reason"
+    ></textarea>
+    <button
+      id="confirmCancelBtn"
+      class="btn btn-danger"
+      style="margin-top: 10px"
+    >
+      Confirm Cancellation
+    </button>
+  </div>
+</div>
+
           </div>
         </div>
 
@@ -328,12 +334,35 @@
   <div class="modal-content" style="background: #fff; padding: 20px; border-radius: 5px; width: 500px; position: relative;">
     <span id="returnCloseModal" style="cursor: pointer;">&times;</span>
     <h3>Return Product</h3>
-    <!-- New element to display the product info -->
+    <!-- Display product info -->
     <p id="returnProductInfo" style="font-weight: bold;"></p>
-    <textarea id="returnReason" placeholder="Enter a valid reason" style="width: 100%; height: 50px;"></textarea>
+    
+    <!-- Built-in return reasons (radio buttons) -->
+    <div id="returnReasonOptions">
+      <label>
+        <input type="radio" name="returnReasonOption" value="Defective product"> Defective product
+      </label><br>
+      <label>
+        <input type="radio" name="returnReasonOption" value="Wrong product delivered"> Wrong product delivered
+      </label><br>
+      <label>
+        <input type="radio" name="returnReasonOption" value="Quality not as expected"> Quality not as expected
+      </label><br>
+      <label>
+        <input type="radio" name="returnReasonOption" value="Changed my mind"> Changed my mind
+      </label><br>
+      <label>
+        <input type="radio" id="returnReasonOther" name="returnReasonOption" value="other"> Other
+      </label>
+    </div>
+    
+    <!-- Custom reason textarea (only visible when "Other" is selected) -->
+    <textarea id="returnReason" placeholder="Enter a valid reason" style="width: 100%; height: 50px; display: none;"></textarea>
+    
     <button id="submitReturn" style="margin-top: 10px;">Submit Return</button>
   </div>
 </div>
+
 
 
     <!-- footer partial -->
