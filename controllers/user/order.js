@@ -240,8 +240,15 @@ const proceedToBuy = async (req, res) => {
     }
 
     // Do NOT adjust finalTotal by wallet usage.
-    // The order's final_amount remains as the original estimated total,
-    // but wallet deduction will be recorded separately.
+
+    // If payment method is COD and finalTotal is above 1000 rupees, COD is not allowed.
+    if (paymentMethod !== "Razorpay" && finalTotal > 1000) {
+      return res.status(400).json({
+        success: false,
+        message:
+          "Cash on Delivery is not allowed for orders above ₹1000. Please choose an online payment method.",
+      });
+    }
 
     // Fetch shipping address snapshot.
     const addressDoc = await Address.findById(addressId).lean();

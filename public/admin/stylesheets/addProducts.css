@@ -35,7 +35,7 @@ body {
 }
 
 #image-previews {
-  justify-content: center; /* Center align the images */
+  justify-content: center;
 }
 
 /* alert */
@@ -105,8 +105,18 @@ input[type="number"]::-webkit-inner-spin-button {
     display: none;
   }
 }
-
-@media (max-width: 358px) {
+@media (max-width: 400px) {
+  .image-preview-container img {
+    width: 150px !important;
+    height: 200px !important;
+  }
+  .image-preview-container button {
+    font-size: small !important;
+    width: 70px;
+  }
+  #productForm div:last-child {
+    justify-content: center !important;
+  }
   .footer-div p {
     font-size: smaller;
   }

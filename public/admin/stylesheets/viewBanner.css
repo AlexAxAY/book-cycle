@@ -102,3 +102,19 @@ body {
   float: right;
   margin-top: 4px;
 }
+
+/* apply every where */
+@media (max-width: 767px) {
+  .burger-icon {
+    display: inline !important;
+  }
+  .sidebar {
+    display: none;
+  }
+}
+
+@media (max-width: 400px) {
+  .footer-div p {
+    font-size: smaller;
+  }
+}

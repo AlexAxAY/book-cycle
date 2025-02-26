@@ -11,6 +11,9 @@
     <!-- bootstrap -->
     <%- include("../partials/admin/bootLink.ejs") %>
 
+    <!-- icon link -->
+    <%- include("../partials/user/iconLink.ejs") %>
+
     <!-- google fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -20,72 +23,73 @@
     />
   </head>
   <body>
-    <!-- sidebar -->
-    <div style="width: 200px; position: fixed">
-      <%- include("../partials/admin/adminNavbar.ejs") %>
-    </div>
+    <!-- header nav -->
+    <%- include("../partials/admin/adminHeader.ejs") %>
 
-    <!-- For logout -->
-    <!-- error alert -->
-    <div class="alert-bad d-none text-center" style="position: fixed"></div>
+    <!-- alert (for logout)-->
+    <%- include("../partials/user/alertMessage.ejs") %>
 
-    <!-- success alert -->
-    <div class="alert-good d-none text-center" style="position: fixed"></div>
-
-    <section
-      class="main-section d-flex"
-      style="
-        min-height: calc(100vh - 60px);
-        margin-left: 210px;
-        justify-content: center;
-      "
-    >
-      <div
-        class="container d-flex justify-content-center align-items-center"
-        style="flex-direction: column"
-      >
-        <h1 class="mb-5 mt-5">Manage Category</h1>
-        <div
-          class="alert alert-warning alert-dismissible fade show d-none"
-          role="alert"
-          id="alert-message"
-        >
-          <span id="alert-text"></span>
-          <button
-            type="button"
-            class="btn-close"
-            aria-label="Close"
-            id="close-button"
-          ></button>
+    <!-- main section -->
+    <section class="main-section" style="min-height: calc(100vh - 130px)">
+      <div class="wrapper container-fluid d-flex">
+        <!-- sidebar -->
+        <div class="sidebar" style="min-width: 170px">
+          <%- include("../partials/admin/adminNavbar.ejs") %>
         </div>
-        <form class="w-50 text-center mb-auto" id="form" novalidate>
-          <div class="mb-3">
-            <label for="category" class="form-label"
-              >Category<span style="color: red">*</span></label
-            >
-            <input
-              type="text"
-              class="form-control"
-              id="category"
-              name="category"
-              value="<%= data.category %>"
-            />
-          </div>
 
-          <div class="mb-3">
-            <label for="description" class="form-label">Description</label>
-            <textarea
-              class="form-control"
-              id="description"
-              name="description"
-              rows="2"
+        <!-- offcanvas -->
+        <%- include("../partials/admin/offCanvas.ejs") %>
+
+        <div class="content p-3" style="flex-grow: 1">
+          <div
+            class="container d-flex justify-content-center align-items-center"
+            style="flex-direction: column"
+          >
+            <h1 class="mb-5 mt-5">Manage Category</h1>
+            <div
+              class="alert alert-warning alert-dismissible fade show d-none"
+              role="alert"
+              id="alert-message"
             >
+              <span id="alert-text"></span>
+              <button
+                type="button"
+                class="btn-close"
+                aria-label="Close"
+                id="close-button"
+              ></button>
+            </div>
+            <form class="w-50 text-center mb-auto" id="form" novalidate>
+              <div class="mb-3">
+                <label for="category" class="form-label">
+                  Category
+                  <span style="color: red">*</span>
+                </label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="category"
+                  name="category"
+                  value="<%= data.category %>"
+                />
+              </div>
+
+              <div class="mb-3">
+                <label for="description" class="form-label">Description</label>
+                <textarea
+                  class="form-control"
+                  id="description"
+                  name="description"
+                  rows="2"
+                >
 <%= data.description || ""%></textarea
-            >
-          </div>
+                >
+              </div>
 
-          <button type="submit" class="btn btn-primary mb-3">Update</button>
-        </form>
+              <button type="submit" class="btn btn-primary mb-3">Update</button>
+            </form>
+          </div>
+        </div>
       </div>
     </section>
 

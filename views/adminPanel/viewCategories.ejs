@@ -11,6 +11,9 @@
     <!-- bootstrap -->
     <%- include("../partials/admin/bootLink.ejs") %>
 
+    <!-- icon link -->
+    <%- include("../partials/user/iconLink.ejs") %>
+
     <!-- google fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -20,114 +23,95 @@
     />
   </head>
   <body>
-    <!-- sidebar -->
-    <div style="width: 200px; position: fixed">
-      <%- include("../partials/admin/adminNavbar.ejs") %>
-    </div>
+    <!-- header nav -->
+    <%- include("../partials/admin/adminHeader.ejs") %>
 
-    <!-- error alert -->
-    <div
-      class="alert-bad d-none text-center alert alert-danger"
-      style="
-        position: fixed;
-        top: 10px;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 50%;
-      "
-    ></div>
+    <!-- alert (for logout)-->
+    <%- include("../partials/user/alertMessage.ejs") %>
 
-    <!-- success alert -->
-    <div
-      class="alert-good d-none text-center alert alert-success"
-      style="
-        position: fixed;
-        top: 10px;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 50%;
-      "
-    ></div>
-
-    <section class="container">
-      <div
-        class="main-section d-flex"
-        style="
-          min-height: calc(100vh - 60px);
-          margin-left: 210px;
-          justify-content: center;
-        "
-      >
-        <div class="row mt-5">
-          <h4 class="mb-5">All Categories</h4>
-          <% datas.forEach((data) => { %> <% if (!data.is_deleted) { %>
-          <!-- Check if is_deleted is false -->
-          <div class="col-12 col-md-6 col-lg-4 col-xl-3 mb-3">
-            <div class="card">
-              <div class="card-body">
-                <h5 class="card-title"><%= data.category %></h5>
-                <p class="card-text">
-                  <%= data.description || "No description given." %>
-                </p>
-                <a
-                  href="/admin/manage-category/<%= data._id %>"
-                  class="btn btn-outline-primary btn-sm"
-                >
-                  Update
-                </a>
-
-                <button
-                  type="button"
-                  class="btn btn-outline-danger btn-sm delete-btn"
-                  data-id="<%= data._id %>"
-                  data-name="<%= data.category %>"
-                >
-                  Delete
-                </button>
-              </div>
-            </div>
-          </div>
-          <% } %> <% }) %>
+    <section class="main-section" style="min-height: calc(100vh - 130px)">
+      <div class="wrapper container-fluid d-flex">
+        <!-- sidebar -->
+        <div class="sidebar" style="min-width: 170px">
+          <%- include("../partials/admin/adminNavbar.ejs") %>
         </div>
 
-        <!-- Delete Confirmation Modal -->
-        <div
-          class="modal fade"
-          id="deleteCategoryModal"
-          tabindex="-1"
-          aria-hidden="true"
-        >
-          <div class="modal-dialog">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h5 class="modal-title">Confirm Deletion</h5>
-                <button
-                  type="button"
-                  class="btn-close"
-                  data-bs-dismiss="modal"
-                  aria-label="Close"
-                ></button>
+        <!-- offcanvas -->
+        <%- include("../partials/admin/offCanvas.ejs") %>
+
+        <!-- main section -->
+        <div class="content p-3" style="flex-grow: 1">
+          <div class="row">
+            <h4 class="mb-5">All Categories</h4>
+            <% datas.forEach((data) => { %> <% if (!data.is_deleted) { %>
+            <!-- Check if is_deleted is false -->
+            <div class="col-12 col-md-6 col-lg-4 col-xl-2 mb-3">
+              <div class="card">
+                <div class="card-body">
+                  <h5 class="card-title"><%= data.category %></h5>
+                  <p class="card-text">
+                    <%= data.description || "No description given." %>
+                  </p>
+                  <a
+                    href="/admin/manage-category/<%= data._id %>"
+                    class="btn btn-outline-primary btn-sm"
+                  >
+                    Update
+                  </a>
+
+                  <button
+                    type="button"
+                    class="btn btn-outline-danger btn-sm delete-btn"
+                    data-id="<%= data._id %>"
+                    data-name="<%= data.category %>"
+                  >
+                    Delete
+                  </button>
+                </div>
               </div>
-              <div class="modal-body">
-                Are you sure you want to delete the category "
-                <span id="categoryNamePlaceholder"></span>
-                "?
-              </div>
-              <div class="modal-footer">
-                <button
-                  type="button"
-                  class="btn btn-secondary"
-                  data-bs-dismiss="modal"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="button"
-                  class="btn btn-danger"
-                  id="confirmDeleteButton"
-                >
-                  Delete
-                </button>
+            </div>
+            <% } %> <% }) %>
+          </div>
+
+          <!-- Delete Confirmation Modal -->
+          <div
+            class="modal fade"
+            id="deleteCategoryModal"
+            tabindex="-1"
+            aria-hidden="true"
+          >
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title">Confirm Deletion</h5>
+                  <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal"
+                    aria-label="Close"
+                  ></button>
+                </div>
+                <div class="modal-body">
+                  Are you sure you want to delete the category "
+                  <span id="categoryNamePlaceholder"></span>
+                  "?
+                </div>
+                <div class="modal-footer">
+                  <button
+                    type="button"
+                    class="btn btn-secondary"
+                    data-bs-dismiss="modal"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="button"
+                    class="btn btn-danger"
+                    id="confirmDeleteButton"
+                  >
+                    Delete
+                  </button>
+                </div>
               </div>
             </div>
           </div>

@@ -94,3 +94,63 @@ input[type="number"]::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
+
+/* apply every where */
+@media (max-width: 992px) {
+  .burger-icon {
+    display: inline !important;
+  }
+  .sidebar {
+    display: none;
+  }
+  .card-header,
+  .card-body {
+    text-align: center;
+  }
+  .form-group:nth-child(2),
+  .form-group:nth-child(3),
+  .form-group:nth-child(4),
+  .form-group:nth-child(5) {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  #productName,
+  #category,
+  #discountType,
+  #discountValue {
+    width: 400px;
+  }
+}
+@media (max-width: 500px) {
+  #productName,
+  #category,
+  #discountType,
+  #discountValue {
+    width: 300px;
+  }
+}
+
+@media (max-width: 400px) {
+  .footer-div p {
+    font-size: smaller;
+  }
+  #productName,
+  #category,
+  #discountType,
+  #discountValue {
+    width: 200px;
+  }
+}
+
+@media (max-width: 300px) {
+  .footer-div p {
+    font-size: smaller;
+  }
+  #productName,
+  #category,
+  #discountType,
+  #discountValue {
+    width: 150px;
+  }
+}

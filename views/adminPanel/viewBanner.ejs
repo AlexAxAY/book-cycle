@@ -23,10 +23,8 @@
     />
   </head>
   <body>
-    <!-- sidebar -->
-    <div style="width: 200px; position: fixed">
-      <%- include("../partials/admin/adminNavbar.ejs") %>
-    </div>
+    <!-- header nav -->
+    <%- include("../partials/admin/adminHeader.ejs") %>
 
     <!-- alert -->
     <div class="d-flex alertBox" style="justify-content: center">
@@ -40,53 +38,60 @@
     <!-- alert -->
     <%- include("../partials/user/alertMessage.ejs") %>
 
-    <section
-      class="main-section d-flex"
-      style="
-        min-height: calc(100vh - 60px);
-        justify-content: center;
-        margin-left: 200px;
-      "
-    >
-      <div class="container py-5">
-        <h2 class="mb-4">All Banners</h2>
-
-        <% if (banners.length > 0) { %>
-        <div class="row g-4">
-          <% banners.forEach((banner) => { %>
-          <div class="hold col-12 col-md-6 col-lg-4">
-            <div class="banner-card position-relative shadow-sm">
-              <!-- Delete Button with data attribute -->
-              <button
-                class="btn btn-danger btn-sm position-absolute top-0 end-0 m-2 banner-delete"
-                data-banner-id="<%= banner._id %>"
-              >
-                <i class="fas fa-trash"></i>
-              </button>
-
-              <!-- Banner Image -->
-              <div class="banner-image-container">
-                <img
-                  src="<%= banner.image.url %>"
-                  alt="<%= banner.title %>"
-                  class="banner-image"
-                />
-              </div>
-
-              <!-- Banner Content -->
-              <div class="p-3">
-                <h5 class="mb-2"><%= banner.title %></h5>
-                <% if (banner.description) { %>
-                <p class="mb-0 text-muted small"><%= banner.description %></p>
-                <% } %>
-              </div>
-            </div>
-          </div>
-          <% }); %>
+    <section class="main-section" style="min-height: calc(100vh - 130px)">
+      <div class="wrapper container-fluid d-flex">
+        <!-- sidebar -->
+        <div class="sidebar" style="min-width: 170px">
+          <%- include("../partials/admin/adminNavbar.ejs") %>
         </div>
-        <% } else { %>
-        <h1>Banners are empty!</h1>
-        <% } %>
+
+        <!-- offcanvas -->
+        <%- include("../partials/admin/offCanvas.ejs") %>
+
+        <div class="content p-3" style="flex-grow: 1">
+          <div>
+            <h2 class="mb-4">All Banners</h2>
+
+            <% if (banners.length > 0) { %>
+            <div class="row g-4">
+              <% banners.forEach((banner) => { %>
+              <div class="hold col-12 col-md-6 col-lg-4">
+                <div class="banner-card position-relative shadow-sm">
+                  <!-- Delete Button with data attribute -->
+                  <button
+                    class="btn btn-danger btn-sm position-absolute top-0 end-0 m-2 banner-delete"
+                    data-banner-id="<%= banner._id %>"
+                  >
+                    <i class="fas fa-trash"></i>
+                  </button>
+
+                  <!-- Banner Image -->
+                  <div class="banner-image-container">
+                    <img
+                      src="<%= banner.image.url %>"
+                      alt="<%= banner.title %>"
+                      class="banner-image"
+                    />
+                  </div>
+
+                  <!-- Banner Content -->
+                  <div class="p-3">
+                    <h5 class="mb-2"><%= banner.title %></h5>
+                    <% if (banner.description) { %>
+                    <p class="mb-0 text-muted small">
+                      <%= banner.description %>
+                    </p>
+                    <% } %>
+                  </div>
+                </div>
+              </div>
+              <% }); %>
+            </div>
+            <% } else { %>
+            <h1>Banners are empty!</h1>
+            <% } %>
+          </div>
+        </div>
       </div>
     </section>
 

@@ -11,6 +11,9 @@
     <!-- bootstrap -->
     <%- include("../partials/admin/bootLink.ejs") %>
 
+    <!-- font link -->
+    <%- include("../partials/user/iconLink.ejs") %>
+
     <!-- google fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -20,169 +23,176 @@
     />
   </head>
   <body>
+    <!-- header nav -->
+    <%- include("../partials/admin/adminHeader.ejs") %>
+
     <!-- alert -->
     <%- include("../partials/user/alertMessage.ejs") %>
 
-    <!-- sidebar -->
-    <div class="col-3" style="width: 200px; position: fixed">
-      <%- include("../partials/admin/adminNavbar.ejs") %>
-    </div>
+    <!-- main section -->
+    <section class="main-section" style="min-height: calc(100vh - 130px)">
+      <div class="wrapper container-fluid d-flex">
+        <!-- sidebar -->
+        <div class="sidebar" style="min-width: 170px">
+          <%- include("../partials/admin/adminNavbar.ejs") %>
+        </div>
 
-    <section
-      class="d-flex"
-      style="
-        min-height: calc(100vh - 60px);
-        margin-left: 210px;
-        justify-content: center;
-      "
-    >
-      <!-- alert -->
-      <%- include("../partials/user/alertMessage.ejs") %>
-
-      <div class="container row justify-content-center">
-        <div class="col-md-8">
-          <!-- Offer Card -->
-          <div class="card shadow-sm mt-5">
-            <div class="card-header bg-primary text-white">
-              <h3 class="mb-0">Create Offer</h3>
-            </div>
-            <div class="card-body">
-              <form id="offerForm" novalidate>
-                <!-- Offer Application Method -->
-                <div class="form-group my-2">
-                  <label class="d-block">Apply Offer By:</label>
-                  <div class="form-check form-check-inline">
-                    <input
-                      class="form-check-input"
-                      type="radio"
-                      name="applyBy"
-                      id="byName"
-                      value="name"
-                      checked
-                    />
-                    <label class="form-check-label" for="byName">
-                      Product Name
-                    </label>
-                  </div>
-                  <div class="form-check form-check-inline my-2">
-                    <input
-                      class="form-check-input"
-                      type="radio"
-                      name="applyBy"
-                      id="byCategory"
-                      value="category"
-                    />
-                    <label class="form-check-label" for="byCategory">
-                      Category
-                    </label>
-                  </div>
+        <!-- offcanvas -->
+        <%- include("../partials/admin/offCanvas.ejs") %>
+        <div class="content p-3" style="flex-grow: 1">
+          <div class="row justify-content-center">
+            <div class="col-12">
+              <!-- Offer Card -->
+              <div class="card shadow-sm mt-5">
+                <div class="card-header bg-primary text-white">
+                  <h3 class="mb-0">Create Offer</h3>
                 </div>
+                <div class="card-body">
+                  <form id="offerForm" novalidate>
+                    <!-- Offer Application Method -->
+                    <div class="form-group my-2">
+                      <label class="d-block">Apply Offer By:</label>
+                      <div class="form-check form-check-inline">
+                        <input
+                          class="form-check-input"
+                          type="radio"
+                          name="applyBy"
+                          id="byName"
+                          value="name"
+                          checked
+                        />
+                        <label class="form-check-label" for="byName">
+                          Product Name
+                        </label>
+                      </div>
+                      <div class="form-check form-check-inline my-2">
+                        <input
+                          class="form-check-input"
+                          type="radio"
+                          name="applyBy"
+                          id="byCategory"
+                          value="category"
+                        />
+                        <label class="form-check-label" for="byCategory">
+                          Category
+                        </label>
+                      </div>
+                    </div>
 
-                <!-- Product Name Select -->
-                <div class="form-group my-2" id="productSelect">
-                  <label for="productName">Product Name:</label>
-                  <select
-                    class="form-control"
-                    id="productName"
-                    name="productName"
-                  >
-                    <option value="All products">All products</option>
-                    <% products.forEach((product)=> { %>
-                    <option value="<%= product.name %>">
-                      <%= product.name %> - ₹<%= product.price %>
-                    </option>
-                    <% }) %>
-                  </select>
+                    <!-- Product Name Select -->
+                    <div class="form-group my-2" id="productSelect">
+                      <label for="productName">Product Name:</label>
+                      <select
+                        class="form-control"
+                        id="productName"
+                        name="productName"
+                      >
+                        <option value="All products">All products</option>
+                        <% products.forEach((product)=> { %>
+                        <option value="<%= product.name %>">
+                          <%= product.name %> - ₹<%= product.price %>
+                        </option>
+                        <% }) %>
+                      </select>
+                    </div>
+
+                    <!-- Category Select -->
+                    <div
+                      class="form-group my-2"
+                      id="categorySelect"
+                      style="display: none"
+                    >
+                      <label for="category">Category:</label>
+                      <select
+                        class="form-control"
+                        id="category"
+                        name="category"
+                      >
+                        <option value="All categories">All categories</option>
+                        <% categories.forEach((category)=> { %>
+                        <option value="<%= category.category %>">
+                          <%= category.category %>
+                        </option>
+                        <% }) %>
+                      </select>
+                    </div>
+
+                    <!-- Discount Type -->
+                    <div class="form-group my-2">
+                      <label for="discountType">Discount Type:</label>
+                      <select
+                        class="form-control"
+                        id="discountType"
+                        name="discountType"
+                      >
+                        <option value="percentage">Percentage</option>
+                        <option value="fixed">Fixed</option>
+                      </select>
+                    </div>
+
+                    <!-- Discount Value -->
+                    <div class="form-group my-2">
+                      <label for="discountValue">Discount Value:</label>
+                      <input
+                        type="number"
+                        class="form-control"
+                        id="discountValue"
+                        name="discountValue"
+                        min="0"
+                        step="any"
+                      />
+                    </div>
+
+                    <!-- Action: Increase or Decrease -->
+                    <div class="form-group my-2">
+                      <label class="d-block">Action:</label>
+                      <div class="form-check form-check-inline">
+                        <input
+                          class="form-check-input"
+                          type="radio"
+                          name="action"
+                          id="increase"
+                          value="increase"
+                          checked
+                        />
+                        <label class="form-check-label" for="increase">
+                          Increase
+                        </label>
+                      </div>
+                      <div class="form-check form-check-inline">
+                        <input
+                          class="form-check-input"
+                          type="radio"
+                          name="action"
+                          id="decrease"
+                          value="decrease"
+                        />
+                        <label class="form-check-label" for="decrease">
+                          Decrease
+                        </label>
+                      </div>
+                    </div>
+
+                    <button
+                      type="submit"
+                      class="btn btn-success btn-sm btn-block"
+                    >
+                      Submit Offer
+                    </button>
+                  </form>
                 </div>
-
-                <!-- Category Select -->
-                <div
-                  class="form-group my-2"
-                  id="categorySelect"
-                  style="display: none"
-                >
-                  <label for="category">Category:</label>
-                  <select class="form-control" id="category" name="category">
-                    <option value="All categories">All categories</option>
-                    <% categories.forEach((category)=> { %>
-                    <option value="<%= category.category %>">
-                      <%= category.category %>
-                    </option>
-                    <% }) %>
-                  </select>
-                </div>
-
-                <!-- Discount Type -->
-                <div class="form-group my-2">
-                  <label for="discountType">Discount Type:</label>
-                  <select
-                    class="form-control"
-                    id="discountType"
-                    name="discountType"
-                  >
-                    <option value="percentage">Percentage</option>
-                    <option value="fixed">Fixed</option>
-                  </select>
-                </div>
-
-                <!-- Discount Value -->
-                <div class="form-group my-2">
-                  <label for="discountValue">Discount Value:</label>
-                  <input
-                    type="number"
-                    class="form-control"
-                    id="discountValue"
-                    name="discountValue"
-                    min="0"
-                    step="any"
-                  />
-                </div>
-
-                <!-- Action: Increase or Decrease -->
-                <div class="form-group my-2">
-                  <label class="d-block">Action:</label>
-                  <div class="form-check form-check-inline">
-                    <input
-                      class="form-check-input"
-                      type="radio"
-                      name="action"
-                      id="increase"
-                      value="increase"
-                      checked
-                    />
-                    <label class="form-check-label" for="increase">
-                      Increase
-                    </label>
-                  </div>
-                  <div class="form-check form-check-inline">
-                    <input
-                      class="form-check-input"
-                      type="radio"
-                      name="action"
-                      id="decrease"
-                      value="decrease"
-                    />
-                    <label class="form-check-label" for="decrease">
-                      Decrease
-                    </label>
-                  </div>
-                </div>
-
-                <button type="submit" class="btn btn-success btn-sm btn-block">
-                  Submit Offer
-                </button>
-              </form>
+              </div>
+              <!-- Custom alerts -->
+              <div
+                class="alert alert-danger alert-bad d-none text-center"
+                role="alert"
+              ></div>
+              <div
+                class="alert alert-success alert-good d-none text-center"
+                role="alert"
+              ></div>
             </div>
           </div>
-          <!-- Custom alerts -->
-          <div
-            class="alert alert-danger alert-bad d-none text-center"
-            role="alert"
-          ></div>
-          <div
-            class="alert alert-success alert-good d-none text-center"
-            role="alert"
-          ></div>
         </div>
       </div>
     </section>

@@ -62,3 +62,46 @@ body {
   float: right;
   margin-top: 4px;
 }
+
+/* apply every where */
+@media (max-width: 1250px) {
+  .carousel-inner img {
+    height: 400px !important;
+  }
+}
+@media (max-width: 1000px) {
+  .carousel-inner img {
+    height: 300px !important;
+  }
+}
+
+@media (max-width: 767px) {
+  .burger-icon {
+    display: inline !important;
+  }
+  .sidebar {
+    display: none;
+  }
+  .carousel-inner img {
+    height: 500px !important;
+  }
+  .main-sec > div {
+    text-align: center;
+    margin-top: 10px;
+  }
+}
+@media (max-width: 600px) {
+  .carousel-inner img {
+    height: 400px !important;
+  }
+}
+@media (max-width: 500px) {
+  .carousel-inner img {
+    height: 300px !important;
+  }
+}
+@media (max-width: 400px) {
+  .footer-div p {
+    font-size: smaller;
+  }
+}

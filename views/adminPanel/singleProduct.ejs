@@ -10,12 +10,13 @@
 
     <!-- bootstrap -->
     <%- include("../partials/admin/bootLink.ejs") %>
+
+    <!-- icon link -->
+    <%- include("../partials/user/iconLink.ejs") %>
   </head>
   <body>
-    <!-- sidebar -->
-    <div style="width: 200px; position: fixed">
-      <%- include("../partials/admin/adminNavbar.ejs") %>
-    </div>
+    <!-- header nav -->
+    <%- include("../partials/admin/adminHeader.ejs") %>
 
     <!-- alert -->
     <div
@@ -32,162 +33,183 @@
       "
     ></div>
 
-    <!-- For logout -->
-    <!-- error alert -->
-    <div class="alert-bad d-none text-center" style="position: fixed"></div>
-
-    <!-- success alert -->
-    <div class="alert-good d-none text-center" style="position: fixed"></div>
+    <!-- alert (for logout)-->
+    <%- include("../partials/user/alertMessage.ejs") %>
 
     <!-- main section -->
-    <section
-      class="d-flex"
-      style="
-        min-height: calc(100vh - 60px);
-        margin-left: 200px;
-        justify-content: center;
-      "
-    >
-      <div class="container py-5">
-        <div class="row">
-          <div class="col-md-6">
-            <!-- Carousel for Product Images -->
-            <div
-              id="productCarousel"
-              class="carousel slide"
-              data-bs-ride="carousel"
-              style="max-width: 60%; margin: 0 auto"
-            >
-              <div class="carousel-inner">
-                <% product.images.forEach((image, index) => { %>
-                <div class="carousel-item <%= index === 0 ? 'active' : '' %>">
-                  <img
-                    style="height: 500px"
-                    src="<%= image.cropped_url || image.original_url %>"
-                    class="d-block w-100"
-                    alt="<%= product.name %> image <%= index + 1 %>"
-                  />
-                </div>
-                <% }) %>
-              </div>
-              <button
-                class="carousel-control-prev"
-                type="button"
-                data-bs-target="#productCarousel"
-                data-bs-slide="prev"
-              >
-                <span
-                  class="carousel-control-prev-icon"
-                  aria-hidden="true"
-                ></span>
-                <span class="visually-hidden">Previous</span>
-              </button>
-              <button
-                class="carousel-control-next"
-                type="button"
-                data-bs-target="#productCarousel"
-                data-bs-slide="next"
-              >
-                <span
-                  class="carousel-control-next-icon"
-                  aria-hidden="true"
-                ></span>
-                <span class="visually-hidden">Next</span>
-              </button>
-            </div>
-          </div>
+    <section style="min-height: calc(100vh - 60px)">
+      <div class="wrapper container-fluid d-flex">
+        <!-- sidebar -->
+        <div class="sidebar" style="min-width: 170px">
+          <%- include("../partials/admin/adminNavbar.ejs") %>
+        </div>
 
-          <div class="col-md-6">
-            <h2><%= product.name %></h2>
-            <p><strong>Author:</strong> <%= product.author %></p>
-            <p><strong>Category:</strong> <%= product.category %></p>
-            <p><strong>Price:</strong> ₹<%= product.price %></p>
-            <p><strong>Description:</strong> <%= product.description %></p>
-            <p>
-              <strong>Publisher:</strong> <%= product.publisher ?
-              product.publisher : 'Not Available' %>
-            </p>
-            <% if(product.count === 0) {%>
-            <p>
-              <strong>Stock Status:</strong>
-              <span style="color: red"><%= product.stock %></span>
-            </p>
-            <% } else if (product.count <= 5) {%>
-            <p>
-              <strong>Stock Status:</strong>
-              <span style="color: orange"><%= product.stock %></span>
-            </p>
-            <% } else {%>
-            <p>
-              <strong>Stock Status:</strong>
-              <span style="color: green"><%= product.stock %></span>
-            </p>
-            <% } %>
-            <p>
-              <strong>Discount:</strong> <%= product.discount %><%=
-              product.discount_type === 'percentage' ? '%' : '₹' %>
-            </p>
-            <p><strong>Final Price:</strong> ₹<%= product.final_price %></p>
+        <!-- offcanvas -->
+        <%- include("../partials/admin/offCanvas.ejs") %>
 
-            <p>
-              <strong>Ratings:</strong> <%= product.avg_rating ?
-              product.avg_rating : 'N/A' %>
-            </p>
-
-            <!-- Modal -->
-            <div
-              class="modal fade"
-              id="exampleModal"
-              tabindex="-1"
-              aria-labelledby="exampleModalLabel"
-              aria-hidden="true"
-            >
-              <div class="modal-dialog">
-                <div class="modal-content">
-                  <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="exampleModalLabel">
-                      Confirmation
-                    </h1>
-                    <button
-                      type="button"
-                      class="btn-close"
-                      data-bs-dismiss="modal"
-                      aria-label="Close"
-                    ></button>
-                  </div>
-                  <div class="modal-body">
-                    Are you sure you want to delete <%= product.name %>?
-                  </div>
-                  <div class="modal-footer">
-                    <button
-                      type="button"
-                      id="dlt-button"
-                      class="btn btn-danger"
-                      data-bs-dismiss="modal"
+        <!-- main section -->
+        <div class="content p-3" style="flex-grow: 1">
+          <div class="d-flex" style="justify-content: center">
+            <div class="main-sec row w-100">
+              <div class="col-12 col-md-6">
+                <!-- Carousel for Product Images -->
+                <div
+                  id="productCarousel"
+                  class="carousel slide"
+                  data-bs-ride="carousel"
+                  style="width: 60%; margin: 0 auto"
+                >
+                  <div class="carousel-inner">
+                    <% product.images.forEach((image, index) => { %>
+                    <div
+                      class="carousel-item <%= index === 0 ? 'active' : '' %>"
                     >
-                      Yes
-                    </button>
+                      <img
+                        style="height: 500px"
+                        src="<%= image.cropped_url || image.original_url %>"
+                        class="d-block w-100"
+                        alt="<%= product.name %> image <%= index + 1 %>"
+                      />
+                    </div>
+                    <% }) %>
                   </div>
+                  <button
+                    class="carousel-control-prev"
+                    type="button"
+                    data-bs-target="#productCarousel"
+                    data-bs-slide="prev"
+                  >
+                    <span
+                      class="carousel-control-prev-icon"
+                      aria-hidden="true"
+                    ></span>
+                    <span class="visually-hidden">Previous</span>
+                  </button>
+                  <button
+                    class="carousel-control-next"
+                    type="button"
+                    data-bs-target="#productCarousel"
+                    data-bs-slide="next"
+                  >
+                    <span
+                      class="carousel-control-next-icon"
+                      aria-hidden="true"
+                    ></span>
+                    <span class="visually-hidden">Next</span>
+                  </button>
                 </div>
               </div>
-            </div>
 
-            <!-- Update and Delete Buttons -->
-            <div class="mt-4">
-              <a
-                href="/admin/product/<%= product._id %>"
-                class="btn btn-primary btn-sm"
-                >Update</a
-              >
+              <div class="col-12 col-md-6">
+                <h2><%= product.name %></h2>
+                <p>
+                  <strong>Author:</strong>
+                  <%= product.author %>
+                </p>
+                <p>
+                  <strong>Category:</strong>
+                  <%= product.category %>
+                </p>
+                <p>
+                  <strong>Price:</strong>
+                  ₹<%= product.price %>
+                </p>
+                <p>
+                  <strong>Description:</strong>
+                  <%= product.description %>
+                </p>
+                <p>
+                  <strong>Publisher:</strong>
+                  <%= product.publisher ? product.publisher : 'Not Available' %>
+                </p>
+                <% if(product.count === 0) {%>
+                <p>
+                  <strong>Stock Status:</strong>
+                  <span style="color: red"><%= product.stock %></span>
+                </p>
+                <% } else if (product.count <= 5) {%>
+                <p>
+                  <strong>Stock Status:</strong>
+                  <span style="color: orange"><%= product.stock %></span>
+                </p>
+                <% } else {%>
+                <p>
+                  <strong>Stock Status:</strong>
+                  <span style="color: green"><%= product.stock %></span>
+                </p>
+                <% } %>
+                <p>
+                  <strong>Discount:</strong>
+                  <%= product.discount %><%= product.discount_type ===
+                  'percentage' ? '%' : '₹' %>
+                </p>
+                <p>
+                  <strong>Final Price:</strong>
+                  ₹<%= product.final_price %>
+                </p>
 
-              <button
-                type="button"
-                class="btn btn-danger btn-sm"
-                data-bs-toggle="modal"
-                data-bs-target="#exampleModal"
-              >
-                Delete
-              </button>
+                <p>
+                  <strong>Ratings:</strong>
+                  <%= product.avg_rating ? product.avg_rating : 'N/A' %>
+                </p>
+
+                <!-- Modal -->
+                <div
+                  class="modal fade"
+                  id="exampleModal"
+                  tabindex="-1"
+                  aria-labelledby="exampleModalLabel"
+                  aria-hidden="true"
+                >
+                  <div class="modal-dialog">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">
+                          Confirmation
+                        </h1>
+                        <button
+                          type="button"
+                          class="btn-close"
+                          data-bs-dismiss="modal"
+                          aria-label="Close"
+                        ></button>
+                      </div>
+                      <div class="modal-body">
+                        Are you sure you want to delete <%= product.name %>?
+                      </div>
+                      <div class="modal-footer">
+                        <button
+                          type="button"
+                          id="dlt-button"
+                          class="btn btn-danger"
+                          data-bs-dismiss="modal"
+                        >
+                          Yes
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Update and Delete Buttons -->
+                <div class="mt-4">
+                  <a
+                    href="/admin/product/<%= product._id %>"
+                    class="btn btn-primary btn-sm"
+                  >
+                    Update
+                  </a>
+
+                  <button
+                    type="button"
+                    class="btn btn-danger btn-sm"
+                    data-bs-toggle="modal"
+                    data-bs-target="#exampleModal"
+                  >
+                    Delete
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
