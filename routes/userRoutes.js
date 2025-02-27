@@ -25,6 +25,9 @@ const {
   reviewPage,
   submitReview,
   allReviews,
+  reviewUpdatePage,
+  updateReview,
+  deleteReview,
 } = require("../controllers/user/review");
 
 // user wallet
@@ -191,7 +194,10 @@ router.route("/wallet-balance").get(checkingAuth, getWalletBalance);
 router
   .route("/review/:id")
   .get(checkingAuth, reviewPage)
-  .post(checkingAuth, submitReview);
+  .post(checkingAuth, submitReview)
+  .patch(checkingAuth, updateReview)
+  .delete(checkingAuth, deleteReview);
+router.route("/review/update/:id").get(checkingAuth, reviewUpdatePage);
 router.route("/reviews").get(checkingAuth, allReviews);
 
 // wishlist routes

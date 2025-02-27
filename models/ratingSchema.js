@@ -13,7 +13,8 @@ const ratingSchema = new mongoose.Schema(
       ref: "Product",
     },
     rating: { type: Number, min: 1, max: 5, required: true },
-    description: { type: String, default: null },
+    description: { type: String, default: null, trim: true },
+    is_deleted: { type: Boolean, default: false },
   },
   { timestamps: true }
 );

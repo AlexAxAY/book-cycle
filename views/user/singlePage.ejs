@@ -76,9 +76,9 @@
           <p class="text-muted"><small>by <%= product.author %></small></p>
           <% } %> <% if (product.stock === "Limited stock") { %>
           <p>
-            <strong style="color: #fb8500"
-              ><%= product.stock %> (<%= product.count %> books left)</strong
-            >
+            <strong style="color: #fb8500"></strong>
+              <%= product.stock %> (<%= product.count %> books left)
+            </strong>
           </p>
           <% } else if (product.stock === "In stock") { %>
           <p><strong style="color: green"><%= product.stock %></strong></p>
@@ -88,10 +88,10 @@
           <!-- Rating Stars -->
           <% if (product.avg_rating) {%>
           <div class="d-flex align-items-center mb-3">
-              <div class="rating-badge">
-                <small><%= product.avg_rating %></small>
-                <span class="star-icon">★</span>
-              </div>
+            <div class="rating-badge">
+              <small><%= product.avg_rating %></small>
+              <span class="star-icon">★</span>
+            </div>
           </div>
           <% } %>
 
@@ -105,9 +105,9 @@
               <small>₹<%= product.price.toFixed(2) %></small>
             </span>
             <% } %> <% if (product.final_price) { %>
-            <span class="text-primary"
-              >₹<%= product.final_price.toFixed(2) %></span
-            >
+            <span class="text-primary">
+              ₹<%= product.final_price.toFixed(2) %>
+            </span>
             <% if (product.discount_type === 'percentage') { %>
             <span class="text-success">(<%= product.discount %>% off)</span>
             <% } else if (product.discount_type === 'fixed') { %>
@@ -122,36 +122,50 @@
 
           <!-- Additional Product Details -->
           <div class="spec-container mt-3">
-            <p><strong>Language:</strong> <%= product.language %></p>
+            <p>
+              <strong>Language:</strong>
+              <%= product.language %>
+            </p>
             <% if (product.publisher) { %>
-            <p><strong>Publisher:</strong> <%= product.publisher %></p>
+            <p>
+              <strong>Publisher:</strong>
+              <%= product.publisher %>
+            </p>
             <% } %> <% if (product.publish_date) { %>
             <p>
-              <strong>Published Year:</strong> <%= new
-              Date(product.publish_date).getFullYear() %>
+              <strong>Published Year:</strong>
+              <%= new Date(product.publish_date).getFullYear() %>
             </p>
             <% } %> <% if (product.category) { %>
-            <p><strong>Category:</strong> <%= product.category %></p>
+            <p>
+              <strong>Category:</strong>
+              <%= product.category %>
+            </p>
             <% } %> <% if (product.used) { %>
-            <p><strong>Condition:</strong> Pre-used Book</p>
+            <p>
+              <strong>Condition:</strong>
+              Pre-used Book
+            </p>
             <% } %>
           </div>
 
           <!-- Add to Cart and wishlist Button -->
           <button
             class="btn btn-outline-dark mt-3 add-to-cart-btn"
-            style="border: none;"
+            style="border: none"
             data-product-id="<%= product._id %>"
           >
-            Add to Cart <i class="fa-solid fa-cart-shopping cart-icon"></i>
+            Add to Cart
+            <i class="fa-solid fa-cart-shopping cart-icon"></i>
           </button>
 
           <button
             class="btn btn-outline-danger mt-3 add-to-wish-btn"
-            style="border: none;"
+            style="border: none"
             data-product-id="<%= product._id %>"
           >
-            Add to Wishlist <i class="fa-solid fa-heart wishlist-icon"></i>
+            Add to Wishlist
+            <i class="fa-solid fa-heart wishlist-icon"></i>
           </button>
         </div>
       </div>
@@ -163,36 +177,33 @@
           <h5>Review (<%= product.rating_count %>)</h5>
           <hr />
           <% reviews.forEach((review) => { %>
-            <div class="review-sec px-3 pt-3 mb-1" style="border: 1px solid rgba(0, 0, 0, 0.2); border-radius: 5px;">
-              <p class="m-0">
-                <strong>
-                  <%= review.user_id.name %>
-                  <span class="review-stars" style="margin-left: 10px;">
-                    <% 
-                      const fullStars = review.rating;
-                      const emptyStars = 5 - review.rating;
-                    %>
-                    <% for (let i = 0; i < fullStars; i++) { %>
-                      <span class="star filled">★</span>
-                    <% } %>
-                    <% for (let i = 0; i < emptyStars; i++) { %>
-                      <span class="star">★</span>
-                    <% } %>
-                  </span>
-                </strong>
-              </p>
-              <p><small class="text-muted"><%= review.formattedDate %></small></p>
-              <p><%= review.description %></p>
+          <div
+            class="review-sec row px-3 pt-3 mb-1"
+            style="border: 1px solid rgba(0, 0, 0, 0.2); border-radius: 5px"
+          >
+            <div class="col">
+            <p class="m-0">
+              <strong>
+                <%= review.user_id.name %>
+                <span class="review-stars" style="margin-left: 10px">
+                  <% const fullStars = review.rating; const emptyStars = 5 -
+                  review.rating; %> <% for (let i = 0; i < fullStars; i++) { %>
+                  <span class="star filled">★</span>
+                  <% } %> <% for (let i = 0; i < emptyStars; i++) { %>
+                  <span class="star">★</span>
+                  <% } %>
+                </span>
+              </strong>
+            </p>
+            <p><small class="text-muted"><%= review.formattedDate %></small></p>
+            <p><%= review.description %></p>
             </div>
-          <% }); %>
-          
-          
-
-          <% } else {%>
-            <h5>Review (0)</h5>
-            <hr />
+          </div>
+          <% }); %> <% } else {%>
+          <h5>Review (0)</h5>
+          <hr />
           <p>No reviews yet</p>
-          <% } %> 
+          <% } %>
         </div>
       </div>
 
@@ -249,6 +260,7 @@
         <p>No related products</p>
         <% } %>
       </div>
+
     </section>
 
     <!-- footer partial -->
@@ -269,7 +281,7 @@
     <!-- Add to cart helper -->
     <script src="/user/helper/addToCartHelper.js"></script>
 
-     <!-- Add to wislist helper -->
+    <!-- Add to wislist helper -->
     <script src="/user/helper/addToWishlistHelper.js"></script>
 
     <!-- pending user clear -->

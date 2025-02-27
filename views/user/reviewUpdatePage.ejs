@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Update Review</title>
+
+    <!-- css -->
+    <link rel="stylesheet" href="/user/stylesheets/reviewPage.css" />
+
+    <!-- icon link -->
+    <%- include("../partials/user/iconLink.ejs") %>
+
+    <!-- bootstrap link -->
+    <%- include("../partials/admin/bootLink.ejs") %>
+  </head>
+  <body>
+    <!-- navbar -->
+    <header><%- include("../partials/user/userNavbar.ejs") %></header>
+
+    <!-- alert -->
+    <%- include("../partials/user/alertMessage.ejs") %>
+
+    <section class="container-main" style="min-height: calc(100vh - 212px)">
+      <div class="container py-5">
+        <div class="card p-4 shadow-sm">
+          <h3 class="mb-4">Rate the Product</h3>
+
+          <div class="d-flex align-items-center">
+            <img
+              src="<%= review.product_id.images[0].cropped_url || review.product_id.images[0].original_url %>"
+              alt="Product Image"
+              class="mr-3"
+              style="max-width: 100px; max-height: 150px"
+            />
+            <div class="mx-4">
+              <h5><%= review.product_id.name %></h5>
+              <p class="text-muted mb-1">by <%= review.product_id.author %></p>
+              <p class="text-muted"><small></small></p>
+            </div>
+          </div>
+
+          <hr />
+
+          <!-- Rating Section -->
+          <div class="rating mt-3">
+            <p class="mb-1">Select your rating</p>
+            <div
+              id="productRating"
+              class="rating-stars"
+              data-review-id="<%= review._id %>"
+              data-product-id="<%= review.product_id._id %>"
+              data-rating="<%= parseInt(review.rating, 10) || 0 %>"
+            >
+              <% const userRating = parseInt(review.rating, 10) || 0; for (let i
+              = 1; i <= 5; i++) { %>
+              <i
+                class="fas fa-star <%= i <= userRating ? 'selected' : '' %>"
+                data-rating="<%= i %>"
+              ></i>
+              <% } %>
+            </div>
+          </div>
+
+          <div class="form-group mt-3">
+            <label for="reviewText">
+              Write a review
+              <i class="fa-solid fa-pen-to-square"></i>
+            </label>
+            <textarea
+              id="reviewText"
+              class="form-control"
+              rows="2"
+              placeholder="Share your thoughts about this product..."
+            >
+<%= review.description %></textarea
+            >
+          </div>
+
+          <button id="submitReview" class="btn btn-primary mt-3">
+            Submit Review
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- footer partial -->
+    <footer><%- include("../partials/user/userFooter.ejs") %></footer>
+
+    <!-- logout -->
+    <script src="/user/helper/logoutHelper.js"></script>
+
+    <!-- pending user clear -->
+    <script src="/user/helper/removePendingUser.js"></script>
+
+    <!-- ratings helper -->
+    <script src="/user/helper/ratingsUpdateHelper.js"></script>
+
+    <!-- Include Axios -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+    <!-- bootstrap -->
+    <%- include("../partials/admin/bootScript.ejs") %>
+  </body>
+</html>
