@@ -16,184 +16,201 @@
   </head>
 
   <body>
-    <!-- sidebar -->
-    <div class="col-3" style="width: 200px; position: fixed">
-      <%- include("../partials/admin/adminNavbar.ejs") %>
-    </div>
+    <!-- header nav -->
+    <%- include("../partials/admin/adminHeader.ejs") %>
 
-    <!-- error alert -->
-    <div class="alert-bad d-none text-center" style="position: fixed"></div>
-    <!-- success alert -->
-    <div class="alert-good d-none text-center" style="position: fixed"></div>
+    <!-- alert -->
+    <%- include("../partials/user/alertMessage.ejs") %>
 
     <!-- main section -->
-    <section class="container">
-      <div
-        class="d-flex flex-column align-items-center"
-        style="min-height: calc(100vh - 60px); margin-left: 210px"
-      >
-        <h2 class="mt-5">Order details</h2>
+    <section class="main-section" style="min-height: calc(100vh - 130px)">
+      <div class="wrapper container-fluid d-flex">
+        <!-- sidebar -->
+        <div class="sidebar" style="min-width: 170px">
+          <%- include("../partials/admin/adminNavbar.ejs") %>
+        </div>
 
-        <!-- Order Details Card -->
-        <div class="card w-75 my-4">
-          <div class="card-body">
-            <h5 class="card-title">Order ID: <%= order._id %></h5>
-            <hr />
-            <div class="row" style="justify-content: space-between">
-              <div class="col-auto details-side">
+        <!-- offcanvas -->
+        <%- include("../partials/admin/offCanvas.ejs") %>
+
+        <!-- main section -->
+        <div class="content p-3" style="flex-grow: 1">
+          <div class="d-flex flex-column align-items-center">
+            <h2 class="mt-5">Order details</h2>
+
+            <!-- Order Details Card -->
+            <div class="card w-75 my-4">
+              <div class="card-body">
+                <h5 class="card-title">Order ID: <%= order._id %></h5>
+                <hr />
+                <div class="row" style="justify-content: space-between">
+                  <div class="col-12 col-lg-auto details-side">
+                    <p class="card-text">
+                      <strong>User:</strong>
+                      <%= order.user_id.name || order.user_id.email %>
+                    </p>
+                    <p class="card-text">
+                      <strong>Order Date:</strong>
+                      <%= orderCreated %>
+                    </p>
+                    <% if(order.status === "Delivered") {%>
+                    <p class="card-text">
+                      <strong>Deliver Date:</strong>
+                      <%= orderDelivered %>
+                    </p>
+                    <% } %> <% if(order.status === "Cancelled") {%>
+                    <p class="card-text">
+                      <strong>Order Cancel Date:</strong>
+                      <%= orderCancelled %>
+                    </p>
+                    <% } %>
+                    <p class="card-text">
+                      <strong>Total Items:</strong>
+                      <%= order.total_items %>
+                    </p>
+                    <p class="card-text">
+                      <strong>Items:</strong>
+                      <% order.order_items.forEach((item, index) => { %> <%=
+                      item.product.name %> (<%=item.quantity%>)<% if (index <
+                      order.order_items.length - 1) { %>, <% } %> <% }) %>
+                    </p>
+                    <p class="card-text">
+                      <strong>Total Amount:</strong>
+                      ₹ <%= order.final_amount %>
+                    </p>
+                    <p class="card-text">
+                      <strong>Payment Type:</strong>
+                      <%= order.payment_type %>
+                    </p>
+                    <p class="card-text">
+                      <strong>Shipping Address:</strong>
+                      <%= order.address.name %>, <%= order.address.address_line
+                      %>, <%= order.address.city %>, <%= order.address.state %>,
+                      <%= order.address.pincode %>
+                    </p>
+                    <p class="card-text mb-3">
+                      <strong>Status:</strong>
+                      <% if(order.status === "Cancelled") {%>
+                      <span style="color: red" id="currentStatus">
+                        <%= order.status %>
+                      </span>
+                      <% } else {%>
+                      <span id="currentStatus"><%= order.status %></span>
+                      <% } %>
+                    </p>
+                    <% if(order.status === "Cancelled") {%>
+                    <p class="card-text mb-2">
+                      <strong>Cancellation reason:</strong>
+                      <span><%= cancel.reason || "No reasons provided" %></span>
+                    </p>
+                    <% } %>
+                  </div>
+                  <hr class="line" style="display: none" />
+                  <div class="col-12 col-lg-auto image-side">
+                    <div class="row">
+                      <% order.order_items.forEach((item)=> { %>
+                      <div class="col-auto">
+                        <img
+                          style="width: 70px; border-radius: 4px; height: 110px"
+                          class="mb-2 imgs"
+                          src="<%= item.product.images[0].cropped_url || item.product.images[0].original_url %>"
+                          alt="product-image"
+                        />
+                      </div>
+                      <% }) %>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="p-3">
+                <% if (returnDecisions.length > 0) {%>
+                <hr />
+                <p class="fs-4"><strong>Return details</strong></p>
+                <% returnDecisions.forEach((item)=>{ %>
                 <p class="card-text">
-                  <strong>User:</strong>
-                  <%= order.user_id.name || order.user_id.email %>
-                </p>
-                <p class="card-text">
-                  <strong>Order Date:</strong>
-                  <%= orderCreated %>
-                </p>
-                <% if(order.status === "Delivered") {%>
-                <p class="card-text">
-                  <strong>Deliver Date:</strong>
-                  <%= orderDelivered %>
-                </p>
-                <% } %> <% if(order.status === "Cancelled") {%>
-                <p class="card-text">
-                  <strong>Order Cancel Date:</strong>
-                  <%= orderCancelled %>
-                </p>
-                <% } %>
-                <p class="card-text">
-                  <strong>Total Items:</strong>
-                  <%= order.total_items %>
-                </p>
-                <p class="card-text">
-                  <strong>Items:</strong>
-                  <% order.order_items.forEach((item, index) => { %> <%=
-                  item.product.name %> (<%=item.quantity%>)<% if (index <
-                  order.order_items.length - 1) { %>, <% } %> <% }) %>
-                </p>
-                <p class="card-text">
-                  <strong>Total Amount:</strong>
-                  ₹ <%= order.final_amount %>
-                </p>
-                <p class="card-text">
-                  <strong>Payment Type:</strong>
-                  <%= order.payment_type %>
-                </p>
-                <p class="card-text">
-                  <strong>Shipping Address:</strong>
-                  <%= order.address.name %>, <%= order.address.address_line %>,
-                  <%= order.address.city %>, <%= order.address.state %>, <%=
-                  order.address.pincode %>
-                </p>
-                <p class="card-text">
-                  <strong>Status:</strong>
-                  <% if(order.status === "Cancelled") {%>
-                  <span style="color: red" id="currentStatus">
-                    <%= order.status %>
-                  </span>
-                  <% } else {%>
-                  <span id="currentStatus"><%= order.status %></span>
+                  <strong>Product name:</strong>
+                  <%= item.product.name %> <% if (item.return_status ===
+                  "Approved") { %>
+                  <span style="color: green">(Approved)</span>
+                  <% } else { %>
+                  <span style="color: red">(Rejected)</span>
                   <% } %>
                 </p>
-                <% if(order.status === "Cancelled") {%>
-                <p class="card-text">
-                  <strong>Cancellation reason:</strong>
-                  <span><%= cancel.reason || "No reasons provided" %></span>
-                </p>
-                <% } %>
+                <% }) %> <% } %>
               </div>
-              <div class="col-auto image-side">
-                <% order.order_items.forEach((item)=> { %>
-                <div>
-                  <img
-                    style="width: 70px; border-radius: 4px"
-                    class="mb-2"
-                    src="<%= item.product.images[0].cropped_url || item.product.images[0].original_url %>"
-                    alt="product-image"
-                  />
+            </div>
+
+            <!-- Status Update Form -->
+            <% if(order.status !== "Cancelled" && order.status !== "Delivered")
+            { %>
+            <div class="w-75 mt-4 mb-4">
+              <form id="statusForm">
+                <div class="form-group">
+                  <label for="orderStatusSelect">
+                    <strong>Update Order Status</strong>
+                  </label>
+                  <select id="orderStatusSelect" class="form-control">
+                    <!-- Options will be populated by JS -->
+                  </select>
                 </div>
-                <% }) %>
-              </div>
+                <button type="submit" class="btn btn-primary mt-3">
+                  Update Status
+                </button>
+              </form>
             </div>
+            <% } %> <% order.order_items.forEach((item) => {
+            if(item.return_status === "Requested") { %>
+            <div
+              class="return-decision-form p-3 my-3"
+              data-product-id="<%= item.product._id %>"
+            >
+              <p class="fs-4">
+                Return request for
+                <strong><%= item.product.name %></strong>
+                (Quantity: <%= item.quantity %>)
+              </p>
+              <p>Reason for return: <%= item.return_reason %></p>
+              <form class="return-decision-form-inner">
+                <div class="form-group">
+                  <label for="returnDecision-<%= item.product._id %>">
+                    Update Return Status:
+                  </label>
+                  <select
+                    name="decision"
+                    id="returnDecision-<%= item.product._id %>"
+                    class="form-control"
+                  >
+                    <option value="">Select Decision</option>
+                    <option value="Approved">Approved</option>
+                    <option value="Rejected">Rejected</option>
+                  </select>
+                </div>
+                <!-- Textarea for providing a reason -->
+                <div class="form-group mt-2">
+                  <label for="adminMessage-<%= item.product._id %>">
+                    Reason:
+                  </label>
+                  <textarea
+                    name="adminMessage"
+                    id="adminMessage-<%= item.product._id %>"
+                    class="form-control"
+                    rows="2"
+                    placeholder="Enter reason..."
+                  ></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary mt-3">
+                  Submit
+                </button>
+              </form>
+              <div
+                class="return-decision-result mt-2"
+                style="display: none"
+              ></div>
+            </div>
+            <% } }); %>
           </div>
-
-          <div class="p-3">
-            <% if (returnDecisions.length > 0) {%>
-            <hr />
-            <p class="fs-4"><strong>Return details</strong></p>
-            <% returnDecisions.forEach((item)=>{ %>
-            <p class="card-text">
-              <strong>Product name:</strong>
-              <%= item.product.name %> <% if (item.return_status === "Approved")
-              { %>
-              <span style="color: green">(Approved)</span>
-              <% } else { %>
-              <span style="color: red">(Rejected)</span>
-              <% } %>
-            </p>
-            <% }) %> <% } %>
-          </div>
         </div>
-
-        <!-- Status Update Form -->
-        <% if(order.status !== "Cancelled" && order.status !== "Delivered") { %>
-        <div class="w-75 mt-4 mb-4">
-          <form id="statusForm">
-            <div class="form-group">
-              <label for="orderStatusSelect">
-                <strong>Update Order Status</strong>
-              </label>
-              <select id="orderStatusSelect" class="form-control">
-                <!-- Options will be populated by JS -->
-              </select>
-            </div>
-            <button type="submit" class="btn btn-primary mt-3">
-              Update Status
-            </button>
-          </form>
-        </div>
-        <% } %> <% order.order_items.forEach((item) => { if(item.return_status
-        === "Requested") { %>
-        <div
-          class="return-decision-form p-3 my-3"
-          data-product-id="<%= item.product._id %>"
-        >
-          <p class="fs-4">
-            Return request for
-            <strong><%= item.product.name %></strong>
-            (Quantity: <%= item.quantity %>)
-          </p>
-          <p>Reason for return: <%= item.return_reason %></p>
-          <form class="return-decision-form-inner">
-            <div class="form-group">
-              <label for="returnDecision-<%= item.product._id %>">
-                Update Return Status:
-              </label>
-              <select
-                name="decision"
-                id="returnDecision-<%= item.product._id %>"
-                class="form-control"
-              >
-                <option value="">Select Decision</option>
-                <option value="Approved">Approved</option>
-                <option value="Rejected">Rejected</option>
-              </select>
-            </div>
-            <!-- Textarea for providing a reason -->
-            <div class="form-group mt-2">
-              <label for="adminMessage-<%= item.product._id %>">Reason:</label>
-              <textarea
-                name="adminMessage"
-                id="adminMessage-<%= item.product._id %>"
-                class="form-control"
-                rows="2"
-                placeholder="Enter reason..."
-              ></textarea>
-            </div>
-            <button type="submit" class="btn btn-primary mt-3">Submit</button>
-          </form>
-          <div class="return-decision-result mt-2" style="display: none"></div>
-        </div>
-        <% } }); %>
       </div>
     </section>
 

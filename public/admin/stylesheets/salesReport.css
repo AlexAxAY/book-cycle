@@ -85,12 +85,6 @@ body {
   border-radius: 8px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
-.table-title {
-  margin-bottom: 20px;
-  font-size: 1.8rem;
-  text-align: center;
-  color: #343a40;
-}
 
 /* Hover effect for table rows */
 .table-hover tbody tr:hover {
