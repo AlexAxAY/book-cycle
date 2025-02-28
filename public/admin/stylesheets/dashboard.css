@@ -1,0 +1,160 @@
+body {
+  margin: 0 !important;
+  padding: 0 !important;
+  min-height: 100vh;
+}
+.footer-div {
+  display: flex;
+  background-color: #2f2929;
+  color: white;
+  height: 60px;
+  justify-content: center;
+  align-items: center;
+}
+
+/* alert */
+.alert-bad,
+.alert-good {
+  padding: 20px;
+  width: fit-content;
+  border-radius: 5px !important;
+  color: white !important;
+  position: fixed;
+  top: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9999;
+}
+
+.alert-bad {
+  background-color: #f44336 !important;
+}
+
+.alert-good {
+  background-color: green !important;
+}
+
+/* sidebar */
+#sidebar .sidebar-header {
+  padding: 1rem;
+  background: #fff;
+}
+#sidebar ul.components {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+#sidebar ul li {
+  width: 100%;
+}
+#sidebar ul li a {
+  display: block;
+  padding: 0.75rem 1.25rem;
+  color: #333;
+  text-decoration: none;
+}
+#sidebar ul li a:hover {
+  background: #e9ecef;
+  text-decoration: none;
+}
+
+/* Style for dropdown toggles */
+#sidebar ul li a.dropdown-toggle::after {
+  float: right;
+  margin-top: 4px;
+}
+
+.boxes {
+  height: 200px !important;
+  border-radius: 5px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  transition: 0.2s;
+}
+
+.boxes:hover {
+  cursor: pointer;
+  transform: scale(1.05);
+}
+
+.total-status {
+  width: 100%;
+}
+
+.price {
+  font-weight: 800;
+}
+
+/* Chart card styling */
+.chart-card {
+  position: relative;
+}
+.chart-card .card-header {
+  background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
+  color: white;
+}
+.chart-filter {
+  width: auto;
+}
+
+@media (max-width: 1300px) {
+  .boxes {
+    margin-bottom: 5px;
+  }
+  .sidebar {
+    display: none;
+  }
+  .burger-icon {
+    display: inline !important;
+  }
+}
+
+@media (max-width: 1200px) {
+  .total-status {
+    width: 700px;
+    height: 100px !important;
+  }
+}
+
+@media (max-width: 772px) {
+  .total-status {
+    width: 300px;
+    height: 100px !important;
+  }
+  #bestSellingProduct,
+  #BestSellingCategories,
+  #BestRatedProducts {
+    font-size: medium !important;
+  }
+  .inside p:last-child {
+    font-size: small !important;
+  }
+}
+
+@media (max-width: 376px) {
+  .total-status {
+    width: 200px;
+    height: 80px !important;
+  }
+  .footer-div p {
+    font-size: x-small;
+  }
+  .modal-title {
+    font-size: medium !important;
+  }
+  .modal-body {
+    font-size: small !important;
+  }
+  .modal-footer button {
+    font-size: x-small;
+    width: fit-content !important;
+    height: fit-content !important;
+  }
+  #bestSellingProduct,
+  #BestSellingCategories,
+  #BestRatedProducts {
+    font-size: small !important;
+  }
+  .inside p:last-child {
+    font-size: x-small !important;
+  }
+}

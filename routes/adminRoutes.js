@@ -10,6 +10,9 @@ const {
   preventAuth,
 } = require("../middleware/admin/authMiddleware.js");
 
+// Requiring dashboard controller
+const { dashboard } = require("../controllers/admin/dashboard.js");
+
 // Requiring banner controllers
 const {
   viewBanner,
@@ -156,5 +159,8 @@ router.route("/offers").get(viewOffers);
 router.route("/sales-report").get(salesReportPage);
 router.get("/sales-report/pdf-download", downloadSalesReportPDF);
 router.get("/sales-report/excel-download", downloadSalesReportExcel);
+
+// dashboard route
+router.route("/dashboard").get(dashboard);
 
 module.exports = router;

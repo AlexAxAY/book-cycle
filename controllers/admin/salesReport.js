@@ -226,6 +226,10 @@ const downloadSalesReportPDF = async (req, res) => {
       (acc, order) => acc + order.final_amount,
       0
     );
+    const totalDeliveryCharge = validOrders.reduce(
+      (acc, order) => acc + order.delivery_charge,
+      0
+    );
 
     let walletTransactionQuery = { type: "credit", order: { $ne: null } };
     if (startDate && endDate) {
@@ -240,7 +244,7 @@ const downloadSalesReportPDF = async (req, res) => {
       refundAggregate.length > 0 ? refundAggregate[0].total : 0;
 
     // Calculate total revenue.
-    const totalRevenue = totalFinalAmount - totalRefund;
+    const totalRevenue = totalFinalAmount - totalRefund - totalDeliveryCharge;
 
     // Prepare data for the PDF.
     const data = {
@@ -345,6 +349,10 @@ const downloadSalesReportExcel = async (req, res) => {
       (acc, order) => acc + order.final_amount,
       0
     );
+    const totalDeliveryCharge = validOrders.reduce(
+      (acc, order) => acc + order.delivery_charge,
+      0
+    );
 
     let walletTransactionQuery = { type: "credit", order: { $ne: null } };
     if (startDate && endDate) {
@@ -358,7 +366,7 @@ const downloadSalesReportExcel = async (req, res) => {
     const totalRefund =
       refundAggregate.length > 0 ? refundAggregate[0].total : 0;
 
-    const totalRevenue = totalFinalAmount - totalRefund;
+    const totalRevenue = totalFinalAmount - totalRefund - totalDeliveryCharge;
 
     // Use the separate module to generate the Excel report.
     const buffer = await generateExcelReport({

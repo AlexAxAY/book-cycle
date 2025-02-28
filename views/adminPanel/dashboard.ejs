@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sales Report</title>
+
+    <!-- css -->
+    <link rel="stylesheet" href="/admin/stylesheets/dashboard.css" />
+
+    <!-- bootstrap -->
+    <%- include("../partials/admin/bootLink.ejs") %>
+
+    <!-- icon link -->
+    <%- include("../partials/user/iconLink.ejs") %>
+
+    <!-- google fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Port+Lligat+Slab&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <!-- header nav -->
+    <%- include("../partials/admin/adminHeader.ejs") %>
+
+    <!-- alert -->
+    <%- include("../partials/user/alertMessage.ejs") %>
+
+    <section
+      class="main-section"
+      style="min-height: calc(100vh - 130px); justify-content: center"
+    >
+      <div class="wrapper container-fluid d-flex">
+        <!-- sidebar -->
+        <div class="sidebar" style="width: 170px">
+          <%- include("../partials/admin/adminNavbar.ejs") %>
+        </div>
+
+        <!-- offcanvas -->
+        <%- include("../partials/admin/offCanvas.ejs") %>
+
+        <!-- main section -->
+        <div class="content p-3" style="flex-grow: 1">
+          <div class="d-flex" style="justify-content: center">
+            <div
+              class="total-status row"
+              style="justify-content: space-around; height: 150px"
+            >
+              <div
+                class="p-1 boxes col-xl-3 col-md-6 col-12 h-100"
+                data-bs-toggle="modal"
+                data-bs-target="#topProductModal"
+              >
+                <div
+                  class="inside d-flex h-100"
+                  style="flex-direction: column; justify-content: center"
+                >
+                  <p
+                    id="bestSellingProduct"
+                    class="fs-5 text-center price text-success"
+                  >
+                    1. <%= topProducts[0].name %>
+                  </p>
+                  <p class="text-center">
+                    Best Seller
+                    <i class="fa-solid fa-award" style="color: #ffd43b"></i>
+                  </p>
+                </div>
+              </div>
+              <div
+                class="p-1 boxes col-xl-3 col-md-6 col-12 h-100"
+                data-bs-toggle="modal"
+                data-bs-target="#topCategoryModal"
+              >
+                <div
+                  class="inside d-flex h-100"
+                  style="flex-direction: column; justify-content: center"
+                >
+                  <p
+                    id="BestSellingCategories"
+                    class="fs-5 text-center price text-danger"
+                  >
+                    1. <%= topCategories[0].name %>
+                  </p>
+                  <p class="text-center">
+                    Best Category
+                    <i class="fa-solid fa-award" style="color: #ffd43b"></i>
+                  </p>
+                </div>
+              </div>
+              <div
+                class="p-1 boxes col-xl-3 col-md-6 col-12 h-100"
+                data-bs-toggle="modal"
+                data-bs-target="#topRatedModal"
+              >
+                <div
+                  class="inside d-flex h-100"
+                  style="flex-direction: column; justify-content: center"
+                >
+                  <p
+                    id="BestRatedProducts"
+                    class="fs-5 text-center price text-primary"
+                  >
+                    1. <%= topRatedProducts[0].name %>
+                  </p>
+                  <p class="text-center">
+                    Top rated
+                    <i class="fa-solid fa-award" style="color: #ffd43b"></i>
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="d-flex mt-5 " style="justify-content: center;">
+              <!-- Chart Card with internal filter -->
+              <div class="card chart-card mb-4" style="width: 80%;">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                  <span>Sales Chart</span>
+                  <form id="filterForm" method="GET" action="/admin/dashboard" class="mb-0">
+                    <div class="form-inline chart-filter">
+                      <select
+                        name="filter"
+                        id="filter"
+                        class="form-control"
+                        onchange="document.getElementById('filterForm').submit();"
+                      >
+                        <option value="weekly" <%= currentFilter === 'weekly' ? 'selected' : '' %>>
+                          Weekly
+                        </option>
+                        <option value="monthly" <%= currentFilter === 'monthly' ? 'selected' : '' %>>
+                          Monthly
+                        </option>
+                        <option value="yearly" <%= currentFilter === 'yearly' ? 'selected' : '' %>>
+                          Yearly
+                        </option>
+                      </select>
+                    </div>
+                  </form>
+                </div>
+                <div class="card-body">
+                  <canvas id="salesChart" data-chart='<%- JSON.stringify(chartData) %>'></canvas>
+                </div>
+              </div>
+            
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Top product modal -->
+    <div
+      class="modal fade"
+      id="topProductModal"
+      data-bs-backdrop="static"
+      data-bs-keyboard="false"
+      tabindex="-1"
+      aria-labelledby="staticBackdropLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1
+              style="font-size: x-large"
+              class="modal-title w-100 text-center"
+              id="staticBackdropLabel"
+            >
+              Top selling products
+            </h1>
+          </div>
+          <div class="modal-body">
+            <% for (let i=0;i< topProducts.length; i++){ %>
+            <p>
+              <%= i+1 %>.
+              <span><%= topProducts[i].name %></span>
+            </p>
+            <% } %>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Top category modal -->
+    <div
+      class="modal fade"
+      id="topCategoryModal"
+      data-bs-backdrop="static"
+      data-bs-keyboard="false"
+      tabindex="-1"
+      aria-labelledby="staticBackdropLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1
+              style="font-size: x-large"
+              class="modal-title w-100 text-center"
+              id="staticBackdropLabel"
+            >
+              Top selling categories
+            </h1>
+          </div>
+          <div class="modal-body">
+            <% for (let i=0;i< topCategories.length; i++){ %>
+            <p>
+              <%= i+1 %>.
+              <span><%= topCategories[i].name %></span>
+            </p>
+            <% } %>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Top category modal -->
+    <div
+      class="modal fade"
+      id="topRatedModal"
+      data-bs-backdrop="static"
+      data-bs-keyboard="false"
+      tabindex="-1"
+      aria-labelledby="staticBackdropLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1
+              style="font-size: x-large"
+              class="modal-title w-100 text-center"
+              id="staticBackdropLabel"
+            >
+              Top rated products
+            </h1>
+          </div>
+          <div class="modal-body">
+            <% for (let i=0;i< topRatedProducts.length; i++){ %>
+            <p>
+              <%= i+1 %>.
+              <span><%= topRatedProducts[i].name %></span>
+            </p>
+            <% } %>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- footer -->
+    <%- include("../partials/admin/adminFooter.ejs") %>
+
+    <!-- bootstrap -->
+    <%- include("../partials/admin/bootScript.ejs") %>
+
+    <!-- axios -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+    <!-- moment -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
+
+    <!-- Chart.js via CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- js logout validation file -->
+    <script src="/admin/front-end-validation/logoutValidation.js"></script>
+
+    <!-- dashboard helper -->
+    <script src="/admin/helper/dashboardHelper.js"></script>
+  </body>
+</html>
