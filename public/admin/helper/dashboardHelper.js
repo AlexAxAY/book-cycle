@@ -1,4 +1,13 @@
 document.addEventListener("DOMContentLoaded", function () {
+  // Attach change event to the filter select element
+  const filterSelect = document.getElementById("filter");
+  const filterForm = document.getElementById("filterForm");
+  if (filterSelect && filterForm) {
+    filterSelect.addEventListener("change", function () {
+      filterForm.submit();
+    });
+  }
+
   // Retrieve chart data from the canvas data attribute
   const canvasEl = document.getElementById("salesChart");
   const chartDataAttr = canvasEl.getAttribute("data-chart");
@@ -10,10 +19,8 @@ document.addEventListener("DOMContentLoaded", function () {
   const refundData = chartData.map((data) => data.refundAmount);
   const ordersCountData = chartData.map((data) => data.ordersCount);
 
-  // Get the 2D context for the canvas
   const ctx = canvasEl.getContext("2d");
 
-  // Render the chart using Chart.js with multiple datasets
   new Chart(ctx, {
     type: "line",
     data: {
@@ -25,6 +32,9 @@ document.addEventListener("DOMContentLoaded", function () {
           backgroundColor: "#1a472a",
           borderColor: "#006400",
           borderWidth: 0.5,
+          pointBackgroundColor: "#006400",
+          pointRadius: 2,
+          tension: 0,
         },
         {
           label: "Total Discount",
@@ -32,6 +42,9 @@ document.addEventListener("DOMContentLoaded", function () {
           backgroundColor: "#b22222",
           borderColor: "#8b0000",
           borderWidth: 0.5,
+          pointBackgroundColor: "#8b0000",
+          pointRadius: 2,
+          tension: 0,
         },
         {
           label: "Total Refunds",
@@ -39,6 +52,9 @@ document.addEventListener("DOMContentLoaded", function () {
           backgroundColor: "#003366",
           borderColor: "#00008b",
           borderWidth: 0.5,
+          pointBackgroundColor: "#00008b",
+          pointRadius: 2,
+          tension: 0,
         },
         {
           label: "Total Orders",
@@ -46,6 +62,9 @@ document.addEventListener("DOMContentLoaded", function () {
           backgroundColor: "#ffff00",
           borderColor: "#9b870c",
           borderWidth: 0.5,
+          pointBackgroundColor: "#9b870c",
+          pointRadius: 2,
+          tension: 0,
         },
       ],
     },
