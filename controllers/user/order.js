@@ -7,6 +7,10 @@ const Address = require("../../models/addressSchema");
 const Product = require("../../models/productSchema");
 const Cancel = require("../../models/cancelSchema");
 const Rating = require("../../models/ratingSchema");
+const ejs = require("ejs");
+const fs = require("fs");
+const path = require("path");
+const puppeteer = require("puppeteer");
 const moment = require("moment");
 const razorpayInstance = require("../../services/razorpay");
 
@@ -845,6 +849,112 @@ const getWalletBalance = async (req, res) => {
   }
 };
 
+const downloadInvoice = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const order = await Order.findById(id)
+      .populate({ path: "order_items.product" })
+      .populate("coupon_applied");
+
+    if (!order) {
+      console.log("order not found!");
+      return res.status(404).send("Order not found");
+    }
+
+    const productIds = order.order_items.map((item) => item.product._id);
+    const ratings = await Rating.find({
+      user_id: req.user ? req.user.id : null,
+      product_id: { $in: productIds },
+    });
+    const ratedProducts = {};
+    ratings.forEach((rating) => {
+      ratedProducts[rating.product_id.toString()] = true;
+    });
+
+    const orderCreated = moment(order.createdAt).format("MMMM Do YYYY, h:mm A");
+    const orderInTransit = order.inTransitAt
+      ? moment(order.inTransitAt).format("MMMM Do YYYY, h:mm A")
+      : null;
+    const orderShipped = order.shippedAt
+      ? moment(order.shippedAt).format("MMMM Do YYYY, h:mm A")
+      : null;
+    const orderDelivered = order.deliveredAt
+      ? moment(order.deliveredAt).format("MMMM Do YYYY, h:mm A")
+      : null;
+
+    const cancel = await Cancel.findOne({ order_id: id }).populate("user_id");
+    let orderCancelled = null;
+    if (cancel) {
+      orderCancelled = moment(cancel.createdAt).format("MMMM Do YYYY, h:mm A");
+    }
+
+    const totalBeforeCoupon = order.order_items.reduce(
+      (acc, item) => acc + item.quantity * item.final_price_at_purchase,
+      0
+    );
+    const couponDiscountValue = totalBeforeCoupon - order.final_amount;
+    const totalProductDiscount = order.order_items.reduce(
+      (acc, item) => acc + item.discount_at_purchase * item.quantity,
+      0
+    );
+
+    // Render the invoice HTML using EJS.
+    const invoiceHtml = await ejs.renderFile(
+      path.join(__dirname, "../../views/user/PDFOrderSummary.ejs"),
+      {
+        order,
+        orderCreated,
+        orderInTransit,
+        orderShipped,
+        orderDelivered,
+        orderCancelled,
+        ratedProducts,
+        couponDiscountValue,
+        totalProductDiscount,
+      }
+    );
+
+    // Log for debugging (optional)
+    console.log("Invoice HTML length:", invoiceHtml.length);
+
+    // Launch Puppeteer.
+    const browser = await puppeteer.launch({
+      headless: true,
+      args: ["--no-sandbox", "--disable-setuid-sandbox"],
+    });
+    const page = await browser.newPage();
+    await page.setViewport({ width: 1200, height: 800 });
+
+    // Set page content with a wait until network is idle.
+    await page.setContent(invoiceHtml, { waitUntil: "networkidle0" });
+    // Optional: a brief delay to ensure all resources are rendered.
+    await new Promise((resolve) => setTimeout(resolve, 500));
+    // Emulate print media for proper styling.
+    await page.emulateMediaType("print");
+
+    // Generate the PDF with similar options to your admin function.
+    const pdfBuffer = await page.pdf({
+      format: "A4",
+      printBackground: true, // use true for a complete rendering
+      margin: { top: "20px", right: "20px", bottom: "20px", left: "20px" },
+      preferCSSPageSize: true,
+    });
+
+    await browser.close();
+
+    // Send the PDF as a downloadable attachment in binary.
+    res.writeHead(200, {
+      "Content-Type": "application/pdf",
+      "Content-Disposition": 'attachment; filename="invoice.pdf"',
+      "Content-Length": pdfBuffer.length,
+    });
+    return res.end(pdfBuffer, "binary");
+  } catch (err) {
+    console.log("Error in downloadInvoice controller", err);
+    return res.status(500).send("Server error!");
+  }
+};
+
 module.exports = {
   orderSummary,
   proceedToBuy,
@@ -853,4 +963,5 @@ module.exports = {
   applyCoupon,
   requestReturn,
   getWalletBalance,
+  downloadInvoice,
 };

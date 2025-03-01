@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Invoice - Order <%= order._id %></title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        color: #000;
+        margin: 20px;
+      }
+      h1,
+      h2,
+      h3,
+      h4,
+      h5,
+      h6 {
+        margin: 0;
+        padding: 0;
+      }
+      .header,
+      .section {
+        margin-bottom: 20px;
+      }
+      .header {
+        text-align: center;
+        border-bottom: 1px solid #000;
+        padding-bottom: 10px;
+      }
+      .details,
+      .price-details {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+      }
+      .details td,
+      .price-details td,
+      .price-details th {
+        padding: 8px;
+        border: 1px solid #000;
+      }
+      .text-right {
+        text-align: right;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="header">
+      <h1>Invoice</h1>
+      <p>Order ID: <%= order._id %></p>
+      <p>Date: <%= orderCreated %></p>
+    </div>
+
+    <div class="section">
+      <h3>Shipping Details</h3>
+      <p><strong><%= order.address.name %></strong></p>
+      <p>
+        <%= order.address.address_line %> <% if (order.address.landmark) { %>,
+        <%= order.address.landmark %><% } %>, <%= order.address.city %>, <%=
+        order.address.state %> - <%= order.address.pincode %>
+      </p>
+      <p>
+        <strong>Phone:</strong>
+        <%= order.address.phone %> <% if (order.address.alt_phone) { %>, <%=
+        order.address.alt_phone %><% } %>
+      </p>
+    </div>
+
+    <div class="section">
+      <h3>Order Summary</h3>
+      <table class="details">
+        <thead>
+          <tr>
+            <th>Product</th>
+            <th>Qty</th>
+            <th>Price</th>
+            <th>Discount</th>
+            <th>Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% order.order_items.forEach(item => { %>
+          <tr>
+            <td><%= item.product.name %></td>
+            <td><%= item.quantity %></td>
+            <td>₹<%= item.final_price_at_purchase.toFixed(2) %></td>
+            <td>₹<%= item.discount_at_purchase.toFixed(2) %></td>
+            <td>
+              ₹<%= (item.quantity * item.final_price_at_purchase - item.quantity
+              * item.discount_at_purchase).toFixed(2) %>
+            </td>
+          </tr>
+          <% }); %>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="section">
+      <h3>Price Details</h3>
+      <table class="price-details">
+        <tr>
+          <th>Selling Price (<%= order.total_items %> items)</th>
+          <td class="text-right">₹<%= order.selling_price.toFixed(2) %></td>
+        </tr>
+        <% if (order.coupon_applied) { %>
+        <tr>
+          <th>Coupon Used</th>
+          <td class="text-right">Yes</td>
+        </tr>
+        <tr>
+          <th>Coupon Discount</th>
+          <td class="text-right">
+            <% if (order.coupon_applied.discount_type === "percentage") { %> <%=
+            order.coupon_applied.discount_value %>% (₹<%=
+            couponDiscountValue.toFixed(2) %>) <% } else { %> ₹<%=
+            order.coupon_applied.discount_value %> <% } %>
+          </td>
+        </tr>
+        <tr>
+          <th>Product Discount</th>
+          <td class="text-right">₹<%= totalProductDiscount.toFixed(2) %></td>
+        </tr>
+        <% } %>
+        <tr>
+          <th>Total Discount</th>
+          <td class="text-right">₹<%= order.total_discount.toFixed(2) %></td>
+        </tr>
+        <tr>
+          <th>Price After Discount</th>
+          <td class="text-right">
+            ₹<%= order.total_selling_price.toFixed(2) %>
+          </td>
+        </tr>
+        <tr>
+          <th>Delivery Charge</th>
+          <td class="text-right">₹<%= order.delivery_charge.toFixed(2) %></td>
+        </tr>
+        <tr>
+          <th>Total Amount</th>
+          <td class="text-right">
+            <strong>₹<%= order.final_amount.toFixed(2) %></strong>
+          </td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="section" style="text-align: center">
+      <p>Thank you for your purchase!</p>
+    </div>
+  </body>
+</html>

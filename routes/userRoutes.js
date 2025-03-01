@@ -54,6 +54,7 @@ const {
   applyCoupon,
   requestReturn,
   getWalletBalance,
+  downloadInvoice,
 } = require("../controllers/user/order");
 
 // checkout
@@ -189,6 +190,7 @@ router
 router.route("/orders").get(checkingAuth, orders);
 router.route("/apply-coupon").post(checkingAuth, applyCoupon);
 router.route("/wallet-balance").get(checkingAuth, getWalletBalance);
+router.route("/order/:id/download-invoice").get(downloadInvoice);
 
 // review routes
 router
