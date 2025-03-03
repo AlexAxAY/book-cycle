@@ -13,6 +13,9 @@ const {
 // Requiring dashboard controller
 const { dashboard } = require("../controllers/admin/dashboard.js");
 
+// Requiring dashboard controller
+const { walletPage } = require("../controllers/admin/wallet.js");
+
 // Requiring banner controllers
 const {
   viewBanner,
@@ -162,5 +165,8 @@ router.get("/sales-report/excel-download", downloadSalesReportExcel);
 
 // dashboard route
 router.route("/dashboard").get(dashboard);
+
+// dashboard route
+router.route("/wallet").get(walletPage);
 
 module.exports = router;

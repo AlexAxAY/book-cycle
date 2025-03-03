@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Wallet</title>
+
+    <!-- css -->
+    <link rel="stylesheet" href="/admin/stylesheets/wallet.css" />
+
+    <!-- bootstrap -->
+    <%- include("../partials/admin/bootLink.ejs") %>
+
+    <!-- icon link -->
+    <%- include("../partials/user/iconLink.ejs") %>
+
+    <!-- google fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Port+Lligat+Slab&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <!-- header nav -->
+    <%- include("../partials/admin/adminHeader.ejs") %>
+
+    <!-- alert -->
+    <%- include("../partials/user/alertMessage.ejs") %>
+
+    <section
+      class="main-section"
+      style="min-height: calc(100vh - 130px); justify-content: center"
+    >
+      <div class="wrapper container-fluid d-flex">
+        <!-- sidebar -->
+        <div class="sidebar" style="width: 170px">
+          <%- include("../partials/admin/adminNavbar.ejs") %>
+        </div>
+
+        <!-- offcanvas -->
+        <%- include("../partials/admin/offCanvas.ejs") %>
+
+        <!-- main section -->
+        <div class="content p-3" style="flex-grow: 1">
+            <div class="text-center  my-3"><h3>Wallet transactions</h3></div>
+          <div class="row" style="justify-content: center">
+            <div
+              class="table-wrapper table-responsive"
+              style="width: fit-content"
+            >
+              <!-- filter -->
+              <div
+                class="d-flex justify-content-between align-items-center mb-3"
+              >
+                <div class="input-group">
+                  <select
+                    class="form-select"
+                    aria-label="Filter by time period"
+                  >
+                    <option selected disabled>Sort</option>
+                    <option value="1">Ascending</option>
+                    <option value="2">Descending</option>
+                    <option value="3">Aa-zZ</option>
+                    <option value="4">Zz-aA</option>
+                  </select>
+                </div>
+                <div class="input-group mx-2">
+                  <label class="input-group-text" for="fromDate">From</label>
+                  <input type="date" id="fromDate" class="form-control" />
+                </div>
+                <div class="input-group">
+                  <label class="input-group-text" for="toDate">To</label>
+                  <input type="date" id="toDate" class="form-control" />
+                </div>
+                <div class="input-group ms-2" style="width: fit-content">
+                  <button id="clearFilters" class="btn btn-secondary">
+                    Clear
+                  </button>
+                </div>
+              </div>
+
+              <!-- table contents -->
+              <table class="table table-striped table-hover text-center">
+                <thead class="thead-dark">
+                  <tr>
+                    <th>Id</th>
+                    <th>User</th>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>Type</th>
+                    <th>Amount</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% if (transactions.length > 0) {%> <%
+                  transactions.forEach((transaction)=> { %>
+                  <tr>
+                    <td><small><strong><%= transaction._id %></small></strong></td>
+                    <td><%= transaction.wallet.user.name %></td>
+                    <td>
+                      <small><strong><%= moment(transaction.createdAt).format("DD/MM/YY") %></strong></small>
+                    </td>
+                    <td>
+                      <%= moment(transaction.createdAt).format("hh:mm A") %>
+                    </td>
+                    <td><small><strong><%= transaction.type %></strong></small></td>
+                    <td>₹ <%= transaction.amount %></td>
+                    <td><small><strong><%= transaction.description%></strong></small></td>
+                  </tr>
+                  <% }) %> <% } else { %>
+                  <tr>
+                    <td colspan="7" class="text-center">
+                      No details available
+                    </td>
+                  </tr>
+                  <% } %>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- footer -->
+    <%- include("../partials/admin/adminFooter.ejs") %>
+
+    <!-- bootstrap -->
+    <%- include("../partials/admin/bootScript.ejs") %>
+
+    <!-- axios -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+    <!-- wallet helper -->
+    <script src="/admin/helper/walletHelper.js"></script>
+
+    <!-- moment -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
+
+    <!-- js logout validation file -->
+    <script src="/admin/front-end-validation/logoutValidation.js"></script>
+  </body>
+</html>
