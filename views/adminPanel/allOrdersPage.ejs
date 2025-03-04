@@ -109,7 +109,7 @@
             <% orders.forEach(function(order) { %>
             <tr>
               <td>
-                <span class="text-muted">(#<%= order._id %>)</span>
+                <span class="text-muted"><%= order.custom_order_id %></span>
               </td>
               <td>
                 <% order.order_items.forEach((item, index) => { %>

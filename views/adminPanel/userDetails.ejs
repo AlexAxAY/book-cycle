@@ -6,40 +6,20 @@
     <title>User Details</title>
 
     <!-- css -->
-    <link rel="stylesheet" href="/admin/stylesheets/allUsers.css" />
+    <link rel="stylesheet" href="/admin/stylesheets/userDetails.css" />
 
     <!-- bootstrap -->
     <%- include("../partials/admin/bootLink.ejs") %>
+
+    <!-- icon link -->
+    <%- include("../partials/user/iconLink.ejs") %>
   </head>
   <body>
-    <!-- sidebar -->
-    <div style="width: 200px; position: fixed">
-      <%- include("../partials/admin/adminNavbar.ejs") %>
-    </div>
+    <!-- header nav -->
+    <%- include("../partials/admin/adminHeader.ejs") %>
 
-    <!-- error alert -->
-    <div
-      class="alert-bad d-none text-center"
-      style="
-        position: fixed;
-        top: 10px;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 80%;
-      "
-    ></div>
-
-    <!-- success alert -->
-    <div
-      class="alert-good d-none text-center"
-      style="
-        position: fixed;
-        top: 10px;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 80%;
-      "
-    ></div>
+    <!-- alert -->
+    <%- include("../partials/user/alertMessage.ejs") %>
 
     <!-- Modal -->
     <div
@@ -66,9 +46,10 @@
             Are you sure you want to block <%= user.name %>?
 
             <div id="reasonContainer" class="my-3">
-              <label for="blockReason" class="form-label"
-                >Reason for blocking<span class="text-danger">*</span></label
-              >
+              <label for="blockReason" class="form-label"></label>
+                Reason for blocking
+                <span class="text-danger">*</span>
+              </label>
               <textarea
                 class="form-control"
                 id="blockReason"
@@ -92,34 +73,63 @@
     </div>
 
     <!-- main section -->
-    <section class="container mt-5">
+    <section class="main-section" style="min-height: calc(100vh - 130px)">
+      <div class="wrapper container-fluid d-flex">
+        <!-- sidebar -->
+        <div class="sidebar" style="width: 170px">
+          <%- include("../partials/admin/adminNavbar.ejs") %>
+        </div>
+
+        <!-- offcanvas -->
+        <%- include("../partials/admin/offCanvas.ejs") %>
+
+        <!-- main section -->
+        <div class="content p-3" style="flex-grow: 1">
       <div
-        class="d-flex main-row mt-5"
+        class="d-flex main-row"
         style="
           flex-direction: column;
-          min-height: calc(100vh - 60px);
-          margin-left: 200px;
-          margin-right: 0;
-          justify-content: start;
+          align-items: center;
         "
       >
         <h2>User Details</h2>
         <div class="col-12">
-          <p><strong>User name:</strong> <%= user.name %></p>
-          <p><strong>User ID:</strong> #<%= user._id %></p>
-          <p><strong>User email:</strong> <%= user.email || "null" %></p>
-          <p><strong>User phone:</strong> <%= user.phone || "null" %></p>
-          <p>
-            <strong>User status:</strong>
-            <% if (user.isBlocked === false) { %>
-            <span style="color: green">Active ⬤</span>
-            <% } else { %>
-            <span style="color: red">Blocked ⬤</span>
-            <% } %>
-          </p>
-          <p><strong>Date of register:</strong> <%= user.createdAt %></p>
+          <div class="d-flex justify-content-center mt-4">
+          <div class="row details-row" style="width: 600px;">
+            <div class="col-6 text-start">
+              <p><strong>User name</strong></p>
+              <hr>
+              <p><strong>User email</strong></p>
+              <hr>
+              <p><strong>User Phone:</strong></p>
+              <hr>
+              <p><strong>User status</strong></p>
+              <hr>
+              <p><strong>Date of register</strong></p>
+              <hr>
+            </div>
+            <div class="col-6 text-end">
+              <p><%= user.name %></p>
+              <hr>
+              <p><%= user.email %></p>
+              <hr>
+              <p><%= user.phone || "NIL" %></p>
+              <hr>
+              <p>
+                <% if (user.isBlocked === false) { %>
+                <span style="color: green">Active ⬤</span>
+                <% } else { %>
+                <span style="color: red">Blocked ⬤</span>
+                <% } %>
+              </p>
+              <hr>
+              <p><%= user.createdAt %></p>
+              <hr>
+            </div>  
+          </div>
         </div>
-        <div class="col-12">
+        </div>
+        <div class="col-12 text-center btnss">
           <% if (!user.isBlocked) { %>
           <button
             type="button"
@@ -136,6 +146,8 @@
           <% } %>
         </div>
       </div>
+    </div>
+    </div>
     </section>
 
     <!-- footer -->

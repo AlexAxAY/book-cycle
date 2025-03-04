@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 
 const orderSchema = new mongoose.Schema(
   {
+    custom_order_id: { type: String, unique: true, default: null },
     total_items: {
       type: Number,
       required: true,

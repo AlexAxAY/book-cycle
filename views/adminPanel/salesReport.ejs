@@ -29,10 +29,7 @@
     <!-- alert -->
     <%- include("../partials/user/alertMessage.ejs") %>
 
-    <section
-      class="main-section"
-      style="min-height: calc(100vh - 130px); justify-content: center"
-    >
+    <section class="main-section" style="min-height: calc(100vh - 130px)">
       <div class="wrapper container-fluid d-flex">
         <!-- sidebar -->
         <div class="sidebar" style="width: 170px">
@@ -150,7 +147,7 @@
                 <tbody>
                   <% if (orders.length > 0) {%> <% orders.forEach((order)=> { %>
                   <tr>
-                    <td><%= order._id %></td>
+                    <td><%= order.custom_order_id %></td>
                     <td><%= moment(order.createdAt).format("DD/MM/YY") %></td>
                     <td><%= order.user_id.name %></td>
                     <td><%= order.order_items.length %></td>

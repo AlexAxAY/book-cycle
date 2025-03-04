@@ -104,14 +104,6 @@ body {
 }
 
 /* apply every where */
-@media (max-width: 1222px) {
-  .table-wrapper {
-    min-width: 800px !important;
-  }
-  .content {
-    flex-grow: 0;
-  }
-}
 
 @media (max-width: 1054px) {
   .burger-icon {
@@ -125,72 +117,26 @@ body {
   }
 }
 
-@media (max-width: 776px) {
-  .table-wrapper {
-    min-width: 600px !important;
+@media (max-width: 676px) {
+  .details-row {
+    width: 400px !important;
+    font-size: small;
+  }
+  .btnss button {
+    font-size: small;
   }
 }
 
-@media (max-width: 650px) {
-  .block-btn,
-  .unblock-btn,
-  .btn-info {
-    font-size: xx-small !important;
-  }
-  th,
-  td {
-    font-size: small !important;
-  }
-  h2 {
-    font-size: large !important;
-  }
-  .pagination a {
-    font-size: 12px;
-  }
-  .filter-btn {
-    font-size: small !important;
-  }
-  .search {
-    font-size: small !important;
-  }
-  .table-wrapper {
-    min-width: 500px !important;
-  }
-}
-
-@media (max-width: 566px) {
-  .block-btn,
-  .unblock-btn,
-  .btn-info {
-    margin-bottom: 5px !important;
-  }
-  .table-wrapper {
-    min-width: 400px !important;
-  }
-}
-
-@media (max-width: 447px) {
-  form {
-    justify-content: center !important;
-  }
-  form div:first-child,
-  form div:nth-child(2) {
-    margin-bottom: 5px !important;
-  }
-  .table-wrapper {
-    min-width: 300px !important;
-  }
-}
-
-@media (max-width: 415px) {
+@media (max-width: 435px) {
   .footer-div p {
     font-size: smaller;
   }
-  .table-wrapper {
+  .details-row {
     width: 300px !important;
+    font-size: x-small;
   }
-  .pagination a {
-    font-size: 10px;
+  .btnss button {
+    font-size: x-small;
   }
 }
 

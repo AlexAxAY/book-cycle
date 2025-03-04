@@ -12,6 +12,7 @@ const path = require("path");
 const puppeteer = require("puppeteer");
 const moment = require("moment");
 const razorpayInstance = require("../../services/razorpay");
+const generateCustomOrderId = require("../../services/randomOrderId");
 
 const orderSummary = async (req, res) => {
   try {
@@ -116,7 +117,6 @@ const proceedToBuy = async (req, res) => {
         .json({ success: false, message: "Address is required." });
     }
 
-    // Fetch the user's cart.
     const cart = await Cart.findOne({ userId });
     if (!cart) {
       return res
@@ -133,7 +133,6 @@ const proceedToBuy = async (req, res) => {
         .json({ success: false, message: "Your cart is empty." });
     }
 
-    // Partition items into valid and invalid based on product stock.
     const validCartItems = cartItems.filter(
       (item) => item.productId && item.productId.count > 0
     );
@@ -177,7 +176,6 @@ const proceedToBuy = async (req, res) => {
       });
     }
 
-    // Calculate totals for valid items.
     let totalOriginalPrice = 0;
     let totalDiscountAmount = 0;
     let totalItems = 0;
@@ -197,7 +195,6 @@ const proceedToBuy = async (req, res) => {
     let deliveryCharge = totalAfterDiscount >= 500 ? 0 : 50;
     let finalTotal = totalAfterDiscount + deliveryCharge;
 
-    // Coupon processing (if couponCode is provided).
     let couponApplied = null;
     if (couponCode && couponCode.trim() !== "") {
       const coupon = await Coupon.findOne({ coupon_code: couponCode.trim() });
@@ -211,7 +208,7 @@ const proceedToBuy = async (req, res) => {
           .status(400)
           .json({ success: false, message: "Coupon is not active." });
       }
-      // Check if the user has already used this coupon.
+
       const alreadyUsed = await CouponUsage.findOne({
         user_id: userId,
         coupon_id: coupon._id,
@@ -222,7 +219,7 @@ const proceedToBuy = async (req, res) => {
           message: "You have already used this coupon.",
         });
       }
-      // Check order qualification.
+
       if (finalTotal < coupon.min_order_value) {
         return res.status(400).json({
           success: false,
@@ -242,7 +239,6 @@ const proceedToBuy = async (req, res) => {
       finalTotal = totalAfterDiscount + deliveryCharge;
     }
 
-    // If payment method is COD and finalTotal is above 1000 rupees, COD is not allowed.
     if (paymentMethod !== "Razorpay" && finalTotal > 1000) {
       return res.status(400).json({
         success: false,
@@ -251,7 +247,6 @@ const proceedToBuy = async (req, res) => {
       });
     }
 
-    // Fetch shipping address snapshot.
     const addressDoc = await Address.findById(addressId).lean();
     if (!addressDoc) {
       return res
@@ -259,7 +254,6 @@ const proceedToBuy = async (req, res) => {
         .json({ success: false, message: "Shipping address not found." });
     }
 
-    // Prepare the updated order data.
     const orderData = {
       total_items: totalItems,
       order_items: validCartItems.map((item) => {
@@ -301,10 +295,9 @@ const proceedToBuy = async (req, res) => {
       final_amount: finalTotal,
       total_discount: totalDiscountAmount,
       payment_type: paymentMethod,
+      custom_order_id: generateCustomOrderId(),
     };
 
-    // For Razorpay orders, calculate the actual amount to charge.
-    // If a wallet is applied, the online payable amount = finalTotal - walletAmount.
     let walletAppliedAmount =
       req.body.walletApplied && req.body.walletAmount
         ? req.body.walletAmount
@@ -312,9 +305,7 @@ const proceedToBuy = async (req, res) => {
     let razorpayAmount = finalTotal - walletAppliedAmount;
     if (razorpayAmount < 0) razorpayAmount = 0;
 
-    // --- Razorpay Flow ---
     if (paymentMethod === "Razorpay") {
-      // Look for an existing pending Razorpay order.
       let existingOrder = await Order.findOne({
         user_id: userId,
         payment_type: "Razorpay",
@@ -322,7 +313,10 @@ const proceedToBuy = async (req, res) => {
       });
 
       if (existingOrder) {
-        // Update order details.
+        if (!existingOrder.custom_order_id) {
+          existingOrder.custom_order_id = generateCustomOrderId();
+        }
+
         existingOrder.total_items = orderData.total_items;
         existingOrder.order_items = orderData.order_items;
         existingOrder.address = orderData.address;
@@ -335,7 +329,6 @@ const proceedToBuy = async (req, res) => {
         existingOrder.payment_type = orderData.payment_type;
         await existingOrder.save();
 
-        // Create a Razorpay order if not already created.
         if (!existingOrder.razorpay_order_id) {
           const options = {
             amount: razorpayAmount * 100,
@@ -348,7 +341,6 @@ const proceedToBuy = async (req, res) => {
           await existingOrder.save();
         }
 
-        // Record wallet deduction if applicable.
         if (walletAppliedAmount > 0) {
           await recordWalletDeduction(
             userId,
@@ -367,12 +359,11 @@ const proceedToBuy = async (req, res) => {
         });
       }
 
-      // No pending order exists—create a new one.
       const newOrder = new Order(orderData);
       await newOrder.save();
 
       const options = {
-        amount: razorpayAmount * 100, // Charge the remaining amount.
+        amount: razorpayAmount * 100,
         currency: "INR",
         receipt: `receipt_${newOrder._id}`,
         payment_capture: 1,
@@ -381,7 +372,6 @@ const proceedToBuy = async (req, res) => {
       newOrder.razorpay_order_id = razorpayOrder.id;
       await newOrder.save();
 
-      // Record wallet deduction for the new Razorpay order.
       if (walletAppliedAmount > 0) {
         await recordWalletDeduction(userId, newOrder._id, walletAppliedAmount);
       }
@@ -396,11 +386,9 @@ const proceedToBuy = async (req, res) => {
       });
     }
 
-    // --- Cash on Delivery Flow ---
     const newOrder = new Order(orderData);
     await newOrder.save();
 
-    // Record coupon usage if applicable.
     if (couponApplied) {
       const newCouponUsage = new CouponUsage({
         user_id: userId,
@@ -411,12 +399,10 @@ const proceedToBuy = async (req, res) => {
       await newCouponUsage.save();
     }
 
-    // Record wallet deduction for COD orders.
     if (walletAppliedAmount > 0) {
       await recordWalletDeduction(userId, newOrder._id, walletAppliedAmount);
     }
 
-    // Reduce stock for each valid item and clear cart items.
     await Promise.all(
       validCartItems.map(async (item) => {
         const updatedProduct = await Product.findByIdAndUpdate(
