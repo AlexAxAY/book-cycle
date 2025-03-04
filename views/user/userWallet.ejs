@@ -44,6 +44,30 @@
           </p>
         </div>
 
+        <div class="my-3">
+          <button
+            id="showAddMoneyBtn"
+            class="btn btn-outline-success"
+            style="border: none"
+          >
+            Add Money
+            <i class="fa-solid fa-indian-rupee-sign" style="color: #198754"></i>
+          </button>
+
+          <div id="addMoneyForm" class="d-none mt-2">
+            <input
+              type="number"
+              id="amountInput"
+              placeholder="Enter amount"
+              class="form-control"
+              style="max-width: 200px; display: inline-block"
+            />
+            <button id="confirmAddMoneyBtn" class="btn btn-success ml-2">
+              Confirm
+            </button>
+          </div>
+        </div>
+
         <!-- Filter Controls -->
         <div
           id="filterControls"
@@ -127,6 +151,18 @@
               </tbody>
             </table>
           </div>
+          <div
+            id="paginationControls"
+            class="mt-3 d-flex justify-content-center"
+          >
+            <button id="prevPage" class="btn btn-outline-dark mx-1" disabled>
+              Previous
+            </button>
+            <span id="currentPage" class="mx-3"></span>
+            <button id="nextPage" class="btn btn-outline-dark mx-1">
+              Next
+            </button>
+          </div>
         </div>
         <% } else {%>
         <p class="fs-4 text-center">No transactions</p>
@@ -145,6 +181,12 @@
 
     <!-- wallet helper -->
     <script src="/user/helper/walletHelper.js"></script>
+
+    <!-- add money helper -->
+    <script src="/user/helper/addMoneyHelper.js"></script>
+
+    <!-- razor pay -->
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
     <!-- Include Axios -->
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>

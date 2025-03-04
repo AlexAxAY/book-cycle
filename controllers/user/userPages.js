@@ -24,7 +24,10 @@ const landingPage = async (req, res) => {
 
 const shoppingPage = async (req, res) => {
   try {
-    const { search, category, minPrice, maxPrice, rating, sort } = req.query;
+    const { search, category, minPrice, maxPrice, rating, sort, page } =
+      req.query;
+    const currentPage = Number(page) || 1;
+    const productsPerPage = 25;
 
     if (minPrice && Number(minPrice) < 0) {
       return res
@@ -42,7 +45,6 @@ const shoppingPage = async (req, res) => {
         message: "Minimum price cannot be greater than maximum price.",
       });
     }
-
     if (rating) {
       const ratingValue = Number(rating);
       if (ratingValue < 1 || ratingValue > 5) {
@@ -54,34 +56,25 @@ const shoppingPage = async (req, res) => {
 
     const query = { is_deleted: false };
 
-    // Search filter
     if (search) {
       query.name = { $regex: new RegExp(search, "i") };
     }
 
-    // Category filter
     if (category) {
       query.category = category;
     }
 
-    // Price range filter
     if (minPrice || maxPrice) {
       query.final_price = {};
       if (minPrice) query.final_price.$gte = Number(minPrice);
       if (maxPrice) query.final_price.$lte = Number(maxPrice);
     }
 
-    // Rating filter
     if (rating) {
       const ratingValue = Number(rating);
-      if (ratingValue === 0) {
-        query.avg_rating = null;
-      } else {
-        query.avg_rating = { $gte: ratingValue };
-      }
+      query.avg_rating = ratingValue === 0 ? null : { $gte: ratingValue };
     }
 
-    // Build sorting options based on the sort parameter
     let sortQuery = {};
     if (sort === "priceLowToHigh") {
       sortQuery.final_price = 1;
@@ -97,23 +90,26 @@ const shoppingPage = async (req, res) => {
       sortQuery.name = -1;
     }
 
-    // Apply sorting to the query
     let productsQuery = Product.find(query);
     if (Object.keys(sortQuery).length) {
       productsQuery = productsQuery.sort(sortQuery);
     }
-    const products = await productsQuery;
 
+    const skip = (currentPage - 1) * productsPerPage;
+    productsQuery = productsQuery.skip(skip).limit(productsPerPage);
+
+    const products = await productsQuery;
     const categories = await Category.find();
 
     if (req.headers.accept.includes("application/json")) {
-      return res.json({ products });
+      return res.json({ products, currentPage });
     }
 
     res.render("user/shoppingPage", {
       products,
       categories,
       category,
+      currentPage,
     });
   } catch (error) {
     console.error(error);

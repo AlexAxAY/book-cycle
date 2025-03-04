@@ -8,7 +8,6 @@ const Product = require("../../models/productSchema");
 const Cancel = require("../../models/cancelSchema");
 const Rating = require("../../models/ratingSchema");
 const ejs = require("ejs");
-const fs = require("fs");
 const path = require("path");
 const puppeteer = require("puppeteer");
 const moment = require("moment");
@@ -243,14 +242,12 @@ const proceedToBuy = async (req, res) => {
       finalTotal = totalAfterDiscount + deliveryCharge;
     }
 
-    // Do NOT adjust finalTotal by wallet usage.
-
     // If payment method is COD and finalTotal is above 1000 rupees, COD is not allowed.
     if (paymentMethod !== "Razorpay" && finalTotal > 1000) {
       return res.status(400).json({
         success: false,
         message:
-          "Cash on Delivery is not allowed for orders above ₹1000. Please choose an online payment method.",
+          "Cash on Delivery is not allowed for orders above ₹1000. Please choose online payment method.",
       });
     }
 
@@ -301,7 +298,7 @@ const proceedToBuy = async (req, res) => {
       total_selling_price: totalAfterDiscount,
       coupon_applied: couponApplied,
       delivery_charge: deliveryCharge,
-      final_amount: finalTotal, // Remains as the original estimated total.
+      final_amount: finalTotal,
       total_discount: totalDiscountAmount,
       payment_type: paymentMethod,
     };
@@ -341,7 +338,7 @@ const proceedToBuy = async (req, res) => {
         // Create a Razorpay order if not already created.
         if (!existingOrder.razorpay_order_id) {
           const options = {
-            amount: razorpayAmount * 100, // Charge the difference after wallet deduction.
+            amount: razorpayAmount * 100,
             currency: "INR",
             receipt: `receipt_${existingOrder._id}`,
             payment_capture: 1,

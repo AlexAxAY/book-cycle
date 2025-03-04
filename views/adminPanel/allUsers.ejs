@@ -104,10 +104,7 @@
                 <tbody>
                   <% users.forEach(function(user) { %>
                   <tr>
-                    <td>
-                      <%= user.name %>
-                      <span class="text-muted">(#<%= user._id %>)</span>
-                    </td>
+                    <td><%= user.name %></td>
                     <td
                       class="<%= user.isBlocked ? 'status-blocked' : 'status-active' %>"
                     >

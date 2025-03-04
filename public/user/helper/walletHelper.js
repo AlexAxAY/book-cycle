@@ -5,16 +5,16 @@ document.addEventListener("DOMContentLoaded", () => {
   const filterBtn = document.getElementById("toggleFilters");
   const filterSec = document.getElementById("filterControls");
 
-  const fetchTransactions = async () => {
-    // Determine the selected sort order
+  const fetchTransactions = async (page = 1) => {
     let sortOrder;
     sortRadios.forEach((radio) => {
       if (radio.checked) {
         sortOrder = radio.value;
       }
     });
+
     const dateValue = dateFilter.value;
-    let query = `?sortOrder=${sortOrder}`;
+    let query = `?sortOrder=${sortOrder}&page=${page}&limit=30`;
     if (dateValue) {
       query += `&date=${dateValue}`;
     }
@@ -23,8 +23,10 @@ document.addEventListener("DOMContentLoaded", () => {
       const response = await axios.get(`/user/wallet${query}`, {
         headers: { "X-Requested-With": "XMLHttpRequest" },
       });
-      const transactions = response.data.transactions;
+      const { transactions, totalPages, currentPage } = response.data;
+
       updateTransactionsTable(transactions);
+      updatePaginationControls(totalPages, currentPage);
     } catch (err) {
       console.error("Error fetching transactions:", err);
     }
@@ -46,7 +48,7 @@ document.addEventListener("DOMContentLoaded", () => {
       tr.innerHTML = `<td colspan="5" class="text-center">No transactions during this date</td>`;
       tableBody.appendChild(tr);
     } else {
-      transactions.forEach((transaction, index) => {
+      transactions.forEach((transaction) => {
         const tr = document.createElement("tr");
         tr.innerHTML = `
             <td>${new Date(transaction.createdAt).toLocaleDateString("en-GB", {
@@ -69,10 +71,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Listen for changes on the radio buttons and date input
   sortRadios.forEach((radio) => {
-    radio.addEventListener("change", fetchTransactions);
+    radio.addEventListener("change", () => fetchTransactions());
   });
 
-  dateFilter.addEventListener("change", fetchTransactions);
+  dateFilter.addEventListener("change", () => fetchTransactions());
 
   // Clear filter event listener
   clearFilterButton.addEventListener("click", () => {
@@ -93,4 +95,21 @@ document.addEventListener("DOMContentLoaded", () => {
       filterSec.classList.add("d-none");
     }
   });
+
+  // Initial fetch of transactions
+  fetchTransactions();
 });
+
+const updatePaginationControls = (totalPages, currentPage) => {
+  const prevButton = document.getElementById("prevPage");
+  const nextButton = document.getElementById("nextPage");
+  const currentPageDisplay = document.getElementById("currentPage");
+
+  currentPageDisplay.textContent = `Page ${currentPage} of ${totalPages}`;
+
+  prevButton.disabled = currentPage <= 1;
+  nextButton.disabled = currentPage >= totalPages;
+
+  prevButton.onclick = () => fetchTransactions(currentPage - 1);
+  nextButton.onclick = () => fetchTransactions(currentPage + 1);
+};

@@ -31,7 +31,11 @@ const {
 } = require("../controllers/user/review");
 
 // user wallet
-const { viewWallet } = require("../controllers/user/wallet");
+const {
+  viewWallet,
+  verifyPaymentAndAddMoney,
+  addMoneyToWallet,
+} = require("../controllers/user/wallet");
 
 const { verifyPayment } = require("../controllers/user/payment");
 
@@ -210,7 +214,13 @@ router
   .delete(checkingAuth, removeFromWishlist);
 
 // wallet routes
-router.route("/wallet").get(checkingAuth, viewWallet);
+router
+  .route("/wallet")
+  .get(checkingAuth, viewWallet)
+  .post(checkingAuth, addMoneyToWallet);
+router
+  .route("/wallet/verify-payment")
+  .post(checkingAuth, verifyPaymentAndAddMoney);
 
 // coupon route
 router.route("/coupons").get(checkingAuth, viewCoupons);
