@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta charset="UTF-8" />
-    <title>Invoice - Order <%= order._id %></title>
+    <title>Invoice - Order <%= order.custom_order_id %></title>
     <style>
       body {
         font-family: Arial, sans-serif;
@@ -47,7 +47,7 @@
   <body>
     <div class="header">
       <h1>Invoice</h1>
-      <p>Order ID: <%= order._id %></p>
+      <p>Order ID: <%= order.custom_order_id %></p>
       <p>Date: <%= orderCreated %></p>
     </div>
 

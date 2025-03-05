@@ -12,7 +12,10 @@ const path = require("path");
 const puppeteer = require("puppeteer");
 const moment = require("moment");
 const razorpayInstance = require("../../services/razorpay");
-const generateCustomOrderId = require("../../services/randomOrderId");
+const {
+  generateCustomWalletId,
+  generateCustomOrderId,
+} = require("../../services/randomOrderId");
 
 const orderSummary = async (req, res) => {
   try {
@@ -102,6 +105,7 @@ async function recordWalletDeduction(userId, orderId, walletAmount) {
       amount: walletAmount,
       order: orderId,
       description: "Wallet used for order payment",
+      custom_wallet_id: generateCustomWalletId(),
     });
   }
 }
@@ -530,7 +534,6 @@ const cancelOrder = async (req, res) => {
     const { reason } = req.body;
     const { id } = req.params;
 
-    // Find the order by its ID.
     let order = await Order.findById(id);
     if (!order) {
       return res
@@ -538,7 +541,6 @@ const cancelOrder = async (req, res) => {
         .json({ success: false, message: "Order not found" });
     }
 
-    // Only allow cancellation if status is "Confirmed" or "In transit"
     if (order.status !== "Confirmed" && order.status !== "In transit") {
       return res.status(400).json({
         success: false,
@@ -546,7 +548,6 @@ const cancelOrder = async (req, res) => {
       });
     }
 
-    // Create a cancellation record
     const cancelRecord = new Cancel({
       user_id: userId,
       order_id: id,
@@ -554,7 +555,6 @@ const cancelOrder = async (req, res) => {
     });
     await cancelRecord.save();
 
-    // Update the order status to "Cancelled"
     order.status = "Cancelled";
     await order.save();
 
@@ -577,23 +577,21 @@ const cancelOrder = async (req, res) => {
     if (refundAmount > 0) {
       let wallet = await Wallet.findOne({ user: order.user_id });
       if (!wallet) {
-        // Create a wallet record if it doesn't exist.
         wallet = await Wallet.create({ user: order.user_id, balance: 0 });
       }
       wallet.balance += refundAmount;
       await wallet.save();
 
-      // Log a wallet credit transaction.
       await WalletTransaction.create({
         wallet: wallet._id,
         type: "credit",
         amount: refundAmount,
         order: order._id,
         description: "Refund on order cancellation",
+        custom_wallet_id: generateCustomWalletId(),
       });
     }
 
-    // --- Stock Restoration ---
     await Promise.all(
       order.order_items.map(async (item) => {
         const updatedProduct = await Product.findByIdAndUpdate(

@@ -40,6 +40,11 @@ const walletTransactionSchema = new mongoose.Schema(
     description: {
       type: String,
     },
+    custom_wallet_id: {
+      type: String,
+      unique: true,
+      required: true,
+    },
   },
   { timestamps: true }
 );

@@ -55,7 +55,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       // Id
       const tdId = document.createElement("td");
-      tdId.innerHTML = `<small><strong>${transaction._id}</strong></small>`;
+      tdId.innerHTML = `<small><strong>${transaction.custom_wallet_id}</strong></small>`;
       tr.appendChild(tdId);
 
       // User

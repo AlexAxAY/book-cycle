@@ -2,6 +2,7 @@ const Order = require("../../models/orderSchema");
 const Cancel = require("../../models/cancelSchema");
 const Product = require("../../models/productSchema");
 const { Wallet, WalletTransaction } = require("../../models/walletSchemas");
+const { generateCustomWalletId } = require("../../services/randomOrderId");
 const moment = require("moment");
 
 const allOrders = async (req, res) => {
@@ -191,7 +192,6 @@ const handleReturnDecision = async (req, res) => {
     const orderId = req.params.id;
     const { productId, decision, adminMessage } = req.body;
 
-    // Validate admin decision
     if (!["Approved", "Rejected"].includes(decision)) {
       return res.status(400).json({
         success: false,
@@ -206,7 +206,6 @@ const handleReturnDecision = async (req, res) => {
       });
     }
 
-    // Retrieve the order and populate coupon and user details
     const order = await Order.findById(orderId)
       .populate("coupon_applied")
       .populate("user_id");
@@ -217,7 +216,6 @@ const handleReturnDecision = async (req, res) => {
       });
     }
 
-    // Check that the order's status is "Delivered"
     if (order.status !== "Delivered") {
       return res.status(400).json({
         success: false,
@@ -225,7 +223,6 @@ const handleReturnDecision = async (req, res) => {
       });
     }
 
-    // Find the order item corresponding to the given productId
     const orderItem = order.order_items.find(
       (item) => item.product.toString() === productId
     );
@@ -236,7 +233,6 @@ const handleReturnDecision = async (req, res) => {
       });
     }
 
-    // Ensure that the return request is still in "Requested" state
     if (orderItem.return_status !== "Requested") {
       return res.status(400).json({
         success: false,
@@ -244,7 +240,6 @@ const handleReturnDecision = async (req, res) => {
       });
     }
 
-    // For Rejected decision: update status and save admin message
     if (decision === "Rejected") {
       orderItem.return_status = "Rejected";
       orderItem.admin_message = adminMessage;
@@ -277,7 +272,6 @@ const handleReturnDecision = async (req, res) => {
     orderItem.admin_message = adminMessage;
     await order.save();
 
-    // Update the product inventory: return the quantity to the product's stock.
     const product = await Product.findById(productId);
     if (product) {
       product.count += orderItem.quantity;
@@ -293,7 +287,6 @@ const handleReturnDecision = async (req, res) => {
       await product.save();
     }
 
-    // Update the user's wallet (order.user_id holds the user's _id).
     let wallet = await Wallet.findOne({ user: order.user_id });
     if (!wallet) {
       wallet = await Wallet.create({ user: order.user_id, balance: 0 });
@@ -301,13 +294,13 @@ const handleReturnDecision = async (req, res) => {
     wallet.balance += refundAmount;
     await wallet.save();
 
-    // Log the wallet transaction.
     await WalletTransaction.create({
       wallet: wallet._id,
       type: "credit",
       amount: refundAmount,
       order: order._id,
       description: `Refund for return of product ${product.name}`,
+      custom_wallet_id: generateCustomWalletId(),
     });
 
     return res.json({

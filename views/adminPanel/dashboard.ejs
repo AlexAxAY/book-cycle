@@ -62,7 +62,7 @@
                     id="bestSellingProduct"
                     class="fs-5 text-center price text-success"
                   >
-                    1. <%= topProducts[0].name %>
+                  1. <%= topProducts && topProducts.length > 0 ? topProducts[0].name : "No top product" %>
                   </p>
                   <p class="text-center">
                     Best Seller
@@ -83,7 +83,7 @@
                     id="BestSellingCategories"
                     class="fs-5 text-center price text-danger"
                   >
-                    1. <%= topCategories[0].name %>
+                  1. <%= topCategories && topCategories.length > 0 ? topCategories[0].name : "No top categories" %>
                   </p>
                   <p class="text-center">
                     Best Category
@@ -104,7 +104,7 @@
                     id="BestRatedProducts"
                     class="fs-5 text-center price text-primary"
                   >
-                    1. <%= topRatedProducts[0].name %>
+                  1. <%= topRatedProducts && topRatedProducts.length > 0 ? topRatedProducts[0].name : "No top rated product" %>
                   </p>
                   <p class="text-center">
                     Top rated

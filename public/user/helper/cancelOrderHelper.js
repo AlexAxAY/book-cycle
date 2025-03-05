@@ -49,7 +49,7 @@ document.addEventListener("DOMContentLoaded", () => {
       'input[name="cancelReasonOption"]:checked'
     );
     if (!selectedRadio) {
-      alertBad.textContent = "Please select a cancellation reason.";
+      alertBad.textContent = "Please select a reason.";
       alertBad.classList.remove("d-none");
       setTimeout(() => {
         alertBad.classList.add("d-none");

@@ -2,16 +2,20 @@ const User = require("../../models/userSchema");
 const razorpayInstance = require("../../services/razorpay");
 const crypto = require("crypto");
 const { Wallet, WalletTransaction } = require("../../models/walletSchemas");
+const { generateCustomWalletId } = require("../../services/randomOrderId");
 const moment = require("moment");
 
 const viewWallet = async (req, res) => {
   try {
     const userId = req.user ? req.user.id : null;
     const user = await User.findById(userId);
-    const wallet = await Wallet.findOne({ user: userId });
+    let wallet = await Wallet.findOne({ user: userId });
+
+    if (!wallet) {
+      wallet = await Wallet.create({ user: userId, balance: 0 });
+    }
 
     let { sortOrder, date, page = 1, limit = 30 } = req.query;
-
     sortOrder = sortOrder === "asc" ? 1 : -1;
     const sortOptions = { createdAt: sortOrder };
 
@@ -119,6 +123,7 @@ const verifyPaymentAndAddMoney = async (req, res) => {
       type: "credit",
       amount: Number(amount),
       description: "Added money via Razorpay",
+      custom_wallet_id: generateCustomWalletId(),
     });
     await transaction.save();
 

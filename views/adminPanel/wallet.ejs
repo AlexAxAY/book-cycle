@@ -98,7 +98,7 @@
                   <% if (transactions.length > 0) {%> <%
                   transactions.forEach((transaction)=> { %>
                   <tr>
-                    <td><small><strong><%= transaction._id %></small></strong></td>
+                    <td><small><strong><%= transaction.custom_wallet_id %></small></strong></td>
                     <td><%= transaction.wallet.user.name %></td>
                     <td>
                       <small><strong><%= moment(transaction.createdAt).format("DD/MM/YY") %></strong></small>

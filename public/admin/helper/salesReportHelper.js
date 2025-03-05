@@ -37,7 +37,7 @@ document.addEventListener("DOMContentLoaded", () => {
           const formattedDate = moment(order.createdAt).format("DD/MM/YY");
           const row = document.createElement("tr");
           row.innerHTML = `
-            <td>${order._id}</td>
+            <td>${order.custom_order_id}</td>
             <td>${formattedDate}</td>
             <td>${order.user_id.name}</td>
             <td>${order.order_items.length}</td>
