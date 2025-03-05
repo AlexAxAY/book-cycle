@@ -110,6 +110,12 @@ body {
   gap: 0.75rem;
 }
 
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
 /* apply this on every user template */
 @media (max-width: 767px) {
   #contact-us {

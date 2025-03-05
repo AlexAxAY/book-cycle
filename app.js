@@ -5,6 +5,7 @@ if (process.env.NODE_ENV !== "production") {
 const express = require("express");
 const session = require("express-session");
 const mongoose = require("mongoose");
+const MongoStore = require("connect-mongo");
 const helmet = require("helmet");
 const cors = require("cors");
 const methodOverride = require("method-override");
@@ -32,25 +33,25 @@ app.use(methodOverride("_method"));
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 
-// session middlewares
+// session middleware
 app.use(
   session({
     secret: process.env.SECRET_KEYS,
-    resave: true,
+    resave: false,
     saveUninitialized: false,
     cookie: {
-      secure: false,
+      secure: process.env.NODE_ENV === "production",
+      httpOnly: true,
       maxAge: 24 * 3600000,
       sameSite: "lax",
     },
-    store:
-      process.env.NODE_ENV === "production"
-        ? yourProductionStore
-        : new session.MemoryStore(),
+    store: MongoStore.create({
+      mongoUrl: "mongodb://127.0.0.1:27017/book-cycle",
+      collectionName: "sessions",
+    }),
   })
 );
 
-// initialize flash messages (must come after session middleware)
 app.use(flash());
 
 app.use(passport.initialize());
@@ -90,7 +91,7 @@ createAdmin();
 app.use("/admin", adminRoutes);
 app.use("/user", userRoutes);
 
-// G-auth routes
+// G-auth route
 app.use("/", googleAuthRoutes);
 
 app.listen(PORT, () => {

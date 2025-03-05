@@ -46,12 +46,14 @@
                     method="GET"
                     action="/admin/products"
                   >
+                    <!-- Pre-populate the search input with query.search value -->
                     <input
                       type="text"
                       name="search"
                       class="form-control m-2"
                       style="border-radius: 20px"
                       placeholder="Search.."
+                      value="<%= query.search ? query.search : '' %>"
                     />
                     <button
                       type="submit"
@@ -68,114 +70,60 @@
                   </button>
                 </div>
               </div>
-
+              
               <!-- Filter Dropdown (Hidden by Default, toggled by the button) -->
-              <div id="filter-options" class="mb-4 d-none">
-                <form
-                  action="/admin/products"
-                  method="GET"
-                  id="filterForm"
-                  class="row g-3"
-                  novalidate
-                >
-                  <div class="col-md-3">
-                    <label for="date" class="form-label">Date Added</label>
-                    <input
-                      type="date"
-                      class="form-control"
-                      id="date"
-                      name="date"
-                    />
-                  </div>
-                  <div class="col-md-3">
-                    <label for="max-price" class="form-label">
-                      Max-Price (₹)
-                    </label>
-                    <input
-                      type="number"
-                      class="form-control"
-                      id="max-price"
-                      name="max-price"
-                      placeholder="Enter a price"
-                      min="0"
-                      max="5000"
-                    />
-                  </div>
-                  <div class="col-md-3">
-                    <label for="min-price" class="form-label">
-                      Min-Price (₹)
-                    </label>
-                    <input
-                      type="number"
-                      class="form-control"
-                      id="min-price"
-                      name="min-price"
-                      placeholder="Enter a price"
-                      min="0"
-                    />
-                  </div>
-                  <div class="col-md-3">
-                    <label for="used" class="form-label">Used</label>
-                    <select class="form-select" id="used" name="used">
-                      <option value="">Any</option>
-                      <option value="true">Used</option>
-                      <option value="false">New</option>
-                    </select>
-                  </div>
+<div id="filter-options" class="mb-4 d-none">
+  <form action="/admin/products" method="GET" id="filterForm" class="row g-3" novalidate>
+    <div class="col-md-3">
+      <label for="date" class="form-label">Date Added</label>
+      <input type="date" class="form-control" id="date" name="date" value="<%= query.date ? query.date : '' %>" />
+    </div>
+    <div class="col-md-3">
+      <label for="max-price" class="form-label">Max-Price (₹)</label>
+      <input type="number" class="form-control" id="max-price" name="max-price" placeholder="Enter a price" min="0" max="5000" value="<%= query['max-price'] ? query['max-price'] : '' %>" />
+    </div>
+    <div class="col-md-3">
+      <label for="min-price" class="form-label">Min-Price (₹)</label>
+      <input type="number" class="form-control" id="min-price" name="min-price" placeholder="Enter a price" min="0" value="<%= query['min-price'] ? query['min-price'] : '' %>" />
+    </div>
+    <div class="col-md-3">
+      <label for="used" class="form-label">Used</label>
+      <select class="form-select" id="used" name="used">
+        <option value="" <%= !query.used ? "selected" : "" %>>Any</option>
+        <option value="true" <%= query.used === "true" ? "selected" : "" %>>Used</option>
+        <option value="false" <%= query.used === "false" ? "selected" : "" %>>New</option>
+      </select>
+    </div>
+    <div class="col-md-3">
+      <label for="rating" class="form-label">Rating</label>
+      <input type="number" class="form-control" id="rating" name="rating" placeholder="Min rating (1-5)" min="0" max="5" value="<%= query.rating ? query.rating : '' %>" />
+    </div>
+    <div class="col-md-6">
+      <label for="discount" class="form-label">Discount (%)</label>
+      <input type="number" class="form-control" id="discount" name="discount" placeholder="Enter discount percentage" min="0" max="100" value="<%= query.discount ? query.discount : '' %>" />
+      <small class="text-muted">Show products with discount greater than or equal to the entered value.</small>
+    </div>
+    <div class="col-md-3">
+      <label for="category" class="form-label">Category</label>
+      <select class="form-select" id="category" name="category">
+        <option value="" <%= !query.category ? "selected" : "" %>>All Categories</option>
+        <% categories.forEach(category => { %>
+        <option value="<%= category.category %>" <%= query.category === category.category ? "selected" : "" %>><%= category.category %></option>
+        <% }) %>
+      </select>
+    </div>
+    <div class="col-12">
+      <button type="button" id="apply-filters" class="btn btn-primary">Apply Filters</button>
+      <button type="button" id="clear-btn" class="btn btn-secondary">Clear</button>
+    </div>
+  </form>
+</div>
 
-                  <div class="col-md-3">
-                    <label for="rating" class="form-label">Rating</label>
-                    <input
-                      type="number"
-                      class="form-control"
-                      id="rating"
-                      name="rating"
-                      placeholder="Min rating (1-5)"
-                      min="0"
-                      max="5"
-                    />
-                  </div>
-                  <div class="col-md-6">
-                    <label for="discount" class="form-label">
-                      Discount (%)
-                    </label>
-                    <input
-                      type="number"
-                      class="form-control"
-                      id="discount"
-                      name="discount"
-                      placeholder="Enter discount percentage"
-                      min="0"
-                      max="100"
-                    />
-                    <small class="text-muted">
-                      Show products with discount greater than or equal to the
-                      entered value.
-                    </small>
-                  </div>
-                  <div class="col-md-3">
-                    <label for="category" class="form-label">Category</label>
-                    <select class="form-select" id="category" name="category">
-                      <option value="">All Categories</option>
-                      <% categories.forEach(category => { %>
-                      <option value="<%= category.category %>">
-                        <%= category.category %>
-                      </option>
-                      <% }) %>
-                    </select>
-                  </div>
-
-                  <div class="col-12">
-                    <button type="submit" class="btn btn-primary">
-                      Apply Filters
-                    </button>
-                  </div>
-                </form>
-              </div>
+              
 
               <!-- Product Cards -->
               <div
-                class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5 g-3"
+                class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xl-4 g-3"
               >
                 <% products.forEach(product => { %>
                 <div class="col">

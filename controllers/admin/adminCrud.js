@@ -22,10 +22,23 @@ const catUpdatePage = async (req, res) => {
 // Navigates to the categories view page
 const catViewPage = async (req, res) => {
   try {
-    const datas = await Category.find();
-    return res.render("adminPanel/viewCategories", { datas });
+    const perPage = 50;
+    const page = parseInt(req.query.page) || 1;
+
+    const totalCategories = await Category.countDocuments();
+    const totalPages = Math.ceil(totalCategories / perPage);
+
+    const datas = await Category.find()
+      .skip((page - 1) * perPage)
+      .limit(perPage);
+
+    return res.render("adminPanel/viewCategories", {
+      datas,
+      currentPage: page,
+      totalPages,
+    });
   } catch (err) {
-    console.log("Error in fetching all the categories from the db!", err);
+    return res.send("Server error!");
   }
 };
 
@@ -97,7 +110,6 @@ const updateCategory = async (req, res) => {
 const deleteCategory = async (req, res) => {
   const { id } = req.params;
   try {
-    // Find the category by id and set is_deleted to true
     const deleted = await Category.findByIdAndUpdate(
       id,
       { is_deleted: true },
@@ -119,74 +131,63 @@ const viewAllProductsPage = async (req, res) => {
     const page = parseInt(req.query.page) || 1;
     const filter = { is_deleted: false };
 
-    // Check if the search form was used (assume query parameter "search")
     if (req.query.search) {
       const searchTerm = req.query.search.trim();
-
       filter.name = { $regex: searchTerm, $options: "i" };
-    } else {
-      // Otherwise, apply the filter form fields
+    }
 
-      // Date filter (products added on a specific day)
-      if (req.query.date) {
-        const selectedDate = new Date(req.query.date);
-        const selectedYear = selectedDate.getFullYear();
-        const selectedMonth = selectedDate.getMonth();
-        const selectedDay = selectedDate.getDate();
-        filter.createdAt = {
-          $gte: new Date(selectedYear, selectedMonth, selectedDay),
-          $lt: new Date(selectedYear, selectedMonth, selectedDay + 1),
-        };
+    if (req.query.date) {
+      const selectedDate = new Date(req.query.date);
+      const selectedYear = selectedDate.getFullYear();
+      const selectedMonth = selectedDate.getMonth();
+      const selectedDay = selectedDate.getDate();
+      filter.createdAt = {
+        $gte: new Date(selectedYear, selectedMonth, selectedDay),
+        $lt: new Date(selectedYear, selectedMonth, selectedDay + 1),
+      };
+    }
+
+    if (req.query["min-price"] || req.query["max-price"]) {
+      filter.price = {};
+      if (req.query["min-price"]) {
+        filter.price.$gte = parseFloat(req.query["min-price"]);
       }
-
-      if (req.query["min-price"] || req.query["max-price"]) {
-        filter.price = {};
-        if (req.query["min-price"]) {
-          filter.price.$gte = parseFloat(req.query["min-price"]);
-        }
-        if (req.query["max-price"]) {
-          filter.price.$lte = parseFloat(req.query["max-price"]);
-        }
-      }
-
-      // Discount filter (products with discount >= given value)
-      if (req.query.discount) {
-        filter.discount = { $gte: parseFloat(req.query.discount) };
-      }
-
-      // Rating filter (products with rating >= given value)
-      if (req.query.rating) {
-        filter.avg_rating = { $gte: parseFloat(req.query.rating) };
-      }
-
-      // Used filter (convert string "true"/"false" to boolean if provided)
-      if (req.query.used !== undefined && req.query.used !== "") {
-        filter.used = req.query.used === "true";
-      }
-
-      // Category filter
-      if (req.query.category) {
-        filter.category = req.query.category;
+      if (req.query["max-price"]) {
+        filter.price.$lte = parseFloat(req.query["max-price"]);
       }
     }
 
-    // Fetch filtered products with pagination
+    if (req.query.discount) {
+      filter.discount = { $gte: parseFloat(req.query.discount) };
+    }
+
+    if (req.query.rating) {
+      filter.avg_rating = { $gte: parseFloat(req.query.rating) };
+    }
+
+    if (req.query.used !== undefined && req.query.used !== "") {
+      filter.used = req.query.used === "true";
+    }
+
+    if (req.query.category) {
+      filter.category = req.query.category;
+    }
+
     const products = await Product.find(filter)
       .skip((page - 1) * perPage)
       .limit(perPage);
 
     const categories = await Category.find();
 
-    // Count total products (filtered) for pagination
     const totalProducts = await Product.countDocuments(filter);
     const totalPages = Math.ceil(totalProducts / perPage);
 
-    // Render the template with products and pagination data
     return res.render("adminPanel/allProducts", {
       products,
       categories,
       currentPage: page,
       totalPages,
+      query: req.query, // so our view can pre-populate inputs
     });
   } catch (err) {
     console.error("Error fetching products:", err);
@@ -224,7 +225,6 @@ const viewAddProducts = async (req, res) => {
 // Adding new product
 const addProduct = async (req, res) => {
   try {
-    // Extract form data from the request body
     const {
       name,
       author,
@@ -242,10 +242,6 @@ const addProduct = async (req, res) => {
       cropped_images,
     } = req.body;
 
-    console.log("request body:", req.body);
-    console.log("before parsing :", cropped_images);
-
-    // Check for required fields
     if (
       !name ||
       !author ||
@@ -264,36 +260,31 @@ const addProduct = async (req, res) => {
         .json({ success: false, message: "Required fields are missing." });
     }
 
-    // Ensure price, discount, and count can be parsed as numbers
     if (isNaN(price) || isNaN(discount) || isNaN(count)) {
-      console.log("Error: Invalid number input", { price, discount, count });
       return res.status(400).json({
         success: false,
         message: "Price, discount, and count must be valid numbers.",
       });
     }
 
-    // Parse the numerical values
     const priceNum = parseFloat(price);
     const discountNum = parseFloat(discount);
     const numCount = parseInt(count, 10);
 
-    // New Validations:
-    // 1. Discount cannot be negative.
     if (discountNum < 0) {
       return res.status(400).json({
         success: false,
         message: "Discount value cannot be negative.",
       });
     }
-    // 2. If discount type is percentage, discount cannot exceed 90.
+
     if (discount_type === "percentage" && discountNum > 90) {
       return res.status(400).json({
         success: false,
         message: "Percentage discount cannot exceed 90%.",
       });
     }
-    // 3. If discount type is fixed, discount cannot be greater than the price.
+
     if (discount_type === "fixed" && discountNum > priceNum) {
       return res.status(400).json({
         success: false,
@@ -301,7 +292,6 @@ const addProduct = async (req, res) => {
       });
     }
 
-    // Determine stock status based on the count value
     let stockStatus = "In stock";
     if (numCount === 0) {
       stockStatus = "Out of stock";
@@ -311,13 +301,11 @@ const addProduct = async (req, res) => {
 
     let croppedImagesArray = [];
 
-    // Process cropped_images if provided
     if (cropped_images) {
       if (
         typeof cropped_images === "object" &&
         !Array.isArray(cropped_images)
       ) {
-        // If it's an object, convert it to an array
         croppedImagesArray = Object.values(cropped_images);
       } else if (typeof cropped_images === "string") {
         try {
@@ -326,7 +314,6 @@ const addProduct = async (req, res) => {
             croppedImagesArray = [croppedImagesArray];
           }
         } catch (error) {
-          console.error("Error parsing cropped_images:", error);
           return res.status(400).json({
             success: false,
             message: "Invalid cropped_images format.",
@@ -335,29 +322,24 @@ const addProduct = async (req, res) => {
       }
     }
 
-    // Process image uploads from req.files and include cropped URLs
     const images = [];
     if (req.files && req.files.length > 0) {
       for (let i = 0; i < req.files.length; i++) {
         const file = req.files[i];
-        const croppedUrl = croppedImagesArray[i] || null; // Prevent index error
+        const croppedUrl = croppedImagesArray[i] || null;
         images.push({
-          original_url: file.path, // Cloudinary provides this
+          original_url: file.path,
           cropped_url: croppedUrl,
           filename: file.filename,
         });
       }
     }
 
-    // Calculate final price based on discount type
-    // For percentage: finalPrice = price - (price * discount / 100)
-    // For fixed: finalPrice = price - discount
     const finalPrice =
       discount_type === "percentage"
         ? priceNum - (priceNum * discountNum) / 100
         : priceNum - discountNum;
 
-    // Construct the product object
     const newProduct = new Product({
       name,
       author,
@@ -377,13 +359,8 @@ const addProduct = async (req, res) => {
       images,
     });
 
-    // Save the product to the database
     const savedProduct = await newProduct.save();
-    if (savedProduct) {
-      console.log("Product is saved in DB");
-    }
 
-    // Respond with success
     res.status(201).json({
       success: true,
       message: "Product added successfully!",
@@ -432,7 +409,6 @@ const updateProduct = async (req, res) => {
       used,
     } = req.body;
 
-    // Validation checks for required fields
     if (
       !name ||
       !author ||
@@ -450,7 +426,6 @@ const updateProduct = async (req, res) => {
       });
     }
 
-    // Ensure price, discount, and count are valid numbers
     if (isNaN(price) || isNaN(discount) || isNaN(count)) {
       return res.status(400).json({
         success: false,
@@ -458,27 +433,24 @@ const updateProduct = async (req, res) => {
       });
     }
 
-    // Parse numbers
     const numericPrice = parseFloat(price);
     const numericDiscount = parseFloat(discount);
     const numCount = parseInt(count, 10);
 
-    // New Validations:
-    // 1. Discount value cannot be negative.
     if (numericDiscount < 0) {
       return res.status(400).json({
         success: false,
         message: "Discount value cannot be negative.",
       });
     }
-    // 2. If discount type is percentage, discount cannot exceed 90.
+
     if (discount_type === "percentage" && numericDiscount > 90) {
       return res.status(400).json({
         success: false,
         message: "Percentage discount cannot exceed 90%.",
       });
     }
-    // 3. If discount type is fixed, discount cannot be greater than the product price.
+
     if (discount_type === "fixed" && numericDiscount > numericPrice) {
       return res.status(400).json({
         success: false,
@@ -486,7 +458,6 @@ const updateProduct = async (req, res) => {
       });
     }
 
-    // Retrieve the original product using the id parameter
     const { id } = req.params;
     const originalProduct = await Product.findById(id);
     if (!originalProduct) {
@@ -496,10 +467,8 @@ const updateProduct = async (req, res) => {
       });
     }
 
-    // Process ALL images (existing + new)
     const images = [];
 
-    // 1. Existing images
     if (req.body.existingImages) {
       req.body.existingImages.forEach((imgStr) => {
         const img = JSON.parse(imgStr);
@@ -512,11 +481,10 @@ const updateProduct = async (req, res) => {
       });
     }
 
-    // 2. New uploaded images
     if (req.files) {
       req.files.forEach((file) => {
         images.push({
-          original_url: file.path, // Cloudinary URL
+          original_url: file.path,
           cropped_url: null,
           filename: file.filename,
           _id: new mongoose.Types.ObjectId(),
@@ -524,7 +492,6 @@ const updateProduct = async (req, res) => {
       });
     }
 
-    // Deduplicate images
     const uniqueImages = [];
     const seen = new Set();
     images.forEach((img) => {
@@ -535,13 +502,11 @@ const updateProduct = async (req, res) => {
       }
     });
 
-    // Calculate final price based on discount type
     const finalPrice =
       discount_type === "percentage"
         ? numericPrice - (numericPrice * numericDiscount) / 100
         : numericPrice - numericDiscount;
 
-    // Determine stock status based on count
     let stockStatus = "In stock";
     if (numCount === 0) {
       stockStatus = "Out of stock";
@@ -549,7 +514,6 @@ const updateProduct = async (req, res) => {
       stockStatus = "Limited stock";
     }
 
-    // Update product in the database
     const updatedProduct = await Product.findByIdAndUpdate(
       id,
       {

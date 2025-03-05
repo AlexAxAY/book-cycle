@@ -44,8 +44,7 @@
           <div class="row">
             <h4 class="mb-5">All Categories</h4>
             <% datas.forEach((data) => { %> <% if (!data.is_deleted) { %>
-            <!-- Check if is_deleted is false -->
-            <div class="col-12 col-md-6 col-lg-4 col-xl-2 mb-3">
+            <div class="col-12 col-md-6 col-lg-4 col-xl-3 mb-3">
               <div class="card">
                 <div class="card-body">
                   <h5 class="card-title"><%= data.category %></h5>
@@ -72,6 +71,45 @@
             </div>
             <% } %> <% }) %>
           </div>
+
+          <!-- Pagination Controls -->
+          <nav aria-label="Categories Pagination">
+            <ul class="pagination justify-content-center">
+              <% if (currentPage > 1) { %>
+              <li class="page-item">
+                <a
+                  class="page-link"
+                  href="/admin/categories?page=<%= currentPage - 1 %>"
+                >
+                  Previous
+                </a>
+              </li>
+              <% } else { %>
+              <li class="page-item disabled">
+                <span class="page-link">Previous</span>
+              </li>
+              <% } %> <% for(let i = 1; i <= totalPages; i++) { %>
+              <li class="page-item <%= currentPage === i ? 'active' : '' %>">
+                <a class="page-link" href="/admin/categories?page=<%= i %>">
+                  <%= i %>
+                </a>
+              </li>
+              <% } %> <% if (currentPage < totalPages) { %>
+              <li class="page-item">
+                <a
+                  class="page-link"
+                  href="/admin/categories?page=<%= currentPage + 1 %>"
+                >
+                  Next
+                </a>
+              </li>
+              <% } else { %>
+              <li class="page-item disabled">
+                <span class="page-link">Next</span>
+              </li>
+              <% } %>
+            </ul>
+          </nav>
 
           <!-- Delete Confirmation Modal -->
           <div

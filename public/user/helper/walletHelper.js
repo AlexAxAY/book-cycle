@@ -42,7 +42,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     tableBody.innerHTML = "";
 
-    // If a date filter is selected and no transactions returned, show message
     if (transactions.length === 0 && dateFilter.value) {
       const tr = document.createElement("tr");
       tr.innerHTML = `<td colspan="5" class="text-center">No transactions during this date</td>`;
@@ -69,20 +68,17 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   };
 
-  // Listen for changes on the radio buttons and date input
   sortRadios.forEach((radio) => {
     radio.addEventListener("change", () => fetchTransactions());
   });
 
   dateFilter.addEventListener("change", () => fetchTransactions());
 
-  // Clear filter event listener
   clearFilterButton.addEventListener("click", () => {
-    // Reset sort order to default: descending order
     document.querySelector(
       'input[name="sortOrder"][value="desc"]'
     ).checked = true;
-    // Clear date input
+
     dateFilter.value = "";
     fetchTransactions();
   });
@@ -96,7 +92,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // Initial fetch of transactions
   fetchTransactions();
 });
 

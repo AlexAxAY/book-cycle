@@ -106,7 +106,7 @@ input[type="number"]::-webkit-inner-spin-button {
 }
 
 /* apply every where */
-@media (max-width: 767px) {
+@media (max-width: 992px) {
   .burger-icon {
     display: inline !important;
   }

@@ -1,4 +1,4 @@
-const { Wallet, WalletTransaction } = require("../../models/walletSchemas");
+const { WalletTransaction } = require("../../models/walletSchemas");
 const moment = require("moment");
 
 const walletPage = async (req, res) => {
