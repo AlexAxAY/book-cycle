@@ -4,9 +4,6 @@ const { WalletTransaction } = require("../../models/walletSchemas");
 
 const dashboard = async (req, res) => {
   try {
-    // 1. Dashboard Aggregations
-
-    // Top 10 Best Selling Products (only product name and total quantity)
     const topProducts = await Order.aggregate([
       { $unwind: "$order_items" },
       {
@@ -35,7 +32,6 @@ const dashboard = async (req, res) => {
       },
     ]);
 
-    // Top 10 Categories by Orders (only category name and total quantity)
     const topCategories = await Order.aggregate([
       { $unwind: "$order_items" },
       {
@@ -64,24 +60,23 @@ const dashboard = async (req, res) => {
       },
     ]);
 
-    // Top 10 Rated Products (only product name)
     const topRatedProducts = await Product.find({ avg_rating: { $ne: null } })
       .sort({ avg_rating: -1, rating_count: -1 })
       .limit(10)
       .select("name -_id");
 
-    // ==========================
-    // 2. Sales Chart Calculations
-    // ==========================
     const { filter, fromDate, toDate } = req.query;
     let query = {};
     let startDate, endDate;
-    let currentFilter = filter; // expected values: "weekly", "monthly", "yearly"
+    let currentFilter = filter;
     const now = new Date();
 
     if (fromDate && toDate) {
       startDate = new Date(fromDate);
       endDate = new Date(toDate);
+      startDate.setHours(0, 0, 0, 0);
+      endDate.setHours(23, 59, 59, 999);
+      currentFilter = "custom";
     } else if (filter) {
       if (filter === "weekly") {
         // Current week: Sunday to Saturday
@@ -102,7 +97,6 @@ const dashboard = async (req, res) => {
         startDate.setHours(0, 0, 0, 0);
         endDate.setHours(23, 59, 59, 999);
       } else {
-        // Default to monthly if unknown filter
         currentFilter = "monthly";
         startDate = new Date(now.getFullYear(), now.getMonth(), 1);
         endDate = new Date(now.getFullYear(), now.getMonth() + 1, 0);
@@ -110,7 +104,6 @@ const dashboard = async (req, res) => {
         endDate.setHours(23, 59, 59, 999);
       }
     } else {
-      // Default to monthly if no filter provided
       currentFilter = "monthly";
       startDate = new Date(now.getFullYear(), now.getMonth(), 1);
       endDate = new Date(now.getFullYear(), now.getMonth() + 1, 0);
@@ -119,16 +112,13 @@ const dashboard = async (req, res) => {
     }
     query.createdAt = { $gte: startDate, $lte: endDate };
 
-    // Fetch orders within the date range (for revenue, discount, and orders count).
     const orders = await Order.find(query).populate("user_id");
 
-    // Exclude orders that are cancelled and paid via COD for revenue calculations.
     const validOrders = orders.filter(
       (order) => !(order.status === "Cancelled" && order.payment_type === "COD")
     );
     const totalOrders = orders.length;
 
-    // Calculate total discount overall (for summary card if needed)
     const totalDiscount = orders.reduce((acc, order) => {
       let discount = order.total_discount;
       if (order.status === "Cancelled" && order.payment_type === "COD") {
@@ -141,7 +131,6 @@ const dashboard = async (req, res) => {
       return acc + discount;
     }, 0);
 
-    // Sum up final amount and delivery charge from valid orders.
     const totalFinalAmount = validOrders.reduce(
       (acc, order) => acc + order.final_amount,
       0
@@ -151,7 +140,6 @@ const dashboard = async (req, res) => {
       0
     );
 
-    // Fetch refunds from WalletTransaction.
     let walletTransactionQuery = {
       type: "credit",
       order: { $ne: null },
@@ -164,10 +152,8 @@ const dashboard = async (req, res) => {
     const totalRefund =
       refundAggregate.length > 0 ? refundAggregate[0].total : 0;
 
-    // Calculate total revenue.
     const totalRevenue = totalFinalAmount - totalRefund - totalDeliveryCharge;
 
-    // Helper function to bucket dates based on the filter.
     const getKey = (date) => {
       if (currentFilter === "weekly") {
         return date.toLocaleDateString("en-US", { weekday: "long" });
@@ -175,12 +161,14 @@ const dashboard = async (req, res) => {
         return date.getDate().toString();
       } else if (currentFilter === "yearly") {
         return date.toLocaleDateString("en-US", { month: "long" });
-      } else {
-        return date.toISOString().split("T")[0];
+      } else if (currentFilter === "custom") {
+        let dd = date.getDate().toString().padStart(2, "0");
+        let mm = (date.getMonth() + 1).toString().padStart(2, "0");
+        let yy = date.getFullYear().toString().slice(-2);
+        return `${dd}-${mm}-${yy}`;
       }
     };
 
-    // Group orders to calculate revenue and orders count per time bucket.
     const ordersRevenueMap = {};
     const ordersCountMap = {};
     validOrders.forEach((order) => {
@@ -190,7 +178,6 @@ const dashboard = async (req, res) => {
       ordersCountMap[key] = (ordersCountMap[key] || 0) + 1;
     });
 
-    // Group refunds similarly.
     const refundsMap = {};
     const refunds = await WalletTransaction.find(walletTransactionQuery);
     refunds.forEach((refund) => {
@@ -198,7 +185,6 @@ const dashboard = async (req, res) => {
       refundsMap[key] = (refundsMap[key] || 0) + refund.amount;
     });
 
-    // Compute discount per bucket (using all orders).
     const discountMap = {};
     orders.forEach((order) => {
       const key = getKey(new Date(order.createdAt));
@@ -213,7 +199,6 @@ const dashboard = async (req, res) => {
       discountMap[key] = (discountMap[key] || 0) + discount;
     });
 
-    // Prepare a consistent set of labels for the chart.
     let labels = [];
     if (currentFilter === "weekly") {
       labels = [
@@ -249,9 +234,19 @@ const dashboard = async (req, res) => {
         "November",
         "December",
       ];
+    } else if (currentFilter === "custom") {
+      const diffTime = Math.abs(endDate - startDate);
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      for (let i = 0; i <= diffDays; i++) {
+        let labelDate = new Date(startDate);
+        labelDate.setDate(startDate.getDate() + i);
+        let dd = labelDate.getDate().toString().padStart(2, "0");
+        let mm = (labelDate.getMonth() + 1).toString().padStart(2, "0");
+        let yy = labelDate.getFullYear().toString().slice(-2);
+        labels.push(`${dd}-${mm}-${yy}`);
+      }
     }
 
-    // Build chart data for each label.
     const chartData = labels.map((label) => {
       const revenueFromOrders = ordersRevenueMap[label] || 0;
       const refundAmount = refundsMap[label] || 0;
@@ -261,9 +256,6 @@ const dashboard = async (req, res) => {
       return { label, netRevenue, discount, refundAmount, ordersCount };
     });
 
-    // ==========================
-    // 3. Render the Dashboard View
-    // ==========================
     return res.render("adminPanel/dashboard", {
       topProducts,
       topCategories,

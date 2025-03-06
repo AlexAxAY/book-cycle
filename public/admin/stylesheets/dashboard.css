@@ -92,7 +92,6 @@ body {
   background: linear-gradient(to right, #f5f7fa, #c3cfe2);
 }
 .modal-header {
-  /* background: linear-gradient(to right, #000000, #5f5f5f, #007bff); */
   border-bottom: none !important;
 }
 
@@ -118,6 +117,11 @@ body {
 }
 .chart-filter {
   width: auto;
+}
+
+select {
+  height: fit-content;
+  font-size: 16px;
 }
 
 @media (max-width: 1300px) {

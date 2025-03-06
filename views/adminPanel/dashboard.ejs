@@ -121,11 +121,12 @@
               <div class="card-header d-flex justify-content-between align-items-center">
                 <span>Sales Chart</span>
                 <form id="filterForm" method="GET" action="/admin/dashboard" class="mb-0">
-                  <div class="form-inline chart-filter">
+                  <div class="form-inline chart-filter d-flex">
                     <select name="filter" id="filter" class="form-control">
                       <option value="weekly" <%= currentFilter === 'weekly' ? 'selected' : '' %>>Weekly</option>
                       <option value="monthly" <%= currentFilter === 'monthly' ? 'selected' : '' %>>Monthly</option>
                       <option value="yearly" <%= currentFilter === 'yearly' ? 'selected' : '' %>>Yearly</option>
+                      <option value="custom" <%= currentFilter === 'custom' ? 'selected' : '' %>>Custom</option>
                     </select>
                   </div>
                 </form>
@@ -138,6 +139,31 @@
               </div>
             </div>
           </div>
+
+          <!-- Add this modal code right after the chart div -->
+<div class="modal fade" id="customDateModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Select Custom Date Range</h5>
+      </div>
+      <div class="modal-body">
+        <div class="mb-3">
+          <label for="fromDate" class="form-label">From Date</label>
+          <input type="date" class="form-control" id="fromDate" required>
+        </div>
+        <div class="mb-3">
+          <label for="toDate" class="form-label">To Date</label>
+          <input type="date" class="form-control" id="toDate" required>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" id="applyCustomDate">Apply</button>
+      </div>
+    </div>
+  </div>
+</div>
           
         </div>
       </div>
