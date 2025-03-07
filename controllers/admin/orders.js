@@ -52,8 +52,10 @@ const allOrders = async (req, res) => {
       name: name || "",
     });
   } catch (err) {
-    console.log("Error from allOrders controller from admin", err);
-    res.status(500).send("Server Error");
+    return res.status(500).render("utils/errorPage", {
+      statusCode: 500,
+      message: "Server Error!",
+    });
   }
 };
 
@@ -92,8 +94,10 @@ const getSingleOrder = async (req, res) => {
       returnDecisions,
     });
   } catch (err) {
-    console.error("Error in getSingleOrder:", err);
-    return res.status(500).send("Server error");
+    return res.status(500).render("utils/errorPage", {
+      statusCode: 500,
+      message: "Server Error!",
+    });
   }
 };
 
@@ -129,7 +133,6 @@ const updateOrderStatus = async (req, res) => {
         .json({ success: false, message: "Invalid status transition" });
     }
 
-    // If the new status is "Cancelled", create a cancellation record
     if (status === "Cancelled") {
       const cancelRecord = new Cancel({
         user_id: req.user ? req.user.id : null,
@@ -139,7 +142,6 @@ const updateOrderStatus = async (req, res) => {
       await cancelRecord.save();
     }
 
-    // Set the corresponding timestamp based on the status transition
     if (status === "In transit") {
       order.inTransitAt = new Date();
     } else if (status === "Shipped") {
@@ -148,7 +150,6 @@ const updateOrderStatus = async (req, res) => {
       order.deliveredAt = new Date();
     }
 
-    // Update the order status
     order.status = status;
     await order.save();
 
@@ -182,7 +183,6 @@ const updateOrderStatus = async (req, res) => {
       message: "Order status updated successfully",
     });
   } catch (err) {
-    console.error("Error in updateOrderStatus:", err);
     return res.status(500).json({ success: false, message: "Server error" });
   }
 };
@@ -250,22 +250,18 @@ const handleReturnDecision = async (req, res) => {
       });
     }
 
-    // 1. Total final price for all order items after individual product discounts.
     const sumFinal = order.order_items.reduce((sum, item) => {
       return sum + item.final_price_at_purchase * item.quantity;
     }, 0);
 
-    // 2. Coupon discount amount (if a coupon is applied).
     let couponDiscountAmount = 0;
     if (order.coupon_applied) {
       couponDiscountAmount = sumFinal - order.final_amount;
     }
 
-    // 3. For the returned product, calculate its total final price.
     const productTotalFinal =
       orderItem.final_price_at_purchase * orderItem.quantity;
 
-    // 4. Refund amount: the returned product's total final price minus half of the coupon discount.
     const refundAmount = productTotalFinal - couponDiscountAmount / 2;
 
     orderItem.return_status = "Approved";
@@ -310,7 +306,6 @@ const handleReturnDecision = async (req, res) => {
       )} has been credited to the user's wallet.`,
     });
   } catch (error) {
-    console.error("Error processing return decision:", error);
     return res.status(500).json({
       success: false,
       message: "Internal server error.",

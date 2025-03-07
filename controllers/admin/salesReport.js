@@ -8,7 +8,11 @@ const {
 
 const salesReportPage = async (req, res) => {
   try {
-    const { filter, fromDate, toDate } = req.query;
+    const { filter, fromDate, toDate, page } = req.query;
+    const currentPage = parseInt(page) || 1;
+    const limit = 30;
+    const skip = (currentPage - 1) * limit;
+
     let query = {};
     let startDate, endDate;
 
@@ -64,15 +68,19 @@ const salesReportPage = async (req, res) => {
       }
     }
 
+    const ordersCount = await Order.countDocuments(query);
+
     const orders = await Order.find(query)
       .populate("user_id")
-      .sort({ createdAt: -1 });
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit);
 
     const validOrders = orders.filter(
       (order) => !(order.status === "Cancelled" && order.payment_type === "COD")
     );
 
-    const totalOrders = orders.length;
+    const totalOrders = ordersCount;
 
     const totalDiscount = orders.reduce((acc, order) => {
       let discount = order.total_discount;
@@ -81,7 +89,6 @@ const salesReportPage = async (req, res) => {
           (sum, item) => sum + item.discount_at_purchase,
           0
         );
-
         discount = discount - productDiscount;
       }
       return acc + discount;
@@ -110,6 +117,8 @@ const salesReportPage = async (req, res) => {
 
     const totalRevenue = totalFinalAmount - totalRefund - totalDeliveryCharge;
 
+    const totalPages = Math.ceil(totalOrders / limit);
+
     if (req.xhr) {
       return res.json({
         orders,
@@ -117,6 +126,8 @@ const salesReportPage = async (req, res) => {
         totalDiscount,
         totalOrders,
         totalRefund,
+        currentPage,
+        totalPages,
       });
     } else {
       return res.render("adminPanel/salesReport", {
@@ -126,6 +137,11 @@ const salesReportPage = async (req, res) => {
         totalDiscount,
         totalOrders,
         totalRefund,
+        currentPage,
+        totalPages,
+        filter,
+        fromDate,
+        toDate,
       });
     }
   } catch (err) {

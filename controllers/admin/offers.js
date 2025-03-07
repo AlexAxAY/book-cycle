@@ -10,7 +10,10 @@ const offerModulePage = async (req, res) => {
 
     return res.render("adminPanel/offerModule", { categories, products });
   } catch (err) {
-    concole.log("Error in offerModulePage controller", err);
+    return res.status(500).render("utils/errorPage", {
+      statusCode: 500,
+      message: "Server Error!",
+    });
   }
 };
 
@@ -25,7 +28,6 @@ const applyOffer = async (req, res) => {
       action,
     } = req.body;
 
-    // Validate discount value existence
     if (
       discountValue === undefined ||
       discountValue === null ||
@@ -43,7 +45,6 @@ const applyOffer = async (req, res) => {
         .json({ success: false, message: "Discount value must be a number." });
     }
 
-    // discount value cannot be negative
     if (discVal < 0) {
       return res.status(400).json({
         success: false,
@@ -51,7 +52,6 @@ const applyOffer = async (req, res) => {
       });
     }
 
-    // Percentage discount check
     if (discountType === "percentage" && discVal > 90) {
       return res.status(400).json({
         success: false,
@@ -59,22 +59,18 @@ const applyOffer = async (req, res) => {
       });
     }
 
-    // Ensure the action field is valid
     if (!action || (action !== "increase" && action !== "decrease")) {
       return res
         .status(400)
         .json({ success: false, message: "Invalid action specified." });
     }
 
-    // Helper to compute discount amount for a product
     const computeDiscountAmount = (price, type, value) => {
       return type === "percentage" ? price * (value / 100) : value;
     };
 
-    // Prepare offer data to save in the Offer schema
     let offerData = { discountType, discountValue: discVal, action };
 
-    // Function to process a list of products
     const processProducts = async (products) => {
       let failedProducts = [];
       for (const product of products) {
@@ -85,7 +81,7 @@ const applyOffer = async (req, res) => {
 
         if (discountType === "fixed" && discVal > effectiveFinalPrice) {
           failedProducts.push(product.name);
-          continue; // Skip updating this product
+          continue;
         }
         const newDiscountAmt = computeDiscountAmount(
           product.price,
@@ -117,7 +113,6 @@ const applyOffer = async (req, res) => {
       return failedProducts;
     };
 
-    // Process offer by product name or category
     if (applyBy === "name") {
       if (productName === "All products") {
         const products = await Product.find({});
@@ -131,7 +126,7 @@ const applyOffer = async (req, res) => {
           });
         }
         offerData.product = null;
-        offerData.allProducts = true; // Set flag for all products
+        offerData.allProducts = true;
       } else {
         const product = await Product.findOne({ name: productName });
         if (!product) {
@@ -189,7 +184,7 @@ const applyOffer = async (req, res) => {
           });
         }
         offerData.category = null;
-        offerData.allCategories = true; // Set flag for all categories
+        offerData.allCategories = true;
       } else {
         const products = await Product.find({ category: category });
         if (!products || products.length === 0) {
@@ -215,12 +210,10 @@ const applyOffer = async (req, res) => {
         .json({ success: false, message: "Invalid application method." });
     }
 
-    // Save the offer document in the Offer schema
     await Offer.create(offerData);
 
     return res.json({ success: true, message: "Offer applied successfully." });
   } catch (error) {
-    console.error("Error applying offer:", error);
     return res.status(500).json({ success: false, message: "Server error." });
   }
 };
@@ -263,7 +256,6 @@ const viewOffers = async (req, res) => {
         }
       }
 
-      // If both fromDate and toDate are provided, they take precedence
       if (req.query.fromDate && req.query.toDate) {
         query.createdAt = {
           $gte: new Date(req.query.fromDate),
@@ -283,8 +275,10 @@ const viewOffers = async (req, res) => {
       return res.render("adminPanel/viewOffers", { offers, moment });
     }
   } catch (err) {
-    console.error("Error from viewOffers controller", err);
-    return res.status(500).send("Server error");
+    return res.status(500).render("utils/errorPage", {
+      statusCode: 500,
+      message: "Server Error!",
+    });
   }
 };
 

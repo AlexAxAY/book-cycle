@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Wallet Info</title>
+
+    <!-- css -->
+    <link rel="stylesheet" href="/admin/stylesheets/walletInfo.css" />
+
+    <!-- bootstrap -->
+    <%- include("../partials/admin/bootLink.ejs") %>
+
+    <!-- icon link -->
+    <%- include("../partials/user/iconLink.ejs") %>
+
+    <!-- google fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Port+Lligat+Slab&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <!-- header nav -->
+    <%- include("../partials/admin/adminHeader.ejs") %>
+
+    <!-- alert -->
+    <%- include("../partials/user/alertMessage.ejs") %>
+
+    <section
+      class="main-section"
+      style="min-height: calc(100vh - 130px); justify-content: center"
+    >
+      <div class="wrapper container-fluid d-flex">
+        <!-- sidebar -->
+        <div class="sidebar" style="width: 170px">
+          <%- include("../partials/admin/adminNavbar.ejs") %>
+        </div>
+
+        <!-- offcanvas -->
+        <%- include("../partials/admin/offCanvas.ejs") %>
+
+        <!-- main section -->
+        <div class="content p-3" style="flex-grow: 1">
+          <div class="d-flex justify-content-center user-side">
+            <div class="user-details">
+              <h4>User Details</h4>
+              <div class="detail">
+                <span class="detail-heading">Name</span>
+                <span class="detail-value"><%= wallet.wallet.user.name %></span>
+              </div>
+              <hr />
+              <div class="detail">
+                <span class="detail-heading">Email</span>
+                <span class="detail-value">
+                  <%= wallet.wallet.user.email %>
+                </span>
+              </div>
+              <hr />
+              <div class="detail">
+                <span class="detail-heading">Gender</span>
+                <span class="detail-value">
+                  <%= wallet.wallet.user.gender %>
+                </span>
+              </div>
+              <hr />
+              <div class="detail">
+                <span class="detail-heading">Registered on</span>
+                <span class="detail-value">
+                  <%= moment(wallet.wallet.user.createdAt).format("DD/MMM/YY")
+                  %>
+                </span>
+              </div>
+              <hr />
+              <div class="detail">
+                <span class="detail-heading">Status</span>
+                <span class="detail-value">
+                  <% if (wallet.wallet.user.isBlocked === false) { %>
+                  <span style="color: green">Active ⬤</span>
+                  <% } else { %>
+                  <span style="color: red">Blocked ⬤</span>
+                  <% } %>
+                </span>
+              </div>
+            </div>
+          </div>
+          <div class="d-flex justify-content-center wallet-side">
+            <div class="wallet-details">
+              <h4>Transaction Details</h4>
+              <div class="detail">
+                <span class="detail-heading">Transaction ID</span>
+                <span class="detail-value"><%= wallet.custom_wallet_id %></span>
+              </div>
+              <hr />
+              <div class="detail">
+                <span class="detail-heading">Date</span>
+                <span class="detail-value">
+                  <%= moment(wallet.createdAt).format("DD/MMM/YY") %>
+                </span>
+              </div>
+              <hr />
+              <div class="detail">
+                <span class="detail-heading">Time</span>
+                <span class="detail-value">
+                  <%= moment(wallet.createdAt).format("hh:mm A") %>
+                </span>
+              </div>
+              <hr />
+              <div class="detail">
+                <span class="detail-heading">Type</span>
+                <span class="detail-value"><%= wallet.type %></span>
+              </div>
+              <hr />
+              <div class="detail">
+                <span class="detail-heading">Amount</span>
+                <span class="detail-value">₹ <%= wallet.amount %></span>
+              </div>
+              <hr />
+              <div class="detail">
+                <span class="detail-heading">Info</span>
+                <span class="detail-value"><%= wallet.description %></span>
+              </div>
+
+              <% if (wallet.order) {%>
+              <hr />
+              <div class="detail">
+                <span class="detail-heading">Source</span>
+                <span class="detail-value">
+                  <a href="/admin/order/<%= wallet.order %>">
+                    <i class="fa-solid fa-circle-info text-info"></i>
+                  </a>
+                </span>
+              </div>
+              <% } %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- footer -->
+    <%- include("../partials/admin/adminFooter.ejs") %>
+
+    <!-- bootstrap -->
+    <%- include("../partials/admin/bootScript.ejs") %>
+
+    <!-- axios -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+    <!-- moment -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
+
+    <!-- js logout validation file -->
+    <script src="/admin/front-end-validation/logoutValidation.js"></script>
+  </body>
+</html>

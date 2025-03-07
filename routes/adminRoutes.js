@@ -13,8 +13,11 @@ const {
 // Requiring dashboard controller
 const { dashboard } = require("../controllers/admin/dashboard.js");
 
-// Requiring dashboard controller
-const { walletPage } = require("../controllers/admin/wallet.js");
+// Requiring wallet controller
+const {
+  walletPage,
+  singleWalletInfo,
+} = require("../controllers/admin/wallet.js");
 
 // Requiring banner controllers
 const {
@@ -105,68 +108,85 @@ router
 router.route("/logout").post(adminLogout);
 
 // Category management routes
-router.route("/manage-category").get(catManagePage).post(createCat);
+router
+  .route("/manage-category")
+  .get(checkAdmin, catManagePage)
+  .post(checkAdmin, createCat);
 router
   .route("/manage-category/:id")
-  .get(catUpdatePage)
-  .put(updateCategory)
-  .delete(deleteCategory);
-router.route("/view-categories").get(catViewPage);
+  .get(checkAdmin, catUpdatePage)
+  .put(checkAdmin, updateCategory)
+  .delete(checkAdmin, deleteCategory);
+router.route("/view-categories").get(checkAdmin, catViewPage);
 
 // Product routes
-router.route("/products").get(viewAllProductsPage);
-router.route("/product-view/:id").get(singleProductPage);
+router.route("/products").get(checkAdmin, viewAllProductsPage);
+router.route("/product-view/:id").get(checkAdmin, singleProductPage);
 router
   .route("/product/:id")
-  .get(updateProductPage)
-  .put(upload.array("images"), updateProduct)
-  .delete(deleteProduct);
+  .get(checkAdmin, updateProductPage)
+  .put(upload.array("images"), checkAdmin, updateProduct)
+  .delete(checkAdmin, deleteProduct);
 router
   .route("/add-products")
-  .get(viewAddProducts)
-  .post(upload.array("images"), addProduct);
+  .get(checkAdmin, viewAddProducts)
+  .post(upload.array("images"), checkAdmin, addProduct);
 
 // Banner management routes
 router
   .route("/banner-management")
-  .get(viewBanner)
-  .post(upload.single("image"), addBanner);
-router.route("/all-banners").get(viewAllBanners);
-router.route("/all-banners/:id").delete(deleteBanner);
+  .get(checkAdmin, viewBanner)
+  .post(upload.single("image"), checkAdmin, addBanner);
+router.route("/all-banners").get(checkAdmin, viewAllBanners);
+router.route("/all-banners/:id").delete(checkAdmin, deleteBanner);
 
 // User management routes
-router.route("/users").get(allUsers);
-router.route("/users/block/:id").patch(blockUser);
-router.route("/users/unblock/:id").patch(unblockUser);
-router.route("/user/details/:id").get(userDetailsPage);
+router.route("/users").get(checkAdmin, allUsers);
+router.route("/users/block/:id").patch(checkAdmin, blockUser);
+router.route("/users/unblock/:id").patch(checkAdmin, unblockUser);
+router.route("/user/details/:id").get(checkAdmin, userDetailsPage);
 
 // Order routes
-router.route("/all-orders").get(allOrders);
-router.route("/order/:id").get(getSingleOrder).post(updateOrderStatus);
-router.route("/order/return/:id").post(handleReturnDecision);
+router.route("/all-orders").get(checkAdmin, allOrders);
+router
+  .route("/order/:id")
+  .get(getSingleOrder)
+  .post(checkAdmin, updateOrderStatus);
+router.route("/order/return/:id").post(checkAdmin, handleReturnDecision);
 
 // Coupon routes
-router.route("/add-coupon").get(couponForm).post(addCoupon);
-router.route("/coupons").get(allCoupons);
+router
+  .route("/add-coupon")
+  .get(checkAdmin, couponForm)
+  .post(checkAdmin, addCoupon);
+router.route("/coupons").get(checkAdmin, allCoupons);
 router
   .route("/coupon/:id")
-  .put(editCoupon)
-  .get(couponUpdateForm)
-  .delete(deleteCoupon);
+  .put(checkAdmin, editCoupon)
+  .get(checkAdmin, couponUpdateForm)
+  .delete(checkAdmin, deleteCoupon);
 
 // Offer routes
-router.route("/add-offer").get(offerModulePage).post(applyOffer);
-router.route("/offers").get(viewOffers);
+router
+  .route("/add-offer")
+  .get(checkAdmin, offerModulePage)
+  .post(checkAdmin, applyOffer);
+router.route("/offers").get(checkAdmin, viewOffers);
 
 // sales report route
-router.route("/sales-report").get(salesReportPage);
-router.get("/sales-report/pdf-download", downloadSalesReportPDF);
-router.get("/sales-report/excel-download", downloadSalesReportExcel);
+router.route("/sales-report").get(checkAdmin, salesReportPage);
+router.get("/sales-report/pdf-download", checkAdmin, downloadSalesReportPDF);
+router.get(
+  "/sales-report/excel-download",
+  checkAdmin,
+  downloadSalesReportExcel
+);
 
 // dashboard route
-router.route("/dashboard").get(dashboard);
+router.route("/dashboard").get(checkAdmin, dashboard);
 
-// dashboard route
-router.route("/wallet").get(walletPage);
+// wallet route
+router.route("/wallet").get(checkAdmin, walletPage);
+router.route("/wallet/:id").get(checkAdmin, singleWalletInfo);
 
 module.exports = router;

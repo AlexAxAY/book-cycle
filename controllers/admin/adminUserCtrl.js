@@ -20,7 +20,6 @@ const allUsers = async (req, res) => {
       query.name = { $regex: name, $options: "i" };
     }
 
-    // Pagination logic
     const page = parseInt(req.query.page) || 1;
     const limit = 20;
     const totalUsers = await User.countDocuments(query);
@@ -38,7 +37,6 @@ const allUsers = async (req, res) => {
       name: name || "",
     });
   } catch (err) {
-    console.log("Error in fetching all users!", err);
     return res
       .status(500)
       .render("adminPanel/allUsers", { error: "Server error" });
@@ -85,7 +83,6 @@ const blockUser = async (req, res) => {
       .status(200)
       .json({ success: true, message: "User blocked successfully." });
   } catch (err) {
-    console.error("Error blocking user:", err);
     return res.status(500).json({ success: false, message: "Server error." });
   }
 };
@@ -123,7 +120,6 @@ const unblockUser = async (req, res) => {
       .status(200)
       .json({ success: true, message: "User unblocked successfully." });
   } catch (err) {
-    console.error("Error unblocking user:", err);
     return res.status(500).json({ success: false, message: "Server error." });
   }
 };
@@ -144,7 +140,10 @@ const userDetailsPage = async (req, res) => {
       });
     }
   } catch (err) {
-    console.log("Server error in fetching user details!", err);
+    return res.status(500).render("utils/errorPage", {
+      statusCode: 500,
+      message: "Server Error!",
+    });
   }
 };
 

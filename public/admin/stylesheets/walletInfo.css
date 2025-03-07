@@ -1,0 +1,164 @@
+body {
+  margin: 0 !important;
+  padding: 0 !important;
+  min-height: 100vh;
+}
+.footer-div {
+  display: flex;
+  background-color: #2f2929;
+  color: white;
+  height: 60px;
+  justify-content: center;
+  align-items: center;
+}
+
+/* alert */
+.alert-bad,
+.alert-good {
+  padding: 20px;
+  width: fit-content;
+  border-radius: 5px !important;
+  color: white !important;
+  position: fixed;
+  top: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9999;
+}
+
+.alert-bad {
+  background-color: #f44336 !important;
+}
+
+.alert-good {
+  background-color: green !important;
+}
+
+/* sidebar */
+#sidebar .sidebar-header {
+  padding: 1rem;
+  background: #fff;
+}
+#sidebar ul.components {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+#sidebar ul li {
+  width: 100%;
+}
+#sidebar ul li a {
+  display: block;
+  padding: 0.75rem 1.25rem;
+  color: #333;
+  text-decoration: none;
+}
+#sidebar ul li a:hover {
+  background: #e9ecef;
+  text-decoration: none;
+}
+
+/* Style for dropdown toggles */
+#sidebar ul li a.dropdown-toggle::after {
+  float: right;
+  margin-top: 4px;
+}
+
+.user-details,
+.wallet-details {
+  width: 600px;
+  margin: 30px 0px;
+  background: #fff;
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+}
+.user-details h4,
+.wallet-details h4 {
+  text-align: center;
+  margin-bottom: 30px;
+  color: #333;
+}
+.detail {
+  display: flex;
+  justify-content: space-between;
+  margin: 8px 0;
+  font-size: 16px;
+}
+.detail-heading {
+  font-weight: bold;
+  color: #555;
+}
+.detail-value {
+  color: #333;
+}
+
+/* media queries */
+@media (max-width: 991px) {
+  .content {
+    flex-grow: 0;
+    width: 500px;
+  }
+}
+
+@media (max-width: 767px) {
+  .sidebar {
+    display: none;
+  }
+  /* apply every where */
+  .burger-icon {
+    display: inline !important;
+  }
+}
+
+@media (max-width: 634px) {
+  .content {
+    flex-grow: 0;
+    width: 400px;
+  }
+
+  .components a {
+    font-size: smaller;
+  }
+}
+
+@media (max-width: 521px) {
+  .content {
+    flex-grow: 0;
+    width: 300px;
+  }
+  .components a {
+    font-size: smaller;
+  }
+  .offcanvas {
+    width: 200px !important;
+  }
+  .detail {
+    font-size: small;
+  }
+  h4 {
+    font-size: large !important;
+  }
+  .footer-div p {
+    font-size: small;
+  }
+}
+
+@media (max-width: 421px) {
+  .content {
+    flex-grow: 0;
+    width: 200px;
+  }
+  .detail {
+    font-size: x-small;
+  }
+  h4 {
+    font-size: medium !important;
+  }
+}
+
+@media (max-width: 421px) {
+  .footer-div p {
+    font-size: x-small;
+  }
+}

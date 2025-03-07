@@ -36,6 +36,7 @@ const walletTransactionSchema = new mongoose.Schema(
     order: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Order",
+      default: null,
     },
     description: {
       type: String,

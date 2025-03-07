@@ -18,9 +18,10 @@
         <div class="error-message"><%= message %></div>
         <a
           class="btn-home btn btn-primary"
-          href="<%= user && user.isAdmin ? '/admin/products' : '/admin/login' %>"
-          >Go back</a
+          href="<%= user && user.isAdmin ? '/admin/dashboard' : '/admin/login' %>"
         >
+          Go back
+        </a>
       </div>
     </div>
     <!-- bootsrtap -->

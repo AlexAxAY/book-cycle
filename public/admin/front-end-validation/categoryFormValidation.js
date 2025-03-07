@@ -51,7 +51,7 @@ document.getElementById("form").addEventListener("submit", async (e) => {
         alert.classList.remove("alert-warning");
         alert.classList.add("alert-success");
         cat.value = "";
-        if (descriptionField) descriptionField.value = ""; // Clear description if it exists
+        if (descriptionField) descriptionField.value = "";
       }
     } catch (err) {
       const errMessage =

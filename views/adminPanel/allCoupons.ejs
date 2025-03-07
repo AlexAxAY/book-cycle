@@ -45,9 +45,9 @@
             class="main-section d-flex"
             style="align-items: center; flex-direction: column"
           >
-            <% if (coupons.length > 0) {%>
-            <h3>Coupons</h3>
-            <% coupons.forEach((coupon)=> { %>
+            <% if (coupons.length > 0) { %>
+            <h3 class="mb-3">Coupons</h3>
+            <% coupons.forEach((coupon) => { %>
             <div
               class="mb-2 the-coupon"
               style="
@@ -61,9 +61,9 @@
             >
               <p>
                 <strong class="fs-5">
-                  <%= coupon.coupon_code %> <% if(coupon.active === true) {%>
+                  <%= coupon.coupon_code %> <% if (coupon.active === true) { %>
                   <span class="text-success">(Active)</span>
-                  <% } else {%>
+                  <% } else { %>
                   <span class="text-danger">(Inactive)</span>
                   <% } %>
                 </strong>
@@ -103,6 +103,30 @@
             <p class="mt-5 fs-3">No coupons</p>
             <% } %>
           </div>
+
+          <!-- Pagination Controls -->
+
+          <nav aria-label="Coupons Pagination" class="mt-4">
+            <ul class="pagination justify-content-center">
+              <% if (currentPage > 1) { %>
+              <li class="page-item">
+                <a class="page-link" href="?page=<%= currentPage - 1 %>">
+                  Previous
+                </a>
+              </li>
+              <% } %> <% for (let i = 1; i <= totalPages; i++) { %>
+              <li class="page-item <%= currentPage === i ? 'active' : '' %>">
+                <a class="page-link" href="?page=<%= i %>"><%= i %></a>
+              </li>
+              <% } %> <% if (currentPage < totalPages) { %>
+              <li class="page-item">
+                <a class="page-link" href="?page=<%= currentPage + 1 %>">
+                  Next
+                </a>
+              </li>
+              <% } %>
+            </ul>
+          </nav>
         </div>
       </div>
     </section>

@@ -19,7 +19,6 @@ const addBanner = async (req, res) => {
       filename: req.file.filename,
     };
 
-    // Save banner to database
     const banner = new Banner({
       title,
       description: description || null,
@@ -31,21 +30,30 @@ const addBanner = async (req, res) => {
       .status(201)
       .json({ success: true, message: "Banner uploaded successfully" });
   } catch (error) {
-    console.log("Error uploading banner:", error);
-    res.status(500).json({ success: false, message: "Server error" });
+    return res.status(500).json({ success: false, message: "Server error" });
   }
 };
 
 const viewAllBanners = async (req, res) => {
   try {
-    const banners = await Banner.find();
-    if (!banners) {
-      return res.render("adminPanel/viewBanner");
-    } else {
-      return res.render("adminPanel/viewBanner", { banners });
-    }
+    const page = parseInt(req.query.page) || 1;
+    const limit = 20;
+    const skip = (page - 1) * limit;
+
+    const banners = await Banner.find().skip(skip).limit(limit);
+
+    const totalBanners = await Banner.countDocuments();
+    const totalPages = Math.ceil(totalBanners / limit);
+
+    return res.render("adminPanel/viewBanner", {
+      banners,
+      currentPage: page,
+      totalPages,
+    });
   } catch (err) {
-    console.log("Server error:", err);
+    return res
+      .status(500)
+      .render("utils/errorPage", { statusCode: 500, message: "Server error!" });
   }
 };
 
@@ -61,7 +69,6 @@ const deleteBanner = async (req, res) => {
       message: "Banner deleted successfully!!",
     });
   } catch (err) {
-    console.log("Error in deleting banner!", err);
     return res.status(500).json({
       success: false,
       message: "Server error! Cant delete the banner!",

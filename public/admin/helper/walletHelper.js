@@ -45,7 +45,7 @@ document.addEventListener("DOMContentLoaded", () => {
     tableBody.innerHTML = "";
     if (!transactions.length) {
       tableBody.innerHTML = `<tr>
-            <td colspan="7" class="text-center">No transactions</td>
+            <td colspan="8" class="text-center">No transactions</td>
           </tr>`;
       return;
     }
@@ -93,6 +93,11 @@ document.addEventListener("DOMContentLoaded", () => {
       tr.appendChild(tdDescription);
 
       tableBody.appendChild(tr);
+
+      // info
+      const tdInfo = document.createElement("td");
+      tdInfo.innerHTML = `<i class="fa-solid fa-circle-info text-info"></i>`;
+      tr.appendChild(tdInfo);
     });
   }
 

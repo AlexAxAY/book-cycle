@@ -4,6 +4,10 @@ const moment = require("moment");
 const walletPage = async (req, res) => {
   try {
     const { sort, fromDate, toDate } = req.query;
+    const page = parseInt(req.query.page) || 1;
+    const limit = 30;
+    const skip = (page - 1) * limit;
+
     const filter = {};
     if (fromDate || toDate) {
       filter.createdAt = {};
@@ -17,29 +21,18 @@ const walletPage = async (req, res) => {
       }
     }
 
-    // Build sort options
-    let sortOption = {};
+    let transactions = await WalletTransaction.find(filter).populate({
+      path: "wallet",
+      populate: {
+        path: "user",
+        model: "User",
+        select: "name email",
+      },
+    });
 
-    if (sort === "1") {
-      sortOption.createdAt = 1;
-    } else if (sort === "2") {
-      sortOption.createdAt = -1;
-    }
-
-    let transactions = await WalletTransaction.find(filter)
-      .populate({
-        path: "wallet",
-        populate: {
-          path: "user",
-          model: "User",
-          select: "name email",
-        },
-      })
-      .sort({ createdAt: -1 });
-
-    if (sortOption.createdAt) {
+    if (sort === "1" || sort === "2") {
       transactions = transactions.sort((a, b) => {
-        return sortOption.createdAt === 1
+        return sort === "1"
           ? new Date(a.createdAt) - new Date(b.createdAt)
           : new Date(b.createdAt) - new Date(a.createdAt);
       });
@@ -59,17 +52,38 @@ const walletPage = async (req, res) => {
       });
     }
 
+    const totalTransactions = transactions.length;
+    const totalPages = Math.ceil(totalTransactions / limit);
+    const paginatedTransactions = transactions.slice(skip, skip + limit);
+
     if (req.xhr) {
-      return res.status(200).json({ transactions });
+      return res.status(200).json({ transactions: paginatedTransactions });
     } else {
-      return res
-        .status(200)
-        .render("adminPanel/wallet", { transactions, moment });
+      return res.status(200).render("adminPanel/wallet", {
+        transactions: paginatedTransactions,
+        moment,
+        currentPage: page,
+        totalPages,
+      });
     }
   } catch (err) {
-    console.log("Error from walletPage controller!", err);
     return res.status(500).json({ success: false, message: "Server error!" });
   }
 };
 
-module.exports = { walletPage };
+const singleWalletInfo = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const wallet = await WalletTransaction.findById(id).populate({
+      path: "wallet",
+      populate: { path: "user" },
+    });
+    return res.render("adminPanel/walletInfo", { wallet, moment });
+  } catch (err) {
+    return res
+      .status(500)
+      .render("utils/errorPage", { statusCode: 500, message: "Server error!" });
+  }
+};
+
+module.exports = { walletPage, singleWalletInfo };

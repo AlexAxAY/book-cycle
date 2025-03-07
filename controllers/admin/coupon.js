@@ -83,10 +83,28 @@ const addCoupon = async (req, res) => {
 
 const allCoupons = async (req, res) => {
   try {
-    const coupons = await Coupon.find({ is_deleted: false }).sort({ _id: -1 });
-    return res.render("adminPanel/allCoupons", { coupons });
+    const page = parseInt(req.query.page) || 1;
+    const limit = 10;
+    const skip = (page - 1) * limit;
+
+    // Retrieve the current page's coupons
+    const coupons = await Coupon.find({ is_deleted: false })
+      .sort({ _id: -1 })
+      .skip(skip)
+      .limit(limit);
+
+    // Get total count to calculate number of pages
+    const totalCoupons = await Coupon.countDocuments({ is_deleted: false });
+    const totalPages = Math.ceil(totalCoupons / limit);
+
+    return res.render("adminPanel/allCoupons", {
+      coupons,
+      currentPage: page,
+      totalPages,
+    });
   } catch (err) {
     console.log("Error from allCoupons controller", err);
+    return res.status(500).send("Internal Server Error");
   }
 };
 

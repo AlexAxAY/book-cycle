@@ -9,13 +9,21 @@ const catManagePage = async (req, res) => {
 
 // Navigates to the category update page
 const catUpdatePage = async (req, res) => {
-  const { id } = req.params;
-
   try {
+    const { id } = req.params;
     const data = await Category.findById(id);
+    if (!data) {
+      return res.status(404).render("utils/errorPage", {
+        statusCode: 404,
+        message: "Data not found!",
+      });
+    }
     return res.render("adminPanel/updateCategory", { data });
   } catch (err) {
-    console.log("Error in fetching the particular Category!", err);
+    return res.status(500).render("utils/errorPage", {
+      statusCode: 500,
+      message: "Server Error!",
+    });
   }
 };
 
@@ -38,7 +46,10 @@ const catViewPage = async (req, res) => {
       totalPages,
     });
   } catch (err) {
-    return res.send("Server error!");
+    return res.status(500).render("utils/errorPage", {
+      statusCode: 500,
+      message: "Server Error!",
+    });
   }
 };
 
@@ -101,7 +112,6 @@ const updateCategory = async (req, res) => {
       message: "Category updated successfully!",
     });
   } catch (err) {
-    console.log("Error in updating the category!", err);
     return res.status(400).json({ message: "Error in updating the category!" });
   }
 };
@@ -119,7 +129,6 @@ const deleteCategory = async (req, res) => {
       .status(200)
       .json({ success: true, message: "Category deleted successfully!" });
   } catch (err) {
-    console.error("Error in soft deleting!", err);
     return res.status(400).json({ message: "Error in deleting the category!" });
   }
 };
@@ -187,11 +196,13 @@ const viewAllProductsPage = async (req, res) => {
       categories,
       currentPage: page,
       totalPages,
-      query: req.query, // so our view can pre-populate inputs
+      query: req.query,
     });
   } catch (err) {
-    console.error("Error fetching products:", err);
-    res.status(500).send("An error occurred while fetching products.");
+    return res.status(500).render("utils/errorPage", {
+      statusCode: 500,
+      message: "Server Error!",
+    });
   }
 };
 
@@ -207,7 +218,10 @@ const singleProductPage = async (req, res) => {
     }
     return res.render("adminPanel/singleProduct", { product });
   } catch (err) {
-    console.log(err);
+    return res.status(500).render("utils/errorPage", {
+      statusCode: 500,
+      message: "Server Error!",
+    });
   }
 };
 
@@ -218,7 +232,10 @@ const viewAddProducts = async (req, res) => {
     return res.render("adminPanel/addProducts", { categories });
   } catch (error) {
     console.error("Error fetching categories:", error);
-    return res.status(500).send("Error loading page");
+    return res.status(500).render("utils/errorPage", {
+      statusCode: 500,
+      message: "Server Error!",
+    });
   }
 };
 
@@ -254,7 +271,6 @@ const addProduct = async (req, res) => {
       !publish_date ||
       !language
     ) {
-      console.log("Error: Missing required fields");
       return res
         .status(400)
         .json({ success: false, message: "Required fields are missing." });
@@ -366,7 +382,6 @@ const addProduct = async (req, res) => {
       message: "Product added successfully!",
     });
   } catch (error) {
-    console.error("Error adding product:", error);
     res.status(500).json({
       success: false,
       message: "An error occurred while adding the product.",
@@ -387,7 +402,10 @@ const updateProductPage = async (req, res) => {
       return res.render("adminPanel/updateProducts", { product, categories });
     }
   } catch (err) {
-    console.log("Some internal error in updating the product!", err);
+    return res.status(500).render("utils/errorPage", {
+      statusCode: 500,
+      message: "Server Error!",
+    });
   }
 };
 
@@ -576,7 +594,6 @@ const deleteProduct = async (req, res) => {
       .status(200)
       .json({ success: true, message: "Product deleted successfully!" });
   } catch (err) {
-    console.log("Error in deleteing the product!", err);
     return res
       .status(500)
       .json({ success: false, message: "Internal server error!" });

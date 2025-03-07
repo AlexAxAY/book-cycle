@@ -7,7 +7,6 @@ const createAdmin = async (req, res) => {
   try {
     const Admin = await User.findOne({ email: adminEmail });
     if (Admin) {
-      console.log("Admin already exists!");
       return null;
     } else {
       const hashedPassword = await bcrypt.hash(adminPass, 12);
@@ -18,7 +17,6 @@ const createAdmin = async (req, res) => {
       });
 
       admin.save();
-      console.log("Admin user created");
     }
   } catch (err) {
     console.log("Error in creating the admin", err);
@@ -49,7 +47,6 @@ const adminLogin = async (req, res) => {
         .json({ success: false, message: "Invalid credentials." });
     }
 
-    // Compare passwords
     const isPasswordValid = await bcrypt.compare(password, admin.password);
     if (!isPasswordValid) {
       return res
@@ -57,13 +54,11 @@ const adminLogin = async (req, res) => {
         .json({ success: false, message: "Invalid credentials." });
     }
 
-    // Set isAdmin to true (if not already true)
     if (!admin.isAdmin) {
       admin.isAdmin = true;
       await admin.save();
     }
 
-    // Only create a session after successful login and validation
     req.session.user = {
       id: admin._id,
       email: admin.email,
@@ -85,7 +80,6 @@ const adminLogin = async (req, res) => {
       });
     });
   } catch (err) {
-    console.error("Error during admin login:", err);
     res
       .status(500)
       .json({ success: false, message: "An error occurred during login." });
@@ -95,7 +89,6 @@ const adminLogin = async (req, res) => {
 const adminLogout = async (req, res) => {
   req.session.destroy((err) => {
     if (err) {
-      console.error("Logout error:", err);
       return res.status(500).json({
         success: false,
         message: "Logout failed.",

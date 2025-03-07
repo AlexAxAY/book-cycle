@@ -85,21 +85,10 @@
     <li>
       <a href="/admin/sales-report">Sales Report</a>
     </li>
+    <% if(user && user.isAdmin) { %>
     <li>
-      <a
-        href="#adminSubmenu"
-        data-bs-toggle="collapse"
-        aria-expanded="false"
-        class="dropdown-toggle"
-      >
-        Admin
-      </a>
-      <ul class="collapse list-unstyled" id="adminSubmenu">
-        <li><a href="#">Change Password</a></li>
-        <% if(user && user.isAdmin) { %>
-        <li><button class="dropdown-item logout-btn">Logout</button></li>
-        <% } %>
-      </ul>
+      <a class="dropdown-item logout-btn" style="cursor: pointer">Logout</a>
     </li>
+    <% } %>
   </ul>
 </nav>

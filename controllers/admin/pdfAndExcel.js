@@ -1,4 +1,3 @@
-// services/excelReportGenerator.js
 const ExcelJS = require("exceljs");
 const moment = require("moment");
 const ejs = require("ejs");
@@ -12,11 +11,9 @@ async function generateExcelReport({
   totalRefund,
   totalOrders,
 }) {
-  // Create a new Excel workbook and worksheet.
   const workbook = new ExcelJS.Workbook();
   const worksheet = workbook.addWorksheet("Sales Report");
 
-  // Define columns for orders.
   worksheet.columns = [
     { header: "Order ID", key: "orderId", width: 25 },
     { header: "Date", key: "date", width: 15 },
@@ -27,7 +24,6 @@ async function generateExcelReport({
     { header: "Status", key: "status", width: 15 },
   ];
 
-  // Style the header row.
   const headerRow = worksheet.getRow(1);
   headerRow.font = { bold: true, color: { argb: "FFFFFFFF" } };
   headerRow.fill = {
@@ -45,7 +41,6 @@ async function generateExcelReport({
     };
   });
 
-  // Add a row for each order.
   orders.forEach((order) => {
     const row = worksheet.addRow({
       orderId: order._id.toString(),
@@ -67,10 +62,8 @@ async function generateExcelReport({
     });
   });
 
-  // Add an empty row before the summary.
   worksheet.addRow([]);
 
-  // Add summary rows.
   const summaryData = [
     ["Total Revenue", totalRevenue],
     ["Total Discount", totalDiscount],
@@ -84,7 +77,7 @@ async function generateExcelReport({
       cell.fill = {
         type: "pattern",
         pattern: "solid",
-        fgColor: { argb: "FFCCE5FF" }, // light blue fill
+        fgColor: { argb: "FFCCE5FF" },
       };
       cell.border = {
         top: { style: "thin" },
@@ -96,20 +89,17 @@ async function generateExcelReport({
     });
   });
 
-  // Write the workbook to a buffer and return it.
   const buffer = await workbook.xlsx.writeBuffer();
   return buffer;
 }
 
 async function generatePDFReport(data) {
   return new Promise((resolve, reject) => {
-    // Define the path to the EJS template.
     const templatePath = path.join(
       __dirname,
       "../../views/adminPanel/salesReportPdf.ejs"
     );
 
-    // Render the EJS template to an HTML string.
     ejs.renderFile(templatePath, data, async (err, html) => {
       if (err) {
         console.error("Error rendering PDF template", err);
@@ -117,14 +107,13 @@ async function generatePDFReport(data) {
       }
 
       try {
-        // Launch Puppeteer with necessary args.
         const browser = await puppeteer.launch({
           args: ["--no-sandbox", "--disable-setuid-sandbox"],
         });
         const page = await browser.newPage();
-        // Set the page content with the rendered HTML.
+
         await page.setContent(html, { waitUntil: "networkidle0" });
-        // Generate the PDF with desired options.
+
         const pdfBuffer = await page.pdf({
           format: "A4",
           printBackground: true,
