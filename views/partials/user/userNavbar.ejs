@@ -33,12 +33,16 @@
         ></button>
       </div>
 
-      <div class="offcanvas-body ms-auto me-5">
+      <div class="offcanvas-body" style="margin: 0px 48px 0px auto">
         <% if (currentURL.startsWith('/user/shop')) { %>
-        <form class="d-flex me-5" role="search">
+        <form
+          class="d-flex"
+          role="search"
+          style="justify-content: space-between"
+        >
           <input
             style="border-radius: 20px"
-            class="form-control me-2"
+            class="form-control me-2 search-form"
             type="search"
             placeholder="Search"
             aria-label="Search"
@@ -90,7 +94,7 @@
           <li class="nav-item">
             <a class="nav-link" href="/user/register">Register</a>
           </li>
-          <!--  put the else statement here after fininhing the profile page -->
+
           <% } else {%>
           <li class="nav-item dropdown">
             <a

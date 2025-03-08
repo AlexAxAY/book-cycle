@@ -86,7 +86,7 @@
               class="col-auto btn btn-success ms-auto me-2"
               id="apply-filters"
             >
-              Apply Filters
+              Apply
             </button>
             <button class="col-auto btn btn-dark" id="clear_filters">
               Clear
@@ -139,11 +139,11 @@
                 <div class="carousel-item <%= index === 0 ? 'active' : '' %>">
                   <img
                     src="<%= img.original_url %>"
-                    class="d-block w-100"
+                    class="d-block"
                     alt="Book Image"
                     style="
-                      max-height: 300px;
-                      min-height: 300px;
+                      height: 300px;
+                      width: 100%;
                       border-radius: 10px;
                       object-fit: cover !important;
                     "

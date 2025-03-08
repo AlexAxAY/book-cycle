@@ -3,7 +3,6 @@ body {
   font-family: Arial, sans-serif !important;
 }
 
-/* must include in all other templates for the navbar */
 .navbar-logo {
   margin-left: 30px;
   border-radius: 50%;
@@ -83,7 +82,12 @@ body {
   color: white;
 }
 
-/* apply this on every user template */
+@media (max-width: 992px) {
+  .offcanvas-body {
+    margin: 0px !important;
+  }
+}
+
 @media (max-width: 767px) {
   #contact-us {
     font-size: 1rem !important;
@@ -109,9 +113,60 @@ body {
   }
 }
 
+@media (max-width: 450px) {
+  #filter-section {
+    font-size: small;
+  }
+  #filter-section button {
+    font-size: small;
+    padding: 3px 6px;
+  }
+  #category,
+  #min-price,
+  #max-price,
+  #rating {
+    padding: 3px 6px;
+    font-size: small;
+  }
+  #filter-btn {
+    padding: 3px 6px;
+    font-size: small;
+  }
+  .breadcrumb li {
+    font-size: small;
+  }
+  .offcanvas {
+    width: 300px !important;
+  }
+  .offcanvas-body {
+    margin: 0px !important;
+  }
+  .navbar-toggler {
+    padding: 2px 6px !important;
+  }
+  .navbar-toggler-icon {
+    font-size: small;
+  }
+  .search-form::placeholder {
+    font-size: small !important;
+  }
+  .search-form {
+    padding: 3px 6px !important;
+    height: 30px !important;
+  }
+  .offcanvas-body form button {
+    padding: 3px 6px;
+    font-size: small;
+  }
+  .nav-item a,
+  .nav-item button {
+    font-size: smaller;
+  }
+}
+
 @media (max-width: 375px) {
   #contact-us {
-    font-size: 0.8rem !important;
+    font-size: 0.6rem !important;
   }
 
   #footer-mail {
@@ -119,7 +174,7 @@ body {
   }
 
   .right h5 {
-    font-size: 0.8rem !important;
+    font-size: 0.6rem !important;
   }
 
   .right ul {
@@ -131,5 +186,11 @@ body {
   }
   .all-rights {
     font-size: 0.3rem !important;
+  }
+  #filter-section div:first-child {
+    width: 130px !important;
+  }
+  .offcanvas {
+    width: 250px !important;
   }
 }
