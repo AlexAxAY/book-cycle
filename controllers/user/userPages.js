@@ -9,16 +9,15 @@ const landingPage = async (req, res) => {
   try {
     const products = await Product.find({ is_deleted: false });
     const banners = await Banner.find();
-    if (!products) {
-      console.log("No products are there!");
-      return res.status(400).send("No products available!");
-    }
     return res.render("user/landingPage", {
       products,
       banners,
     });
   } catch (err) {
-    console.log(err);
+    return res.status(500).render("utils/userErrorPage", {
+      statusCode: 500,
+      message: "Server error!",
+    });
   }
 };
 
@@ -112,8 +111,10 @@ const shoppingPage = async (req, res) => {
       currentPage,
     });
   } catch (error) {
-    console.error(error);
-    res.status(500).send("Server Error");
+    return res.status(500).render("utils/userErrorPage", {
+      statusCode: 500,
+      message: "Server error!",
+    });
   }
 };
 
@@ -149,8 +150,10 @@ const singlePage = async (req, res) => {
       reviews,
     });
   } catch (err) {
-    console.log("Server error while fetching the product!", err);
-    return res.status(500).send("server error!");
+    return res.status(500).render("utils/userErrorPage", {
+      statusCode: 500,
+      message: "Server error!",
+    });
   }
 };
 

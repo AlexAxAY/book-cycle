@@ -438,7 +438,6 @@ const proceedToBuy = async (req, res) => {
       orderId: newOrder._id,
     });
   } catch (error) {
-    console.error("Error in proceedToBuy:", error);
     return res.status(500).json({ success: false, message: "Server error." });
   }
 };
@@ -457,7 +456,6 @@ const orders = async (req, res) => {
       query.status = req.query.statusFilter;
     }
 
-    // If a time filter is provided, apply that (this takes precedence over yearFilter)
     if (req.query.timeFilter) {
       switch (req.query.timeFilter) {
         case "thisWeek": {
@@ -479,14 +477,12 @@ const orders = async (req, res) => {
           break;
         }
         case "previous": {
-          // Example: orders before the start of this year
           const end = moment().startOf("year").toDate();
           query.createdAt = { $lt: end };
           break;
         }
       }
     } else if (req.query.yearFilter) {
-      // If a year filter is provided (and no time filter), filter by that year
       const year = parseInt(req.query.yearFilter);
       if (!isNaN(year)) {
         const start = new Date(year, 0, 1);
@@ -523,8 +519,10 @@ const orders = async (req, res) => {
       currentYear: new Date().getFullYear(),
     });
   } catch (err) {
-    console.log("Error in orders controller", err);
-    res.status(500).send("Server Error");
+    return res.status(500).render("utils/userErrorPage", {
+      statusCode: 500,
+      message: "Server error!",
+    });
   }
 };
 
@@ -558,13 +556,11 @@ const cancelOrder = async (req, res) => {
     order.status = "Cancelled";
     await order.save();
 
-    // --- Wallet Refund Logic ---
+    // Wallet Refund Logic
     let refundAmount = 0;
     if (order.payment_type === "Razorpay") {
-      // For Razorpay orders, refund the entire final amount.
       refundAmount = order.final_amount;
     } else {
-      // For COD orders, refund only the wallet amount applied.
       const walletDebits = await WalletTransaction.find({
         order: order._id,
         type: "debit",
@@ -621,7 +617,6 @@ const cancelOrder = async (req, res) => {
       message: "Order cancelled",
     });
   } catch (error) {
-    console.error("Error in cancelOrder controller:", error);
     return res.status(500).json({
       success: false,
       message: "Server error. Please try again.",
@@ -650,7 +645,6 @@ const applyCoupon = async (req, res) => {
         .json({ success: false, message: "Your cart is empty." });
     }
 
-    // Use only valid items (in stock)
     const validCartItems = cartItems.filter(
       (item) => item.productId && item.productId.count > 0
     );
@@ -661,7 +655,6 @@ const applyCoupon = async (req, res) => {
       });
     }
 
-    // Calculate totals for valid items
     let totalOriginalPrice = 0;
     let totalDiscountAmount = 0;
     let totalItems = 0;
@@ -683,7 +676,6 @@ const applyCoupon = async (req, res) => {
     let finalTotal = totalAfterDiscount + deliveryCharge;
     let couponDiscount = 0;
 
-    // If a coupon code is provided, validate and apply it
     if (couponCode && couponCode.trim() !== "") {
       const coupon = await Coupon.findOne({ coupon_code: couponCode.trim() });
       if (!coupon) {
@@ -696,7 +688,7 @@ const applyCoupon = async (req, res) => {
           .status(400)
           .json({ success: false, message: "Coupon is not active" });
       }
-      // Check if the user has already used this coupon
+
       const alreadyUsed = await CouponUsage.findOne({
         user_id: userId,
         coupon_id: coupon._id,
@@ -707,21 +699,20 @@ const applyCoupon = async (req, res) => {
           message: "You have already used this coupon",
         });
       }
-      // Check order qualification: final total must be at least the coupon's min order value
+
       if (finalTotal < coupon.min_order_value) {
         return res.status(400).json({
           success: false,
           message: `Order total must be at least ₹${coupon.min_order_value} to use this coupon`,
         });
       }
-      // Calculate coupon discount amount
+
       if (coupon.discount_type === "percentage") {
         couponDiscount = totalAfterDiscount * (coupon.discount_value / 100);
       } else if (coupon.discount_type === "fixed") {
         couponDiscount = coupon.discount_value;
       }
 
-      // Deduct coupon discount
       totalAfterDiscount -= couponDiscount;
 
       deliveryCharge = totalAfterDiscount >= 500 ? 0 : 50;
@@ -742,7 +733,6 @@ const applyCoupon = async (req, res) => {
       },
     });
   } catch (err) {
-    console.error("Error in applyCoupon:", err);
     return res.status(500).json({ success: false, message: "Server error." });
   }
 };
@@ -767,7 +757,6 @@ const requestReturn = async (req, res) => {
       });
     }
 
-    // Check that the order's status is "Delivered"
     if (order.status !== "Delivered") {
       return res.status(400).json({
         success: false,
@@ -775,7 +764,6 @@ const requestReturn = async (req, res) => {
       });
     }
 
-    // Find the order item for the given productId
     const orderItem = order.order_items.find(
       (item) => item.product.toString() === productId
     );
@@ -786,7 +774,6 @@ const requestReturn = async (req, res) => {
       });
     }
 
-    // Check that the product has not already had a return request made
     if (orderItem.return_status !== "Not requested") {
       return res.status(400).json({
         success: false,
@@ -795,11 +782,9 @@ const requestReturn = async (req, res) => {
       });
     }
 
-    // Update the order item with the return request details
     orderItem.return_status = "Requested";
     orderItem.return_reason = reason;
 
-    // Save the updated order document
     await order.save();
 
     return res.json({
@@ -807,7 +792,6 @@ const requestReturn = async (req, res) => {
       message: "Return request submitted successfully",
     });
   } catch (error) {
-    console.error("Error processing return request:", error);
     return res.status(500).json({
       success: false,
       message: "Internal server error",
@@ -822,7 +806,6 @@ const getWalletBalance = async (req, res) => {
     const balance = wallet ? wallet.balance : 0;
     return res.json({ balance });
   } catch (error) {
-    console.error("Error fetching wallet balance:", error);
     return res.status(500).json({
       balance: 0,
       message: "Error fetching wallet balance.",
@@ -879,7 +862,6 @@ const downloadInvoice = async (req, res) => {
       0
     );
 
-    // Render the invoice HTML using EJS.
     const invoiceHtml = await ejs.renderFile(
       path.join(__dirname, "../../views/user/PDFOrderSummary.ejs"),
       {
@@ -895,9 +877,6 @@ const downloadInvoice = async (req, res) => {
       }
     );
 
-    // Log for debugging (optional)
-    console.log("Invoice HTML length:", invoiceHtml.length);
-
     // Launch Puppeteer.
     const browser = await puppeteer.launch({
       headless: true,
@@ -906,24 +885,21 @@ const downloadInvoice = async (req, res) => {
     const page = await browser.newPage();
     await page.setViewport({ width: 1200, height: 800 });
 
-    // Set page content with a wait until network is idle.
     await page.setContent(invoiceHtml, { waitUntil: "networkidle0" });
-    // Optional: a brief delay to ensure all resources are rendered.
+
     await new Promise((resolve) => setTimeout(resolve, 500));
-    // Emulate print media for proper styling.
+
     await page.emulateMediaType("print");
 
-    // Generate the PDF with similar options to your admin function.
     const pdfBuffer = await page.pdf({
       format: "A4",
-      printBackground: true, // use true for a complete rendering
+      printBackground: true,
       margin: { top: "20px", right: "20px", bottom: "20px", left: "20px" },
       preferCSSPageSize: true,
     });
 
     await browser.close();
 
-    // Send the PDF as a downloadable attachment in binary.
     res.writeHead(200, {
       "Content-Type": "application/pdf",
       "Content-Disposition": 'attachment; filename="invoice.pdf"',
@@ -931,8 +907,10 @@ const downloadInvoice = async (req, res) => {
     });
     return res.end(pdfBuffer, "binary");
   } catch (err) {
-    console.log("Error in downloadInvoice controller", err);
-    return res.status(500).send("Server error!");
+    return res.status(500).render("utils/userErrorPage", {
+      statusCode: 500,
+      message: "Server error!",
+    });
   }
 };
 

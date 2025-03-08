@@ -20,8 +20,10 @@ const cartPage = async (req, res) => {
 
     return res.status(200).render("user/cartPage", { cartItems });
   } catch (err) {
-    console.log("Error in fetching all the cart products!", err);
-    return res.status(404).send("Not Found");
+    return res.status(500).render("utils/userErrorPage", {
+      statusCode: 500,
+      message: "Server error!",
+    });
   }
 };
 
@@ -72,7 +74,6 @@ const addToCart = async (req, res) => {
       return res.json({ success: true, message: "Product already in cart!" });
     }
   } catch (error) {
-    console.error("Error adding product to cart:", error);
     return res.status(500).json({ success: false, message: "Server error" });
   }
 };
@@ -98,7 +99,6 @@ const removeFromCart = async (req, res) => {
 
     return res.json({ success: true, message: "Item removed from cart!" });
   } catch (error) {
-    console.error("Error removing cart item:", error);
     return res.status(500).json({ success: false, message: "Server error" });
   }
 };
@@ -171,7 +171,6 @@ const getCartDetails = async (req, res) => {
   }
 };
 
-// update the cart item
 const updateCartItem = async (req, res) => {
   try {
     const { productId } = req.params;
@@ -188,7 +187,6 @@ const updateCartItem = async (req, res) => {
         .json({ success: false, message: "Invalid quantity" });
     }
 
-    // Retrieve the cart item using its ID.
     const cartItem = await CartItem.findById(productId);
     if (!cartItem) {
       return res
@@ -196,7 +194,6 @@ const updateCartItem = async (req, res) => {
         .json({ success: false, message: "Cart item not found" });
     }
 
-    // Use the productId stored in the cart item to fetch the product details.
     const product = await Product.findById(cartItem.productId);
     if (!product) {
       return res
@@ -204,7 +201,6 @@ const updateCartItem = async (req, res) => {
         .json({ success: false, message: "Product not found" });
     }
 
-    // Validate that the requested quantity does not exceed the product's available stock.
     if (quantity > product.count) {
       return res.status(400).json({
         success: false,
@@ -214,7 +210,6 @@ const updateCartItem = async (req, res) => {
       });
     }
 
-    // Update the cart item's quantity if validations pass.
     cartItem.quantity = quantity;
     await cartItem.save();
 
@@ -224,7 +219,6 @@ const updateCartItem = async (req, res) => {
       data: cartItem,
     });
   } catch (error) {
-    console.error("Error updating cart item:", error);
     return res.status(500).json({ success: false, message: "Server error" });
   }
 };

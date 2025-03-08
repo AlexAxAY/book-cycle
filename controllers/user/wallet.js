@@ -53,8 +53,10 @@ const viewWallet = async (req, res) => {
       currentPage: page,
     });
   } catch (err) {
-    console.error("Error in viewWallet controller", err);
-    return res.status(500).send("Internal Server Error");
+    return res.status(500).render("utils/userErrorPage", {
+      statusCode: 500,
+      message: "Server error!",
+    });
   }
 };
 
@@ -82,7 +84,6 @@ const addMoneyToWallet = async (req, res) => {
       razorpayKey: process.env.RAZORPAY_KEY_ID,
     });
   } catch (error) {
-    console.error(error);
     return res.status(500).json({
       success: false,
       message: "Server error while creating order",
@@ -133,7 +134,6 @@ const verifyPaymentAndAddMoney = async (req, res) => {
       wallet,
     });
   } catch (error) {
-    console.error(error);
     return res.status(500).json({
       success: false,
       message: "Server error during payment verification",

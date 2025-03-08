@@ -9,7 +9,10 @@ const getProfile = async (req, res) => {
     const user = await User.findOne({ _id: userId });
     return res.status(200).render("user/profilePage", { user });
   } catch (err) {
-    console.log("Error fetching user data for profile", err);
+    return res.status(500).render("utils/userErrorPage", {
+      statusCode: 500,
+      message: "Server error!",
+    });
   }
 };
 
@@ -37,14 +40,12 @@ const updateProfile = async (req, res) => {
         return res.status(400).json({ message: "Email is already taken" });
       }
 
-      // Update the user's email and mark them as unverified.
       user.name = name;
       user.gender = gender;
       user.email = email;
       user.isVerified = false;
       await user.save();
 
-      // loggin out the user to verify the email
       req.logout((err) => {
         if (err) {
           return next(err);
@@ -68,7 +69,6 @@ const updateProfile = async (req, res) => {
 
       return;
     } else {
-      // No email change, just update name and gender.
       user.name = name;
       user.gender = gender;
       const updatedUser = await user.save();
@@ -79,7 +79,6 @@ const updateProfile = async (req, res) => {
       });
     }
   } catch (err) {
-    console.error("Error updating profile:", err);
     return res.status(500).json({ message: "Internal Server Error" });
   }
 };

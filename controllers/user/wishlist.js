@@ -20,8 +20,10 @@ const wishlistPage = async (req, res) => {
 
     return res.render("user/wishlistPage", { wishlistItems, count });
   } catch (err) {
-    console.error("Error from wishlistPage controller:", err);
-    return res.status(500).send("Server error. Please try again later.");
+    return res.status(500).render("utils/userErrorPage", {
+      statusCode: 500,
+      message: "Server error! Please try again later!",
+    });
   }
 };
 
@@ -29,10 +31,6 @@ const addToWishlist = async (req, res) => {
   try {
     const userId = req.user ? req.user.id : null;
     const { id } = req.params;
-
-    if (!userId) {
-      return res.status(401).json({ success: false, message: "Please Login!" });
-    }
 
     let wishlist = await Wishlist.findOne({ userId });
     if (!wishlist) {
@@ -59,7 +57,6 @@ const addToWishlist = async (req, res) => {
     await wishlistItem.save();
     res.json({ success: true, message: "Product added to wishlist." });
   } catch (err) {
-    console.error(err);
     res.status(500).json({
       success: false,
       message: "Server error. Please try again later.",
@@ -103,7 +100,6 @@ const removeFromWishlist = async (req, res) => {
       message: "Item removed from wishlist",
     });
   } catch (err) {
-    console.error("Error from removeFromWishlist controller:", err);
     return res.status(500).json({
       success: false,
       message: "Server error. Please try again later.",

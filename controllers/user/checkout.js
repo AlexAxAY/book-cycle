@@ -29,13 +29,11 @@ const checkoutPage = async (req, res) => {
       (item) => !item.productId || item.productId.count <= 0
     );
 
-    // Remove any invalid cart items from the database.
     if (invalidCartItems.length > 0) {
       const invalidIds = invalidCartItems.map((item) => item._id);
       await CartItem.deleteMany({ _id: { $in: invalidIds } });
     }
 
-    // If no valid items remain, alert the user and redirect to the cart page.
     if (validCartItems.length === 0) {
       req.flash(
         "error",
@@ -44,7 +42,6 @@ const checkoutPage = async (req, res) => {
       return res.redirect("/user/cart");
     }
 
-    // Check that the quantity selected for each valid cart item does not exceed the product's available stock.
     const insufficientItems = validCartItems.filter(
       (item) => item.quantity > item.productId.count
     );
@@ -67,7 +64,6 @@ const checkoutPage = async (req, res) => {
         "Some items in your cart are out of stock and have been removed.";
     }
 
-    // Recalculate totals using only valid (in-stock) items.
     let totalOriginalPrice = 0;
     let totalDiscountAmount = 0;
     let totalItems = 0;
@@ -96,7 +92,6 @@ const checkoutPage = async (req, res) => {
       console.log("No states found");
     }
 
-    // finding avaialble coupons
     const usedCoupons = await CouponUsage.find({ user_id: userId });
     const usedCouponIds = usedCoupons.map((usage) => usage.coupon_id);
     const availableCoupons = await Coupon.find({
@@ -121,7 +116,6 @@ const checkoutPage = async (req, res) => {
       coupons: availableCoupons,
     });
   } catch (error) {
-    console.error("Error rendering checkout page:", error);
     req.flash("error", "Server error. Please try again later.");
     return res.redirect("/user/cart");
   }
@@ -141,7 +135,6 @@ const addCheckoutAddress = async (req, res) => {
       address_type,
     } = req.body;
 
-    // Validate required fields (landmark and alt_phone are optional)
     if (
       !name ||
       !phone ||
@@ -201,7 +194,6 @@ const addCheckoutAddress = async (req, res) => {
       message: "Address added successfully.",
     });
   } catch (error) {
-    console.error("Error in addCheckoutAddress controller:", error);
     return res.status(500).json({
       success: false,
       message: "Server error. Please try again later.",
@@ -226,7 +218,10 @@ const checkoutAddressUpdatePage = async (req, res) => {
       .status(200)
       .render("user/checkoutUpdateAddressPage", { address, states });
   } catch (err) {
-    console.log("internal error in checkoutAddressUpdatePage controller", err);
+    return res.status(500).render("utils/userErrorPage", {
+      statusCode: 500,
+      message: "Server error!",
+    });
   }
 };
 
@@ -284,7 +279,6 @@ const checkoutAddressUpdate = async (req, res) => {
 
     const user_id = req.user.id;
 
-    // Create a new address document using your address schema
     await Address.findByIdAndUpdate(id, {
       name,
       phone,
@@ -302,7 +296,6 @@ const checkoutAddressUpdate = async (req, res) => {
       .status(200)
       .json({ success: true, message: "Address updated successfully." });
   } catch (error) {
-    console.error("Error in checkoutAddressUpdate controller:", error);
     return res.status(500).json({
       success: false,
       message: "Server error. Please try again later.",

@@ -21,7 +21,10 @@ const viewCoupons = async (req, res) => {
 
     return res.render("user/allCouponsPage", { coupons, user });
   } catch (err) {
-    return console.log("Error in viewCoupons controller", err);
+    return res.status(500).render("utils/userErrorPage", {
+      statusCode: 500,
+      message: "Server error!",
+    });
   }
 };
 

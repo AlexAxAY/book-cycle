@@ -20,7 +20,6 @@ const setPassword = async (req, res) => {
   const { newPassword, confirmPass } = req.body;
 
   try {
-    // Validate input...
     if (!newPassword || !confirmPass) {
       return res
         .status(400)
@@ -47,7 +46,6 @@ const setPassword = async (req, res) => {
         .json({ success: false, message: "User not found." });
     }
 
-    // Hash and update new password
     user.password = await bcrypt.hash(newPassword, 12);
     await user.save();
 
@@ -56,7 +54,6 @@ const setPassword = async (req, res) => {
       message: "Password updated successfully!",
     });
   } catch (error) {
-    console.error("Error in setPassword:", error);
     return res.status(500).json({
       success: false,
       message: "Server error. Please try again later.",
@@ -71,7 +68,6 @@ const changePasswordPage = async (req, res) => {
     const userId = res.locals.user.id;
     const user = await User.findById(userId);
     if (!user) {
-      console.log("User not found!");
       return res.redirect("/user/login");
     }
     if (user.password === null) {
@@ -80,7 +76,10 @@ const changePasswordPage = async (req, res) => {
       return res.render("user/changePasswordPage");
     }
   } catch (err) {
-    console.error("Error in fetching setPassword page", err);
+    return res.status(500).render("utils/userErrorPage", {
+      statusCode: 500,
+      message: "Server error!",
+    });
   }
 };
 
@@ -116,14 +115,12 @@ const changePassword = async (req, res) => {
         .json({ success: false, message: "Passwords do no match." });
     }
 
-    // Find the user
     const user = await User.findById(userId.id);
     if (!user)
       return res
         .status(404)
         .json({ success: false, message: "User not found." });
 
-    // Check current password
     const isMatch = await bcrypt.compare(currentPassword, user.password);
     if (!isMatch) {
       return res
@@ -131,7 +128,6 @@ const changePassword = async (req, res) => {
         .json({ success: false, message: "Current password is incorrect." });
     }
 
-    // Hash and update new password
     user.password = await bcrypt.hash(newPassword, 12);
     await user.save();
 
@@ -172,7 +168,6 @@ const forgotPassword = async (req, res) => {
     const otp = generateOtp();
     const expiresAt = expiringTime();
 
-    // Upsert (update or create) the OTP record for this email
     await Otp.findOneAndUpdate(
       { email },
       { otp, expiresAt },
@@ -214,7 +209,6 @@ const forgotPassword = async (req, res) => {
       redirectTo: "/user/verify-otp",
     });
   } catch (error) {
-    console.error("Error in forgotPassword:", error);
     return res.status(500).json({
       success: false,
       message: "Server error. Please try again later.",

@@ -32,8 +32,10 @@ const reviewPage = async (req, res) => {
 
     return res.render("user/reviewPage", { product, rating });
   } catch (err) {
-    console.error("Error in reviewPage controller:", err);
-    res.status(500).send("Internal Server Error");
+    return res.status(500).render("utils/userErrorPage", {
+      statusCode: 500,
+      message: "Server error!",
+    });
   }
 };
 
@@ -48,8 +50,10 @@ const reviewUpdatePage = async (req, res) => {
 
     return res.render("user/reviewUpdatePage", { review });
   } catch (err) {
-    console.error("Error in reviewPage controller:", err);
-    res.status(500).send("Internal Server Error");
+    return res.status(500).render("utils/userErrorPage", {
+      statusCode: 500,
+      message: "Server error!",
+    });
   }
 };
 
@@ -104,7 +108,6 @@ const submitReview = async (req, res) => {
       .status(200)
       .json({ success: true, message: "Review submitted successfully." });
   } catch (err) {
-    console.error("Error in submitReview controller:", err);
     return res
       .status(500)
       .json({ success: false, message: "Internal server error." });
@@ -167,7 +170,6 @@ const updateReview = async (req, res) => {
       .status(200)
       .json({ success: true, message: "Review updated successfully." });
   } catch (err) {
-    console.error("Error in updateReview controller:", err);
     return res
       .status(500)
       .json({ success: false, message: "Internal server error." });
@@ -222,7 +224,6 @@ const deleteReview = async (req, res) => {
 
     return res.json({ success: true, message: "Review deleted successfully" });
   } catch (error) {
-    console.error("Error in deleteReview controller:", error);
     return res
       .status(500)
       .json({ success: false, message: "Internal server error" });

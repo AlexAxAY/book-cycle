@@ -13,14 +13,12 @@ const verifyPayment = async (req, res) => {
       .digest("hex");
 
     if (generatedSignature === signature) {
-      // Update the order status to confirmed
       const updatedOrder = await Order.findByIdAndUpdate(
         orderId,
         { status: "Confirmed" },
         { new: true }
       );
 
-      // Create a payment record
       const newPayment = new Payment({
         order_id: updatedOrder._id,
         user_id: updatedOrder.user_id,
@@ -30,7 +28,6 @@ const verifyPayment = async (req, res) => {
       });
       await newPayment.save();
 
-      // Reduce stock for each product in the order
       for (const item of updatedOrder.order_items) {
         const updatedProduct = await Product.findByIdAndUpdate(
           item.product,
@@ -53,7 +50,6 @@ const verifyPayment = async (req, res) => {
         }
       }
 
-      // Clear the user's cart
       const userCart = await Cart.findOne({ userId: updatedOrder.user_id });
       if (userCart) {
         await CartItem.deleteMany({ cartId: userCart._id });
@@ -63,13 +59,12 @@ const verifyPayment = async (req, res) => {
     } else {
       return res
         .status(400)
-        .json({ success: false, message: "Invalid payment signature." });
+        .json({ success: false, message: "Payment Invalid!" });
     }
   } catch (error) {
-    console.error("Error in payment verification:", error);
     return res.status(500).json({
       success: false,
-      message: "Server error during payment verification.",
+      message: "Server error!",
     });
   }
 };

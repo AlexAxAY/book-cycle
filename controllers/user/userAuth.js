@@ -39,7 +39,6 @@ const register = async (req, res) => {
         .json({ success: false, message: "Passwords mismatch!" });
     }
 
-    // Check if user already exists
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       return res
@@ -47,7 +46,6 @@ const register = async (req, res) => {
         .json({ success: false, message: "User already exists." });
     }
 
-    // Hash the password
     const hashedPassword = await bcrypt.hash(password, 12);
 
     const newUser = new User({
@@ -102,7 +100,6 @@ const register = async (req, res) => {
       redirectTo: "/user/verify-otp",
     });
   } catch (error) {
-    console.error("Error during registration:", error);
     res.status(500).json({ success: false, message: "Internal server error." });
   }
 };
@@ -144,10 +141,8 @@ const verifyOtp = async (req, res) => {
         .json({ success: false, message: "Invalid OTP. Please try again." });
     }
 
-    // OTP is valid. Delete the OTP record.
     await Otp.deleteOne({ email });
 
-    // If purpose exists and equals "forgot-password", do not update isVerified.
     if (purpose && purpose === "forgot-password") {
       await User.findOneAndUpdate({ email }, { isVerified: true });
       const user = await User.findOne({ email });
@@ -169,7 +164,6 @@ const verifyOtp = async (req, res) => {
         redirectTo: "/user/change-password",
       });
     } else {
-      // For registration: update isVerified and set session data.
       await User.findOneAndUpdate({ email }, { isVerified: true });
       const newUser = await User.findOne({ email });
 
@@ -186,7 +180,6 @@ const verifyOtp = async (req, res) => {
       });
     }
   } catch (error) {
-    console.error("Error verifying OTP:", error);
     return res
       .status(500)
       .json({ success: false, message: "Internal server error." });
@@ -206,14 +199,12 @@ const resendOtp = async (req, res) => {
     const otp = generateOtp();
     const expiresAt = expiringTime();
 
-    // Upsert new OTP record
     await Otp.findOneAndUpdate(
       { email },
       { otp, expiresAt },
       { upsert: true, new: true }
     );
 
-    // Declare mailOptions before the condition
     let mailOptions = {
       from: '"Book Cycle®" <alexaxay10619@gmail.com>',
       to: email,
@@ -240,7 +231,6 @@ const resendOtp = async (req, res) => {
       otpExpiresAt: expiresAt,
     });
   } catch (error) {
-    console.error("Error resending OTP:", error);
     return res
       .status(500)
       .json({ success: false, message: "Internal server error." });
@@ -276,7 +266,6 @@ const login = async (req, res) => {
       });
     }
 
-    // Compare the entered password with the stored hashed password
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       return res.status(400).json({
@@ -285,20 +274,16 @@ const login = async (req, res) => {
       });
     }
 
-    // If the user is not verified, mimic the registration OTP flow:
     if (!user.isVerified) {
-      // Generate OTP and expiry time
       const otp = generateOtp();
       const expiresAt = expiringTime();
 
-      // Upsert new OTP record
       await Otp.findOneAndUpdate(
         { email },
         { otp, expiresAt },
         { upsert: true, new: true }
       );
 
-      // Send OTP email
       const mailOptions = {
         from: '"Book Cycle®" <alexaxay10619@gmail.com>',
         to: email,
@@ -335,7 +320,6 @@ const login = async (req, res) => {
       });
     }
 
-    // If verified, store user details in session and redirect to home.
     req.session.user = {
       id: user._id,
       email: user.email,
@@ -348,7 +332,6 @@ const login = async (req, res) => {
       redirectTo: "/user/home",
     });
   } catch (error) {
-    console.error(error);
     return res.status(500).json({
       success: false,
       message: "Server error. Please try again later.",
@@ -375,8 +358,6 @@ const logout = async (req, res, next) => {
     });
   });
 };
-
-module.exports = { logout };
 
 module.exports = {
   loginForm,

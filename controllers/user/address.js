@@ -5,9 +5,6 @@ const User = require("../../models/userSchema");
 const getAddressPage = async (req, res) => {
   try {
     const states = await State.find();
-    if (!states) {
-      console.log("NO states found");
-    }
     const userId = req.user ? req.user.id : null;
     if (userId === null) {
       console.log(userId);
@@ -15,7 +12,10 @@ const getAddressPage = async (req, res) => {
     const user = await User.findOne({ _id: userId });
     return res.render("user/userAddressPage", { states, user });
   } catch (err) {
-    console.log("Internal error", err);
+    return res.status(500).render("utils/userErrorPage", {
+      statusCode: 500,
+      message: "Server error!",
+    });
   }
 };
 
@@ -23,9 +23,6 @@ const addressUpdatePage = async (req, res) => {
   try {
     const { id } = req.params;
     const states = await State.find();
-    if (!states) {
-      console.log("NO states found");
-    }
     const address = await Address.findById(id);
     if (!address) {
       return res
@@ -36,7 +33,10 @@ const addressUpdatePage = async (req, res) => {
       .status(200)
       .render("user/updateAddressPage", { address, states });
   } catch (err) {
-    console.log("internal error in addressUpdatePage controller", err);
+    return res.status(500).render("utils/userErrorPage", {
+      statusCode: 500,
+      message: "Server error!",
+    });
   }
 };
 
@@ -101,7 +101,6 @@ const addAddress = async (req, res) => {
 
     const user_id = req.user.id;
 
-    // Create a new address document using your address schema
     const newAddress = new Address({
       name,
       phone,
@@ -121,7 +120,6 @@ const addAddress = async (req, res) => {
       .status(200)
       .json({ success: true, message: "Address added successfully." });
   } catch (error) {
-    console.error("Error in addAddress controller:", error);
     return res.status(500).json({
       success: false,
       message: "Server error. Please try again later.",
@@ -139,7 +137,10 @@ const viewAllAddress = async (req, res) => {
     const addresses = await Address.find();
     return res.render("user/viewAddress", { user, addresses });
   } catch (err) {
-    console.log("Internal error", err);
+    return res.status(500).render("utils/userErrorPage", {
+      statusCode: 500,
+      message: "Server error!",
+    });
   }
 };
 
@@ -151,7 +152,6 @@ const deleteAddress = async (req, res) => {
       .status(200)
       .json({ success: true, message: "Address deleted successfully" });
   } catch (err) {
-    console.log("Error in deleting the address! ", err);
     return res.status(500).json({
       success: false,
       message: "Server error in deleting the address",
@@ -221,7 +221,6 @@ const updateAddress = async (req, res) => {
 
     const user_id = req.user.id;
 
-    // Create a new address document using your address schema
     await Address.findByIdAndUpdate(id, {
       name,
       phone,
@@ -239,7 +238,6 @@ const updateAddress = async (req, res) => {
       .status(200)
       .json({ success: true, message: "Address updated successfully." });
   } catch (error) {
-    console.error("Error in updateAddress controller:", error);
     return res.status(500).json({
       success: false,
       message: "Server error. Please try again later.",
