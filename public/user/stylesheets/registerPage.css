@@ -95,27 +95,6 @@ body {
 }
 
 @media (max-width: 450px) {
-  #filter-section {
-    font-size: small;
-  }
-  #filter-section button {
-    font-size: small;
-    padding: 3px 6px;
-  }
-  #category,
-  #min-price,
-  #max-price,
-  #rating {
-    padding: 3px 6px;
-    font-size: small;
-  }
-  #filter-btn {
-    padding: 3px 6px;
-    font-size: small;
-  }
-  .breadcrumb li {
-    font-size: small;
-  }
   .offcanvas {
     width: 300px !important;
   }

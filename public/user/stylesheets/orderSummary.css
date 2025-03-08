@@ -188,27 +188,6 @@ body {
 }
 
 @media (max-width: 450px) {
-  #filter-section {
-    font-size: small;
-  }
-  #filter-section button {
-    font-size: small;
-    padding: 3px 6px;
-  }
-  #category,
-  #min-price,
-  #max-price,
-  #rating {
-    padding: 3px 6px;
-    font-size: small;
-  }
-  #filter-btn {
-    padding: 3px 6px;
-    font-size: small;
-  }
-  .breadcrumb li {
-    font-size: small;
-  }
   .offcanvas {
     width: 300px !important;
   }
@@ -235,36 +214,5 @@ body {
   .nav-item a,
   .nav-item button {
     font-size: smaller;
-  }
-}
-
-@media (max-width: 375px) {
-  #contact-us {
-    font-size: 0.6rem !important;
-  }
-
-  #footer-mail {
-    font-size: 0.4rem !important;
-  }
-
-  .right h5 {
-    font-size: 0.6rem !important;
-  }
-
-  .right ul {
-    font-size: 0.4rem !important;
-  }
-
-  .cycle-logo {
-    height: 40px !important;
-  }
-  .all-rights {
-    font-size: 0.3rem !important;
-  }
-  #filter-section div:first-child {
-    width: 130px !important;
-  }
-  .offcanvas {
-    width: 250px !important;
   }
 }
