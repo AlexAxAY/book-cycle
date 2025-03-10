@@ -30,10 +30,10 @@
           <h3 class="mb-5">Your orders</h3>
         </div>
       </div>
-      <div class="row" style="justify-content: space-around">
+      <div class="row main" style="justify-content: space-around">
         <!-- Filter Sidebar -->
         <div
-          class="col-2 filter-display p-3"
+          class="col-4 col-sm-3 col-lg-2 filter-display p-3"
           style="
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1),
               0 6px 20px rgba(0, 0, 0, 0.1);
@@ -108,26 +108,28 @@
         </div>
 
         <!-- Orders Display and Pagination -->
-        <div class="col-8">
+        <div class="col-4 col-md-8">
           <!-- Orders Listing Container -->
           <div id="orders-container">
             <% orders.forEach((order) => { %>
             <div class="order-container row mb-2">
-              <div class="col-auto">
-                <img
-                  style="width: 70px"
-                  src="<%= order.order_items[0].product.images[0].cropped_url || order.order_items[0].product.images[0].original_url %>"
-                  alt="Book Image"
-                  class="order-image"
-                />
+              <div class="col-12 col-md-auto">
+                <div class="d-flex img-div" style="justify-content: center">
+                  <img
+                    style="width: 70px"
+                    src="<%= order.order_items[0].product.images[0].cropped_url || order.order_items[0].product.images[0].original_url %>"
+                    alt="Book Image"
+                    class="order-image"
+                  />
+                </div>
               </div>
-              <div class="col">
+              <div class="col-12 col-md">
                 <div class="order-details">
                   <div class="row">
                     <div class="col-md-4">
                       <div class="row h-100" style="align-items: center">
                         <% order.order_items.forEach((item) => { %>
-                        <p class="m-0">
+                        <p class="m-0 p-0">
                           🕮 <%= item.product.name %>
                           <small class="text-muted">
                             (<%= item.quantity %> <%= item.quantity === 1 ?
@@ -139,7 +141,7 @@
                     </div>
                     <div class="col-md-4">
                       <div class="row h-100" style="align-items: center">
-                        <p class="m-0 text-center">
+                        <p class="m-0 p-0 text-center">
                           ₹ <%= order.final_amount %>
                         </p>
                       </div>
@@ -163,12 +165,12 @@
                           your order <% } %>
                         </a>
                         <% if (order.status === "Delivered") {%>
-                        <p class="mb-0 m-3 text-success">
+                        <p class="mb-0 m-3 text-success status">
                           Delivered
                           <span style="color: green">⬤</span>
                         </p>
                         <% } else if (order.status === "Cancelled") {%>
-                        <p class="mb-0 m-3 text-danger">
+                        <p class="mb-0 m-3 text-danger status">
                           Cancelled
                           <span style="color: red">⬤</span>
                         </p>

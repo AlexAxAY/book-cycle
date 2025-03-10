@@ -51,7 +51,7 @@ body {
   justify-content: space-between;
 }
 
-.price-details {
+.price-details > div:first-child {
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
 }
 
@@ -105,6 +105,15 @@ body {
 }
 
 /* apply this on every user template */
+@media (max-width: 992px) {
+  .offcanvas-body {
+    margin-left: 0px !important;
+  }
+  .offcanvas {
+    width: 250px !important;
+  }
+}
+
 @media (max-width: 767px) {
   #contact-us {
     font-size: 1rem !important;
@@ -130,33 +139,40 @@ body {
   }
 }
 
+@media (max-width: 576px) {
+  .img-sec img {
+    height: 80px;
+    width: 50px;
+  }
+  .info-sec,
+  .quantity-input {
+    font-size: small;
+  }
+  .price-details {
+    font-size: small;
+  }
+  .price-details h5 {
+    font-size: medium;
+  }
+  .low-button {
+    width: 200px;
+  }
+}
+
 @media (max-width: 450px) {
-  .offcanvas {
-    width: 300px !important;
-  }
-  .offcanvas-body {
-    margin: 0px !important;
-  }
   .navbar-toggler {
     padding: 2px 6px !important;
   }
   .navbar-toggler-icon {
     font-size: small;
   }
-  .search-form::placeholder {
-    font-size: small !important;
-  }
-  .search-form {
-    padding: 3px 6px !important;
-    height: 30px !important;
-  }
-  .offcanvas-body form button {
-    padding: 3px 6px;
-    font-size: small;
-  }
   .nav-item a,
   .nav-item button {
     font-size: smaller;
+  }
+  .alert-bad,
+  .alert-good {
+    font-size: small;
   }
 }
 
@@ -182,8 +198,5 @@ body {
   }
   .all-rights {
     font-size: 0.3rem !important;
-  }
-  .offcanvas {
-    width: 250px !important;
   }
 }

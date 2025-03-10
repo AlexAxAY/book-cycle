@@ -33,7 +33,7 @@
         ></button>
       </div>
 
-      <div class="offcanvas-body" style="margin: 0px 48px 0px auto">
+      <div class="offcanvas-body" style="margin-left: auto">
         <% if (currentURL.startsWith('/user/shop')) { %>
         <form
           class="d-flex"
@@ -116,10 +116,36 @@
                 <a class="dropdown-item" href="/user/profile">My Profile</a>
               </li>
               <li><hr class="dropdown-divider" /></li>
+              <li class="d-md-none">
+                <a class="dropdown-item" href="/user/manage-address">
+                  Add Address
+                </a>
+              </li>
+              <li><hr class="dropdown-divider d-md-none" /></li>
+              <li class="d-md-none">
+                <a class="dropdown-item" href="/user/view-address">
+                  View Address
+                </a>
+              </li>
+              <li><hr class="dropdown-divider d-md-none" /></li>
               <li>
                 <a class="dropdown-item" href="/user/orders">My Orders</a>
               </li>
               <li><hr class="dropdown-divider" /></li>
+              <li class="d-md-none">
+                <a class="dropdown-item" href="/user/coupons">My Coupons</a>
+              </li>
+              <li><hr class="dropdown-divider d-md-none" /></li>
+              <li class="d-md-none">
+                <a class="dropdown-item" href="/user/wallet">My Wallet</a>
+              </li>
+              <li><hr class="dropdown-divider d-md-none" /></li>
+              <li class="d-md-none">
+                <a class="dropdown-item" href="/user/reviews">
+                  My Ratings & Reviews
+                </a>
+              </li>
+              <li><hr class="dropdown-divider d-md-none" /></li>
               <li>
                 <a class="dropdown-item" href="/user/change-password">
                   Change password

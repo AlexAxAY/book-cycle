@@ -72,7 +72,34 @@ body {
 }
 
 /* apply this on every user template */
-@media (max-width: 767px) {
+@media (max-width: 992px) {
+  .main {
+    justify-content: space-between !important;
+  }
+  .order-container {
+    padding: 8px;
+  }
+  .order-details {
+    font-size: small;
+  }
+  .form-check {
+    font-size: small;
+  }
+  .filter-display h5 {
+    font-size: large;
+  }
+  .status {
+    font-size: smaller;
+  }
+  .offcanvas-body {
+    margin-left: 0px !important;
+  }
+  .offcanvas {
+    width: 250px !important;
+  }
+}
+
+@media (max-width: 768px) {
   #contact-us {
     font-size: 1rem !important;
   }
@@ -95,35 +122,41 @@ body {
   .all-rights {
     font-size: 0.5rem !important;
   }
+  .order-details > div {
+    text-align: center;
+  }
+  .order-details {
+    padding: 0;
+  }
+  .main {
+    justify-content: space-around !important;
+  }
+  .img-div {
+    margin-bottom: 5px;
+  }
+  .track-btn {
+    margin-top: 5px;
+  }
 }
 
 @media (max-width: 450px) {
-  .offcanvas {
-    width: 300px !important;
-  }
-  .offcanvas-body {
-    margin: 0px !important;
-  }
   .navbar-toggler {
     padding: 2px 6px !important;
   }
   .navbar-toggler-icon {
     font-size: small;
   }
-  .search-form::placeholder {
-    font-size: small !important;
-  }
-  .search-form {
-    padding: 3px 6px !important;
-    height: 30px !important;
-  }
-  .offcanvas-body form button {
-    padding: 3px 6px;
-    font-size: small;
-  }
+
   .nav-item a,
   .nav-item button {
     font-size: smaller;
+  }
+  .track-btn {
+    font-size: smaller;
+  }
+  .alert-bad,
+  .alert-good {
+    font-size: small;
   }
 }
 
@@ -152,8 +185,5 @@ body {
   }
   #filter-section div:first-child {
     width: 130px !important;
-  }
-  .offcanvas {
-    width: 250px !important;
   }
 }

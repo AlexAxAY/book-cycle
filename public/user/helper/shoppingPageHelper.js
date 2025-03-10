@@ -1,32 +1,25 @@
-// Global object to maintain current query parameters (filters, sort, search, page)
 let currentParams = {};
 
-// Initialize event listeners after DOM load
 document.addEventListener("DOMContentLoaded", () => {
-  // Toggle filter section visibility
   document.getElementById("filter-btn").addEventListener("click", () => {
     document.getElementById("filter-section").classList.toggle("d-none");
   });
 
-  // Search handler on form submit
   const searchForm = document.querySelector('form[role="search"]');
   if (searchForm) {
     searchForm.addEventListener("submit", handleSearch);
   }
 
-  // Filter handler
   const applyFiltersBtn = document.getElementById("apply-filters");
   if (applyFiltersBtn) {
     applyFiltersBtn.addEventListener("click", handleFilters);
   }
 
-  // Clear filters handler
   const clearFiltersBtn = document.getElementById("clear_filters");
   if (clearFiltersBtn) {
     clearFiltersBtn.addEventListener("click", handleClearFilters);
   }
 
-  // Delegated event listener for product card clicks (navigating to product detail)
   document.querySelector(".product-grid").addEventListener("click", (e) => {
     const productCard = e.target.closest(".to-product");
     if (productCard) {
@@ -35,7 +28,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // Delegated event listener for pagination links (using data attributes)
   document.addEventListener("click", function (e) {
     if (e.target.classList.contains("pagination-link")) {
       e.preventDefault();
@@ -46,7 +38,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // Delegated add-to-cart handler on the shopping page
   if (window.location.pathname.includes("/user/shop")) {
     document.querySelector(".row.mt-4").addEventListener("click", async (e) => {
       const btn = e.target.closest(".add-to-cart-btn");
@@ -88,7 +79,6 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 
-// Search Handler: updates global state with search term, preserves other filters
 async function handleSearch(e) {
   e.preventDefault();
   const searchInput = e.target.querySelector('input[type="search"]');
@@ -97,19 +87,17 @@ async function handleSearch(e) {
   } else {
     delete currentParams.search;
   }
-  // Reset to page 1 when performing a new search
+
   currentParams.page = 1;
   fetchProducts();
 }
 
-// Filter Handler: updates global state with current filter values (merges with existing search/sort)
 async function handleFilters() {
   const minPriceValue = document.getElementById("min-price").value;
   const maxPriceValue = document.getElementById("max-price").value;
   const ratingValueStr = document.getElementById("rating").value;
   const category = document.getElementById("category").value;
 
-  // Validate price values
   const minPrice = parseFloat(minPriceValue);
   const maxPrice = parseFloat(maxPriceValue);
   if (minPriceValue.trim() !== "" && !isNaN(minPrice) && minPrice < 0) {
@@ -131,7 +119,6 @@ async function handleFilters() {
     return;
   }
 
-  // Validate rating if provided
   let ratingNum;
   if (ratingValueStr.trim() !== "") {
     ratingNum = Number(ratingValueStr.trim());
@@ -141,7 +128,6 @@ async function handleFilters() {
     }
   }
 
-  // Update currentParams with filter values
   if (category.trim() !== "") {
     currentParams.category = category;
   } else {
@@ -162,19 +148,18 @@ async function handleFilters() {
   } else {
     delete currentParams.maxPrice;
   }
-  // Update sort if selected
+
   const sortRadio = document.querySelector('input[name="sort"]:checked');
   if (sortRadio) {
     currentParams.sort = sortRadio.value;
   } else {
     delete currentParams.sort;
   }
-  // Reset to page 1 when filters change
+
   currentParams.page = 1;
   fetchProducts();
 }
 
-// Clear Filters Handler: resets global state and input fields
 async function handleClearFilters() {
   document.getElementById("min-price").value = "";
   document.getElementById("max-price").value = "";
@@ -186,18 +171,16 @@ async function handleClearFilters() {
   if (searchInput) {
     searchInput.value = "";
   }
-  // Clear global state completely
+
   currentParams = { page: 1 };
   fetchProducts();
 }
 
-// Pagination function: update page in global state and fetch products
 function changePage(newPage) {
   currentParams.page = newPage;
   fetchProducts();
 }
 
-// Function to send the current query parameters to the server and update products
 function fetchProducts() {
   axios
     .get("/user/shop", { params: currentParams })
@@ -210,7 +193,6 @@ function fetchProducts() {
     });
 }
 
-// Function to update the product grid
 function updateProducts(products) {
   const productsGrid = document.querySelector(".row.mt-4");
   if (!productsGrid) {
@@ -283,7 +265,6 @@ function updateProducts(products) {
   });
 }
 
-// Function to update pagination controls (adjusts the "Previous" and "Next" links)
 function updatePaginationControls(currentPage) {
   const prevLink = document.querySelector(
     ".pagination-link[data-page]:first-of-type"
@@ -300,7 +281,6 @@ function updatePaginationControls(currentPage) {
   }
 }
 
-// Helper to show temporary alerts for validation errors
 function showTemporaryAlert(message) {
   const alertBox = document.querySelector(".alert-bad");
   alertBox.classList.remove("d-none");
@@ -310,7 +290,6 @@ function showTemporaryAlert(message) {
   }, 2000);
 }
 
-// Helper to determine stock color based on stock status
 function getStockColor(stock) {
   const colors = {
     "In stock": "green",
@@ -320,7 +299,6 @@ function getStockColor(stock) {
   return colors[stock] || "black";
 }
 
-// Helper to show alerts (for success or error messages)
 function showAlert(element, message, type) {
   element.textContent = message;
   element.classList.remove("d-none");

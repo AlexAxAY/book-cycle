@@ -182,6 +182,13 @@ a:hover {
   }
 }
 
+@media (max-width: 450px) {
+  .alert-bad,
+  .alert-good {
+    font-size: small;
+  }
+}
+
 @media (max-width: 375px) {
   #contact-us {
     font-size: 0.8rem !important;
@@ -212,6 +219,14 @@ a:hover {
   max-width: 300px !important;
   align-items: center !important;
 }
+@media (max-width: 992px) {
+  .offcanvas-body {
+    margin-left: 0px !important;
+  }
+  .offcanvas {
+    width: 250px !important;
+  }
+}
 
 @media (max-width: 600px) {
   .nav-off {
@@ -226,29 +241,13 @@ a:hover {
 }
 
 @media (max-width: 450px) {
-  .offcanvas {
-    width: 300px !important;
-  }
-  .offcanvas-body {
-    margin: 0px !important;
-  }
   .navbar-toggler {
     padding: 2px 6px !important;
   }
   .navbar-toggler-icon {
     font-size: small;
   }
-  .search-form::placeholder {
-    font-size: small !important;
-  }
-  .search-form {
-    padding: 3px 6px !important;
-    height: 30px !important;
-  }
-  .offcanvas-body form button {
-    padding: 3px 6px;
-    font-size: small;
-  }
+
   .nav-item a,
   .nav-item button {
     font-size: smaller;
@@ -292,8 +291,5 @@ a:hover {
   }
   .all-rights {
     font-size: 0.3rem !important;
-  }
-  .offcanvas {
-    width: 250px !important;
   }
 }

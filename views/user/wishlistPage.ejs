@@ -35,48 +35,57 @@
           style="justify-content: space-between"
         >
           <!-- Product image + name -->
-          <div class="col-2 d-flex align-items-center">
-            <img
-              src="<%= items.productId.images[0].cropped_url ||  items.productId.images[0].original_url%>"
-              alt="The Batman"
-              class="img-fluid rounded me-3"
-              style="width: 60px; height: auto"
-            />
-            <span><%= items.productId.name %></span>
+          <div class="col-12 col-sm col-md-2 d-flex align-items-center">
+            <div class="d-flex w-100 img-name" style="justify-content: center">
+              <img
+                src="<%= items.productId.images[0].cropped_url ||  items.productId.images[0].original_url%>"
+                alt="The Batman"
+                class="img-fluid rounded me-3"
+                style="width: 60px; height: auto"
+              />
+              <span><%= items.productId.name %></span>
+            </div>
           </div>
+          <hr class="d-sm-none" />
 
           <!-- Unit price -->
-          <div class="col-2 text-center">
+          <div class="col col-md-2 text-center">
             ₹<%= items.productId.final_price %>
           </div>
 
           <!-- Stock status -->
           <% if (items.productId.stock === "In stock") {%>
-          <div class="col-3 text-success text-center fw-bold">In stock</div>
+          <div class="col col-md-3 text-success text-center fw-bold">
+            In stock
+          </div>
           <% } else if (items.productId.stock === "Limited stock") { %>
-          <div style="color: orange" class="col-3 fw-bold text-center">
+          <div style="color: orange" class="col col-md-3 fw-bold text-center">
             Limited stock (<%= items.productId.count %> books left)
           </div>
           <% } else { %>
-          <div class="col-3 text-danger fw-bold text-center">Out of stock</div>
+          <div class="col col-md-3 text-danger fw-bold text-center">
+            Out of stock
+          </div>
           <% } %>
 
           <!-- Add to cart button -->
-          <div class="col-auto">
-            <button
-              class="btn btn-outline-dark btn-sm mx-2 add-to-cart-btn"
-              data-product-id="<%= items.productId._id %>"
-            >
-              <strong>Add to cart</strong>
-              <i class="fa-solid fa-cart-shopping cart-icon"></i>
-            </button>
-            <button
-              class="btn btn-link text-danger p-0 mx-2 dlt-item"
-              style="font-size: 1.25rem"
-              data-product-id="<%= items.productId._id %>"
-            >
-              <i class="fa-solid fa-trash-can"></i>
-            </button>
+          <div class="col col-md-auto">
+            <div class="d-flex" style="justify-content: center">
+              <button
+                class="btn btn-outline-dark btn-sm mx-2 add-to-cart-btn"
+                data-product-id="<%= items.productId._id %>"
+              >
+                <strong>Add to cart</strong>
+                <i class="fa-solid fa-cart-shopping cart-icon"></i>
+              </button>
+              <button
+                class="btn btn-link text-danger p-0 mx-2 dlt-item"
+                style="font-size: 1.25rem"
+                data-product-id="<%= items.productId._id %>"
+              >
+                <i class="fa-solid fa-trash-can"></i>
+              </button>
+            </div>
           </div>
         </div>
       </div>

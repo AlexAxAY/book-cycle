@@ -1,5 +1,4 @@
 document.addEventListener("DOMContentLoaded", () => {
-  // Get modal elements
   const openCancelModalBtn = document.getElementById("openCancelModal");
   const cancelModal = document.getElementById("cancelModal");
   const closeModalBtn = document.getElementById("closeModal");
@@ -8,10 +7,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const alertBad = document.querySelector(".alert-bad");
   const alertGood = document.querySelector(".alert-good");
 
-  // Open cancel modal on button click (if the open button exists)
   if (openCancelModalBtn) {
     openCancelModalBtn.addEventListener("click", () => {
-      // Reset any previous selection and hide the textarea
       document
         .querySelectorAll('input[name="cancelReasonOption"]')
         .forEach((radio) => {
@@ -23,12 +20,10 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Close modal event listener
   closeModalBtn.addEventListener("click", () => {
     cancelModal.style.display = "none";
   });
 
-  // Listen for radio button changes to toggle the custom reason textarea
   document
     .querySelectorAll('input[name="cancelReasonOption"]')
     .forEach((radio) => {
@@ -42,9 +37,7 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     });
 
-  // Handle the confirm cancellation button click with validation
   confirmCancelBtn.addEventListener("click", async () => {
-    // Get the selected radio option
     const selectedRadio = document.querySelector(
       'input[name="cancelReasonOption"]:checked'
     );
@@ -58,7 +51,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     let reason;
-    // If "Other" is selected, ensure that the textarea is not empty
+
     if (selectedRadio.value === "other") {
       reason = cancelReasonField.value.trim();
       if (!reason) {

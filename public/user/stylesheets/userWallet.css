@@ -117,6 +117,18 @@ input::-webkit-inner-spin-button {
 }
 
 /* apply this on every user template */
+@media (max-width: 992px) {
+  .sidebar {
+    display: none;
+  }
+  .offcanvas-body {
+    margin-left: 0px !important;
+  }
+  .offcanvas {
+    width: 250px !important;
+  }
+}
+
 @media (max-width: 767px) {
   #contact-us {
     font-size: 1rem !important;
@@ -142,33 +154,50 @@ input::-webkit-inner-spin-button {
   }
 }
 
+@media (max-width: 600px) {
+  .table-responsive {
+    font-size: small;
+  }
+  #paginationControls button,
+  #currentPage {
+    font-size: small;
+  }
+}
+
 @media (max-width: 450px) {
-  .offcanvas {
-    width: 300px !important;
-  }
-  .offcanvas-body {
-    margin: 0px !important;
-  }
   .navbar-toggler {
     padding: 2px 6px !important;
   }
   .navbar-toggler-icon {
     font-size: small;
   }
-  .search-form::placeholder {
-    font-size: small !important;
-  }
-  .search-form {
-    padding: 3px 6px !important;
-    height: 30px !important;
-  }
-  .offcanvas-body form button {
-    padding: 3px 6px;
-    font-size: small;
-  }
+
   .nav-item a,
   .nav-item button {
     font-size: smaller;
+  }
+  .form-check,
+  #dateFilter {
+    font-size: small;
+  }
+  #clearFilter {
+    font-size: small;
+  }
+  .content {
+    padding: 10px 15px;
+  }
+  .content > div h3 {
+    font-size: large;
+  }
+  .content > div p,
+  #showAddMoneyBtn,
+  #amountInput,
+  #confirmAddMoneyBtn {
+    font-size: small;
+  }
+  .alert-bad,
+  .alert-good {
+    font-size: small;
   }
 }
 
@@ -197,8 +226,5 @@ input::-webkit-inner-spin-button {
   }
   #filter-section div:first-child {
     width: 130px !important;
-  }
-  .offcanvas {
-    width: 250px !important;
   }
 }

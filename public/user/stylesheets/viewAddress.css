@@ -112,11 +112,11 @@ body {
 }
 
 .address-actions {
-  position: absolute;
-  bottom: 10px;
-  right: 10px;
   display: flex;
-  gap: 10px;
+  justify-content: end;
+}
+.address-actions a {
+  margin: 0px 8px;
 }
 
 .edit-icon,
@@ -136,6 +136,15 @@ body {
 }
 
 /* apply this on every user template */
+@media (max-width: 992px) {
+  .offcanvas-body {
+    margin-left: 0px !important;
+  }
+  .offcanvas {
+    width: 250px !important;
+  }
+}
+
 @media (max-width: 767px) {
   #contact-us {
     font-size: 1rem !important;
@@ -159,35 +168,35 @@ body {
   .all-rights {
     font-size: 0.5rem !important;
   }
+  .sidebar {
+    display: none;
+  }
 }
 
 @media (max-width: 450px) {
-  .offcanvas {
-    width: 300px !important;
-  }
-  .offcanvas-body {
-    margin: 0px !important;
-  }
   .navbar-toggler {
     padding: 2px 6px !important;
   }
   .navbar-toggler-icon {
     font-size: small;
   }
-  .search-form::placeholder {
-    font-size: small !important;
-  }
-  .search-form {
-    padding: 3px 6px !important;
-    height: 30px !important;
-  }
-  .offcanvas-body form button {
-    padding: 3px 6px;
-    font-size: small;
-  }
+
   .nav-item a,
   .nav-item button {
     font-size: smaller;
+  }
+  .content h2 {
+    font-size: larger;
+  }
+  .address-name {
+    font-size: medium;
+  }
+  .address-text {
+    font-size: small;
+  }
+  .alert-bad,
+  .alert-good {
+    font-size: small;
   }
 }
 
@@ -216,8 +225,5 @@ body {
   }
   #filter-section div:first-child {
     width: 130px !important;
-  }
-  .offcanvas {
-    width: 250px !important;
   }
 }

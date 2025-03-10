@@ -64,7 +64,6 @@ const setPassword = async (req, res) => {
 // change password page
 const changePasswordPage = async (req, res) => {
   try {
-    console.log("res.locals.user:", res.locals.user);
     const userId = res.locals.user.id;
     const user = await User.findById(userId);
     if (!user) {

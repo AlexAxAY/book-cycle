@@ -16,25 +16,22 @@ function showSuccessAlert(message) {
   }, 3000);
 }
 
-// Modified openReturnModal accepts extra parameters to show product info.
 function openReturnModal(productId, productName, productQuantity) {
   const modal = document.getElementById("returnModal");
   if (!modal) {
     console.error("Return modal not found.");
     return;
   }
-  // Store product data in the modal's dataset.
+
   modal.dataset.productId = productId;
   modal.dataset.productName = productName;
   modal.dataset.productQuantity = productQuantity;
 
-  // Update modal content to display product info.
   const productInfoEl = document.getElementById("returnProductInfo");
   if (productInfoEl) {
     productInfoEl.textContent = `Returning: ${productName} (Quantity: ${productQuantity})`;
   }
 
-  // Reset radio selection and hide the textarea.
   document
     .querySelectorAll('input[name="returnReasonOption"]')
     .forEach((radio) => {
@@ -48,7 +45,6 @@ function openReturnModal(productId, productName, productQuantity) {
 }
 
 const id = window.location.pathname.split("/").pop();
-console.log("Extracted order id:", id);
 
 document.addEventListener("DOMContentLoaded", () => {
   // Close modal on click.
@@ -66,7 +62,6 @@ document.addEventListener("DOMContentLoaded", () => {
     console.error("Return modal close element not found.");
   }
 
-  // Set up click event on return-order buttons.
   document.querySelectorAll(".return-order-btn").forEach((button) => {
     button.addEventListener("click", () => {
       const productId = button.getAttribute("data-product-id");
@@ -76,7 +71,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  // Listen for changes on the radio buttons to show/hide the textarea.
   document
     .querySelectorAll('input[name="returnReasonOption"]')
     .forEach((radio) => {
@@ -90,7 +84,6 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     });
 
-  // Update submit event to validate based on radio selection.
   document
     .getElementById("submitReturn")
     .addEventListener("click", async () => {
@@ -100,14 +93,13 @@ document.addEventListener("DOMContentLoaded", () => {
         'input[name="returnReasonOption"]:checked'
       );
 
-      // Validate that a reason has been selected.
       if (!selectedRadio) {
         showErrorAlert("Please select a return reason.");
         return;
       }
 
       let reason;
-      // If "Other" is selected, require a non-empty description.
+
       if (selectedRadio.value === "other") {
         reason = document.getElementById("returnReason").value.trim();
         if (!reason) {
@@ -142,7 +134,6 @@ document.addEventListener("DOMContentLoaded", () => {
         );
         console.error(error);
       } finally {
-        // Close modal and clear the custom reason textarea.
         modal.classList.add("d-none");
         document.getElementById("returnReason").value = "";
       }

@@ -17,7 +17,6 @@ async function deleteAddress(addressId) {
   }
 }
 
-// Function to show custom alerts
 function showAlert(message, type) {
   const alertBox =
     type === "good"

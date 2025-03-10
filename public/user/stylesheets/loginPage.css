@@ -71,6 +71,16 @@ body {
 }
 
 /* apply this on every user template */
+
+@media (max-width: 992px) {
+  .offcanvas-body {
+    margin-left: 0px !important;
+  }
+  .offcanvas {
+    width: 250px !important;
+  }
+}
+
 @media (max-width: 767px) {
   #contact-us {
     font-size: 1rem !important;
@@ -94,30 +104,31 @@ body {
   .all-rights {
     font-size: 0.5rem !important;
   }
+
+  .card-title {
+    font-size: large;
+  }
+  .main-form {
+    flex-direction: column;
+  }
+  .main-con {
+    min-height: calc(100vh - 178.4px) !important;
+  }
+  .main-form div:nth-child(2) {
+    margin: 10px 0px;
+    border-radius: 10px;
+  }
+  .alert-bad,
+  .alert-good {
+    font-size: small;
+  }
 }
 
 @media (max-width: 450px) {
-  .offcanvas {
-    width: 300px !important;
-  }
-  .offcanvas-body {
-    margin: 0px !important;
-  }
   .navbar-toggler {
     padding: 2px 6px !important;
   }
   .navbar-toggler-icon {
-    font-size: small;
-  }
-  .search-form::placeholder {
-    font-size: small !important;
-  }
-  .search-form {
-    padding: 3px 6px !important;
-    height: 30px !important;
-  }
-  .offcanvas-body form button {
-    padding: 3px 6px;
     font-size: small;
   }
   .nav-item a,
@@ -152,7 +163,7 @@ body {
   #filter-section div:first-child {
     width: 130px !important;
   }
-  .offcanvas {
-    width: 250px !important;
+  .main-con {
+    min-height: calc(100vh - 156.31px) !important;
   }
 }

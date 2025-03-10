@@ -36,31 +36,33 @@
       <h4>Your items (<%= cartItems.length %>)</h4>
       <div class="row carts mt-4">
         <!-- Main cart items -->
-        <div class="col-8 main-cart">
+        <div class="col-12 col-lg-8 main-cart">
           <% cartItems.forEach(function(item) { %>
           <div class="row inner-cart mb-3">
-            <div class="col-auto img-sec">
-              <!-- Display the product image from the first image in the array -->
-              <img
-                src="<%= item.productId.images[0].cropped_url || item.productId.images[0].original_url %>"
-                alt="book-cover"
-              />
+            <div class="col-12 col-sm-auto img-sec">
+              <div class="d-flex" style="justify-content: center">
+                <img
+                  src="<%= item.productId.images[0].cropped_url || item.productId.images[0].original_url %>"
+                  alt="book-cover"
+                />
+              </div>
             </div>
-            <div class="col info-sec">
+            <div class="col-12 col-sm info-sec">
               <div class="row info-sec-sub text-center">
                 <div class="col-3">
                   <div class="row h-100" style="align-items: center">
                     <p class="m-0">
-                      <%= item.productId.name %> <br />
-                      <small class="text-muted"
-                        ><%= item.productId.category %></small
-                      >
+                      <%= item.productId.name %>
+                      <br />
+                      <small class="text-muted">
+                        <%= item.productId.category %>
+                      </small>
                     </p>
                     <% if (item.productId.count <= 5) {%>
                     <p>
-                      <small style="color: orange"
-                        ><%= item.productId.count %> books left</small
-                      >
+                      <small style="color: orange">
+                        <%= item.productId.count %> books left
+                      </small>
                     </p>
                     <% } %>
                   </div>
@@ -78,18 +80,20 @@
                     class="row h-100 w-100"
                     style="align-items: center; justify-content: center"
                   >
-                    <div class="col-auto">
+                    <div class="col-12 col-xxl-auto">
                       <button class="plus" data-id="<%= item._id %>">+</button>
                     </div>
-                    <div class="col-auto">
-                      <input
-                        type="text"
-                        class="form-control quantity-input"
-                        value="<%= item.quantity %>"
-                        readonly
-                      />
+                    <div class="col-12 col-xxl-auto">
+                      <div class="d-flex" style="justify-content: center">
+                        <input
+                          type="text"
+                          class="form-control quantity-input"
+                          value="<%= item.quantity %>"
+                          readonly
+                        />
+                      </div>
                     </div>
-                    <div class="col-auto">
+                    <div class="col-12 col-xxl-auto">
                       <button class="minus" data-id="<%= item._id %>">─</button>
                     </div>
                   </div>
@@ -111,8 +115,8 @@
         </div>
 
         <!-- Price details section -->
-        <div class="col-3 price-details" style="max-height: 300px">
-          <div class="row h-100" style="flex-direction: column">
+        <div class="col-12 col-lg-3 price-details">
+          <div class="row" style="flex-direction: column">
             <div class="col-auto my-2 text-center">
               <h5>Product details</h5>
             </div>
@@ -145,10 +149,10 @@
                   totalAfterDiscount + deliveryCharge; %>
                   <p><small>₹ <%= totalOriginalPrice.toFixed(2) %></small></p>
                   <p>
-                    <small
-                      >₹ <%= totalDiscountAmount.toFixed(2) %> off (<%=
-                      overallDiscountPercentage.toFixed(2) %>% off)</small
-                    >
+                    <small>
+                      ₹ <%= totalDiscountAmount.toFixed(2) %> off (<%=
+                      overallDiscountPercentage.toFixed(2) %>% off)
+                    </small>
                   </p>
                   <% if (totalAfterDiscount.toFixed(2) > 500) {%>
                   <p><small style="color: green">Free</small></p>
@@ -162,7 +166,7 @@
           </div>
           <div class="row">
             <div class="col mt-3">
-              <div class="row my-2">
+              <div class="row my-2" style="justify-content: center">
                 <a
                   href="/user/checkout"
                   class="low-button text-center"
@@ -177,7 +181,7 @@
                   Proceed to checkout
                 </a>
               </div>
-              <div class="row my-2">
+              <div class="row my-2" style="justify-content: center">
                 <a
                   href="/user/shop"
                   class="text-center low-button"

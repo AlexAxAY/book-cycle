@@ -43,7 +43,12 @@ document.addEventListener("DOMContentLoaded", function () {
       orders.forEach((order) => {
         let orderItemsHTML = "";
         order.order_items.forEach((item) => {
-          orderItemsHTML += `<p class="m-0">🕮 ${item.product.name}(${item.quantity})</p>`;
+          orderItemsHTML += `<p class="m-0">🕮 ${
+            item.product.name
+          } <small class = "text-muted">(${item.quantity} ${
+            item.quantity > 1 ? "books" : "book"
+          })</small></p>
+`;
         });
 
         const linkText =
@@ -52,9 +57,9 @@ document.addEventListener("DOMContentLoaded", function () {
             : "Track your order";
         let statusHTML = "";
         if (order.status === "Delivered") {
-          statusHTML = `<p class="mb-0 m-3 text-success"> Delivered <span style="color: green">⬤</span> </p>`;
+          statusHTML = `<p class="mb-0 m-3 text-success status"> Delivered <span style="color: green">⬤</span> </p>`;
         } else if (order.status === "Cancelled") {
-          statusHTML = `<p class="mb-0 m-3 text-danger"> Cancelled <span style="color: red">⬤</span> </p>`;
+          statusHTML = `<p class="mb-0 m-3 text-danger status"> Cancelled <span style="color: red">⬤</span> </p>`;
         }
 
         html += `<div class="order-container row mb-2">
