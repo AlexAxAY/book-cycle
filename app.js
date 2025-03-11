@@ -4,18 +4,22 @@ if (process.env.NODE_ENV !== "production") {
 
 const express = require("express");
 const session = require("express-session");
-const mongoose = require("mongoose");
 const MongoStore = require("connect-mongo");
 const helmet = require("helmet");
 const cors = require("cors");
 const methodOverride = require("method-override");
 const path = require("path");
-const { createAdmin } = require("./controllers/admin/adminAuth");
+const passport = require("passport");
+const flash = require("connect-flash");
+
 const adminRoutes = require("./routes/adminRoutes");
 const userRoutes = require("./routes/userRoutes");
 const googleAuthRoutes = require("./routes/googleAuthRoutes");
-const passport = require("passport");
-const flash = require("connect-flash");
+const {
+  customMiddleware,
+  setHeaderMiddleware,
+} = require("./middleware/main/appMiddlewares");
+const connectDB = require("./config/mongo");
 
 const PORT = process.env.PORT;
 
@@ -46,7 +50,7 @@ app.use(
       sameSite: "lax",
     },
     store: MongoStore.create({
-      mongoUrl: "mongodb://127.0.0.1:27017/book-cycle",
+      mongoUrl: process.env.MONGO,
       collectionName: "sessions",
     }),
   })
@@ -57,37 +61,16 @@ app.use(flash());
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.use((req, res, next) => {
-  if (req.session.user) {
-    req.user = req.session.user;
-    res.locals.user = req.user;
-  } else {
-    res.locals.user = null;
-  }
-  res.locals.currentURL = req.originalUrl;
+// custom session assigning middleware
+app.use(customMiddleware);
 
-  res.locals.error = req.flash("error");
-  res.locals.success = req.flash("success");
-
-  next();
-});
-
-app.use((req, res, next) => {
-  res.setHeader(
-    "Content-Security-Policy",
-    "script-src 'self' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://code.jquery.com https://checkout.razorpay.com"
-  );
-  next();
-});
+// headers
+app.use(setHeaderMiddleware);
 
 // DB connection
-mongoose
-  .connect("mongodb://127.0.0.1:27017/book-cycle")
-  .then(() => console.log("Connected to Mongo DB!"))
-  .catch((error) => console.log(error));
+connectDB();
 
-createAdmin();
-
+// routes
 app.use("/admin", adminRoutes);
 app.use("/user", userRoutes);
 

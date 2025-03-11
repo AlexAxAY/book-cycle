@@ -6,14 +6,25 @@ const dashboard = async (req, res) => {
   try {
     const topProducts = await Order.aggregate([
       { $unwind: "$order_items" },
+
+      {
+        $match: {
+          status: { $ne: "Cancelled", $eq: "Delivered" },
+          "order_items.return_status": { $ne: "Approved" },
+        },
+      },
+
       {
         $group: {
           _id: "$order_items.product",
           totalQuantity: { $sum: "$order_items.quantity" },
         },
       },
+
       { $sort: { totalQuantity: -1 } },
+
       { $limit: 10 },
+
       {
         $lookup: {
           from: "products",
@@ -23,6 +34,7 @@ const dashboard = async (req, res) => {
         },
       },
       { $unwind: "$product" },
+
       {
         $project: {
           name: "$product.name",
@@ -34,6 +46,12 @@ const dashboard = async (req, res) => {
 
     const topCategories = await Order.aggregate([
       { $unwind: "$order_items" },
+      {
+        $match: {
+          status: { $ne: "Cancelled", $eq: "Delivered" },
+          "order_items.return_status": { $ne: "Approved" },
+        },
+      },
       {
         $lookup: {
           from: "products",

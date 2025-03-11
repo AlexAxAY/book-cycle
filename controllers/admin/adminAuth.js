@@ -1,28 +1,6 @@
 const User = require("../../models/userSchema");
 const bcrypt = require("bcrypt");
 
-const createAdmin = async (req, res) => {
-  const adminEmail = process.env.ADMIN;
-  const adminPass = process.env.PASS;
-  try {
-    const Admin = await User.findOne({ email: adminEmail });
-    if (Admin) {
-      return null;
-    } else {
-      const hashedPassword = await bcrypt.hash(adminPass, 12);
-      const admin = new User({
-        email: adminEmail,
-        password: hashedPassword,
-        isAdmin: true,
-      });
-
-      admin.save();
-    }
-  } catch (err) {
-    console.log("Error in creating the admin", err);
-  }
-};
-
 // Navigates to the login page
 const viewAdminLoginPage = async (req, res) => {
   return res.render("adminPanel/adminLogin");
@@ -109,4 +87,4 @@ const adminLogout = async (req, res) => {
   });
 };
 
-module.exports = { createAdmin, viewAdminLoginPage, adminLogin, adminLogout };
+module.exports = { viewAdminLoginPage, adminLogin, adminLogout };
