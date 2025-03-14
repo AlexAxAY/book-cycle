@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Shop</title>
+
+    <!-- css -->
+    <link rel="stylesheet" href="/user/stylesheets/retryPayment.css" />
+
+    <!-- icon link -->
+    <%- include("../partials/user/iconLink.ejs") %>
+
+    <!-- bootstrap link -->
+    <%- include("../partials/admin/bootLink.ejs") %>
+  </head>
+  <body>
+    <!-- alert -->
+    <%- include("../partials/user/alertMessage.ejs") %>
+
+    <!-- main section -->
+    <section
+      class="container d-flex text-center"
+      style="
+        min-height: 100vh;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      "
+    >
+      <input type="hidden" id="orderId" value="<%= orderId %>" />
+      <h2>Payment Failed</h2>
+      <p>
+        Unfortunately, your payment could not be processed. Please click the
+        button below to retry payment.
+      </p>
+      <button class="btn btn-dark" id="retryPaymentBtn">Retry Payment</button>
+      <p class="mt-3"><small>OR</small></p>
+      <a class="btn btn-primary" href="/user/home">Go Home</a>
+    </section>
+
+    <!-- Razorpay -->
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+    <!-- logout -->
+    <script src="/user/helper/logoutHelper.js"></script>
+
+    <!-- retry payment -->
+    <script src="/user/helper/retryPaymentHelper.js"></script>
+
+    <!-- Include Axios -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+    <!-- pending user clear -->
+    <script src="/user/helper/removePendingUser.js"></script>
+
+    <!-- bootstrap -->
+    <%- include("../partials/admin/bootScript.ejs") %>
+  </body>
+</html>

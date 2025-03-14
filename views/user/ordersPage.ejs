@@ -160,9 +160,13 @@
                           "
                           class="track-btn"
                         >
-                          <% if (order.status === "Cancelled" || order.status
-                          === "Delivered") { %> View order <% } else { %> Track
-                          your order <% } %>
+                        <% if (order.status === "Cancelled" || order.status === "Delivered") { %>
+                          View order
+                        <% } else if (order.status === "Pending") { %>
+                          Pending payment
+                        <% } else { %>
+                          Track your order
+                        <% } %>
                         </a>
                         <% if (order.status === "Delivered") {%>
                         <p class="mb-0 m-3 text-success status">

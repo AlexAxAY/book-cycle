@@ -133,8 +133,11 @@ const dashboard = async (req, res) => {
     const orders = await Order.find(query).populate("user_id");
 
     const validOrders = orders.filter(
-      (order) => !(order.status === "Cancelled" && order.payment_type === "COD")
+      (order) =>
+        order.status !== "Pending" &&
+        !(order.status === "Cancelled" && order.payment_type === "COD")
     );
+
     const totalOrders = orders.length;
 
     const totalDiscount = orders.reduce((acc, order) => {

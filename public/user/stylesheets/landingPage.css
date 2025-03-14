@@ -155,6 +155,9 @@ a:hover {
 #contact-us {
   font-size: 1.25rem !important;
 }
+.offcanvas-body {
+  margin-right: 45px;
+}
 
 /* apply this on every user template */
 @media (max-width: 767px) {

@@ -70,8 +70,11 @@ body {
   background-color: green !important;
 }
 
-/* apply this on every user template */
+.offcanvas-body {
+  margin-right: 45px;
+}
 
+/* apply this on every user template */
 @media (max-width: 992px) {
   .offcanvas-body {
     margin-left: 0px !important;

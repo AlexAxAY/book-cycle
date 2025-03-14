@@ -16,7 +16,7 @@ let originalFinalTotal = parseFloat(
   originalOrderSummary.finalTotal.replace("₹", "").trim()
 );
 
-// Optionally, fetch and display the current wallet balance on page load.
+// fetch and display the current wallet balance on page load.
 async function fetchAndDisplayWalletBalance() {
   try {
     const response = await axios.get("/user/wallet-balance", {
@@ -26,7 +26,6 @@ async function fetchAndDisplayWalletBalance() {
     document.getElementById("currentWalletBalance").textContent =
       "Wallet Balance: ₹ " + walletBalance.toFixed(2);
   } catch (error) {
-    console.error("Error fetching wallet balance:", error);
     document.getElementById("currentWalletBalance").textContent =
       "Wallet Balance: Error fetching balance";
   }
@@ -276,6 +275,7 @@ document
   .addEventListener("click", async function () {
     const addressId = getSelectedAddressId();
     const paymentMethod = getSelectedPaymentMethod();
+    const resumedOrderId = document.getElementById("resumedOrderId").value;
 
     if (!addressId) {
       showAlert(".alert-bad", "Please select a shipping address.");
@@ -303,6 +303,8 @@ document
         couponCode: window.appliedCoupon,
         walletApplied: walletApplied,
         walletAmount: appliedWalletAmount,
+        orderId: resumedOrderId,
+        resumedOrder: resumedOrderId ? true : false,
       });
 
       if (response.data.razorpay) {
@@ -320,13 +322,22 @@ document
                 paymentId: paymentResponse.razorpay_payment_id,
                 orderIdRazor: paymentResponse.razorpay_order_id,
                 signature: paymentResponse.razorpay_signature,
+                walletAmount: appliedWalletAmount,
               });
               showAlert(".alert-good", "Payment successful!");
               setTimeout(() => {
                 window.location.replace(`/user/order/${response.data.orderId}`);
               }, 500);
             } catch (err) {
-              showAlert(".alert-bad", "Payment verification failed.");
+              setTimeout(() => {
+                showAlert(".alert-bad", "Payment verification failed.");
+                if (walletApplied) {
+                  localStorage.setItem("w", appliedWalletAmount);
+                }
+                window.location.replace(
+                  `/user/payment-failed?orderId=${response.data.orderId}`
+                );
+              }, 500);
             }
           },
           prefill: {
@@ -347,7 +358,6 @@ document
           window.location.replace(`/user/order/${response.data.orderId}`);
         }, 500);
       } else if (response.data.partial) {
-        // Handle partial confirmation logic
         const confirmModal = new bootstrap.Modal(
           document.getElementById("confirmModal")
         );
@@ -375,11 +385,7 @@ document
               showAlert(".alert-bad", resp.data.message);
             }
           } catch (err) {
-            console.error(err);
-            showAlert(
-              ".alert-bad",
-              "An error occurred. Please try again later."
-            );
+            showAlert(".alert-bad", "An error occurred");
           }
         };
       } else {
@@ -405,7 +411,6 @@ document
           );
         }
       } else {
-        console.error("Error placing order:", error);
         showAlert(".alert-bad", "An error occurred. Please try again later.");
       }
     }
@@ -414,7 +419,6 @@ document
 function showAlert(selector, message) {
   const alertEl = document.querySelector(selector);
   if (!alertEl) {
-    console.error("Alert element not found for selector:", selector);
     return;
   }
   alertEl.textContent = message;

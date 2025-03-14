@@ -292,7 +292,7 @@
       <p>Estimated total</p>
     </div>
     <div class="col text-end">
-      <p id="finalTotal">₹<%= checkoutData.finalTotal %></p>
+      <p id="finalTotal">₹ <%= checkoutData.finalTotal.toFixed(2) %></p>
     </div>
   </div>
 </div>
@@ -335,6 +335,9 @@
         </div>
       </div>
     </div>
+
+    <!-- resume booking -->
+    <input type="hidden" id="resumedOrderId" value="<%= isResume ? isResume : null %>">
 
     <!-- Modal Confirmation (hidden by default) -->
     <div

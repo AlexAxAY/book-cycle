@@ -22,7 +22,6 @@ const {
 const connectDB = require("./config/mongo");
 
 const PORT = process.env.PORT;
-
 const app = express();
 
 // middlewares

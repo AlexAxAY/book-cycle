@@ -77,7 +77,9 @@ const salesReportPage = async (req, res) => {
       .limit(limit);
 
     const validOrders = orders.filter(
-      (order) => !(order.status === "Cancelled" && order.payment_type === "COD")
+      (order) =>
+        order.status !== "Pending" &&
+        !(order.status === "Cancelled" && order.payment_type === "COD")
     );
 
     const totalOrders = ordersCount;

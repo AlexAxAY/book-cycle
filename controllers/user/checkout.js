@@ -2,78 +2,112 @@ const { Cart, CartItem } = require("../../models/cartSchemas");
 const { Coupon, CouponUsage } = require("../../models/couponSchemas");
 const Address = require("../../models/addressSchema");
 const State = require("../../models/stateSchema");
+const Order = require("../../models/orderSchema");
+const Product = require("../../models/productSchema");
 
 const checkoutPage = async (req, res) => {
   try {
     const userId = req.user.id;
-
-    const cart = await Cart.findOne({ userId });
-    if (!cart) {
-      req.flash("error", "Your cart is empty.");
-      return res.redirect("/user/cart");
-    }
-
-    const cartItems = await CartItem.find({ cartId: cart._id }).populate(
-      "productId"
-    );
-
-    if (cartItems.length === 0) {
-      req.flash("error", "Your cart is empty!");
-      return res.redirect("/user/cart");
-    }
-
-    const validCartItems = cartItems.filter(
-      (item) => item.productId && item.productId.count > 0
-    );
-    const invalidCartItems = cartItems.filter(
-      (item) => !item.productId || item.productId.count <= 0
-    );
-
-    if (invalidCartItems.length > 0) {
-      const invalidIds = invalidCartItems.map((item) => item._id);
-      await CartItem.deleteMany({ _id: { $in: invalidIds } });
-    }
-
-    if (validCartItems.length === 0) {
-      req.flash(
-        "error",
-        "All items in your cart are out of stock. Please update your cart."
-      );
-      return res.redirect("/user/cart");
-    }
-
-    const insufficientItems = validCartItems.filter(
-      (item) => item.quantity > item.productId.count
-    );
-    if (insufficientItems.length > 0) {
-      const errorMsg = insufficientItems
-        .map(
-          (item) =>
-            `${item.productId.name || "Product"} has ${
-              item.productId.count
-            } in stock but you opted for ${item.quantity}`
-        )
-        .join(" ");
-      req.flash("error", errorMsg);
-      return res.redirect("/user/cart");
-    }
-
+    let validCartItems = [];
     let outOfStockMessage = "";
-    if (validCartItems.length < cartItems.length) {
-      outOfStockMessage =
-        "Some items in your cart are out of stock and have been removed.";
-    }
-
     let totalOriginalPrice = 0;
     let totalDiscountAmount = 0;
     let totalItems = 0;
+
+    if (req.query.orderId) {
+      const order = await Order.findOne({
+        _id: req.query.orderId,
+        user_id: userId,
+        status: "Pending",
+      }).populate("order_items.product");
+
+      if (!order) {
+        req.flash("error", "Pending order not found.");
+        return res.redirect("/user/cart");
+      }
+
+      for (const orderItem of order.order_items) {
+        const freshProduct = await Product.findById(orderItem.product._id);
+
+        if (freshProduct && freshProduct.count > 0) {
+          validCartItems.push({
+            productId: freshProduct,
+            quantity: orderItem.quantity,
+          });
+        }
+      }
+
+      if (validCartItems.length === 0) {
+        req.flash(
+          "error",
+          "All items in your order are out of stock. Please update your cart."
+        );
+        return res.redirect("/user/cart");
+      }
+    } else {
+      const cart = await Cart.findOne({ userId });
+      if (!cart) {
+        req.flash("error", "Your cart is empty.");
+        return res.redirect("/user/cart");
+      }
+
+      const cartItems = await CartItem.find({ cartId: cart._id }).populate(
+        "productId"
+      );
+      if (cartItems.length === 0) {
+        req.flash("error", "Your cart is empty!");
+        return res.redirect("/user/cart");
+      }
+
+      const validItems = cartItems.filter(
+        (item) => item.productId && item.productId.count > 0
+      );
+      const invalidItems = cartItems.filter(
+        (item) => !item.productId || item.productId.count <= 0
+      );
+      if (invalidItems.length > 0) {
+        const invalidIds = invalidItems.map((item) => item._id);
+        await CartItem.deleteMany({ _id: { $in: invalidIds } });
+      }
+      if (validItems.length === 0) {
+        req.flash(
+          "error",
+          "All items in your cart are out of stock. Please update your cart."
+        );
+        return res.redirect("/user/cart");
+      }
+
+      const insufficientItems = validItems.filter(
+        (item) => item.quantity > item.productId.count
+      );
+      if (insufficientItems.length > 0) {
+        const errorMsg = insufficientItems
+          .map(
+            (item) =>
+              `${item.productId.name || "Product"} has ${
+                item.productId.count
+              } in stock but you opted for ${item.quantity}`
+          )
+          .join(" ");
+        req.flash("error", errorMsg);
+        return res.redirect("/user/cart");
+      }
+
+      if (validItems.length < cartItems.length) {
+        outOfStockMessage =
+          "Some items in your cart are out of stock and have been removed.";
+      }
+      validCartItems = validItems.map((item) => ({
+        productId: item.productId,
+        quantity: item.quantity,
+      }));
+    }
 
     validCartItems.forEach((item) => {
       const price = item.productId.price;
       const quantity = item.quantity;
       totalOriginalPrice += price * quantity;
       totalItems += quantity;
-
       if (item.productId.discount_type === "percentage") {
         totalDiscountAmount +=
           price * (item.productId.discount / 100) * quantity;
@@ -114,6 +148,7 @@ const checkoutPage = async (req, res) => {
       states,
       validCartItems,
       coupons: availableCoupons,
+      isResume: req.query.orderId || null,
     });
   } catch (error) {
     req.flash("error", "Server error. Please try again later.");

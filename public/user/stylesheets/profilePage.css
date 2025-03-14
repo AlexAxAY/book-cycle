@@ -76,6 +76,10 @@ body {
   text-decoration: underline;
 }
 
+.offcanvas-body {
+  margin-right: 45px;
+}
+
 /* apply this on every user template */
 @media (max-width: 992px) {
   .offcanvas-body {

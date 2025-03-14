@@ -71,7 +71,7 @@ const getSingleOrder = async (req, res) => {
     const cancel = await Cancel.findOne({ order_id: id });
     let orderCancelled = null;
 
-    const orderCreated = moment(order.createdAt).format("MMMM Do YYYY, h:mm A");
+    const orderCreated = moment(order.updatedAt).format("MMMM Do YYYY, h:mm A");
     if (cancel) {
       orderCancelled = moment(cancel.createdAt).format("MMMM Do YYYY, h:mm A");
     }

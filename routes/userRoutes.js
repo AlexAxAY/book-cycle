@@ -37,7 +37,11 @@ const {
   addMoneyToWallet,
 } = require("../controllers/user/wallet");
 
-const { verifyPayment } = require("../controllers/user/payment");
+const {
+  verifyPayment,
+  paymentFailedPage,
+  retryPayment,
+} = require("../controllers/user/payment");
 
 // user coupons
 const { viewCoupons } = require("../controllers/user/coupon");
@@ -224,6 +228,12 @@ router
 
 // coupon route
 router.route("/coupons").get(checkingAuth, viewCoupons);
+
+// payment routes
 router.route("/verify-payment").post(checkingAuth, verifyPayment);
+router
+  .route("/payment-failed")
+  .get(checkingAuth, preventCache, paymentFailedPage);
+router.route("/retry-payment").post(checkingAuth, preventCache, retryPayment);
 
 module.exports = router;
