@@ -62,7 +62,7 @@
                     id="bestSellingProduct"
                     class="fs-5 text-center price text-success"
                   >
-                  1. <%= topProducts && topProducts.length > 0 ? topProducts[0].name : "No top product" %>
+                  1. <%= topProducts && topProducts.length > 0 ? topProducts[0].name  : "No top product" %>
                   </p>
                   <p class="text-center">
                     Best Seller
@@ -194,7 +194,7 @@
             <% for (let i=0;i< topProducts.length; i++){ %>
             <p>
               <%= i+1 %>.
-              <span><%= topProducts[i].name %></span>
+              <span><%= topProducts[i].name %> (<%= topProducts[i].totalQuantity %>)</span>
             </p>
             <% } %>
           </div>
@@ -237,7 +237,7 @@
             <% for (let i=0;i< topCategories.length; i++){ %>
             <p>
               <%= i+1 %>.
-              <span><%= topCategories[i].name %></span>
+              <span><%= topCategories[i].name %> (<%= topCategories[i].totalQuantity %>)</span>
             </p>
             <% } %>
           </div>

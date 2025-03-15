@@ -332,6 +332,7 @@ document
               setTimeout(() => {
                 showAlert(".alert-bad", "Payment verification failed.");
                 if (walletApplied) {
+                  localStorage.removeItem("w");
                   localStorage.setItem("w", appliedWalletAmount);
                 }
                 window.location.replace(

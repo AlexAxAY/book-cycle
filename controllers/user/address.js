@@ -130,11 +130,9 @@ const addAddress = async (req, res) => {
 const viewAllAddress = async (req, res) => {
   try {
     const userId = req.user ? req.user.id : null;
-    if (userId === null) {
-      console.log(userId);
-    }
+
     const user = await User.findOne({ _id: userId });
-    const addresses = await Address.find();
+    const addresses = await Address.find({ user_id: userId });
     return res.render("user/viewAddress", { user, addresses });
   } catch (err) {
     return res.status(500).render("utils/userErrorPage", {

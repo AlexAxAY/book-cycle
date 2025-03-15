@@ -8,4 +8,13 @@ function generateCustomWalletId() {
   return `WLT-${Date.now()}-${randomNum}`;
 }
 
-module.exports = { generateCustomOrderId, generateCustomWalletId };
+function generateRefId() {
+  const randomNum = Math.floor(1000 + Math.random() * 9000);
+  return `RF${(Date.now() % 1e6).toString(36).toUpperCase()}${randomNum}`;
+}
+
+module.exports = {
+  generateCustomOrderId,
+  generateCustomWalletId,
+  generateRefId,
+};

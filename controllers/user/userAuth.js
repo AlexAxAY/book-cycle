@@ -1,6 +1,11 @@
 const User = require("../../models/userSchema");
 const Otp = require("../../models/otpSchema");
 const jwt = require("jsonwebtoken");
+const { Wallet, WalletTransaction } = require("../../models/walletSchemas");
+const {
+  generateRefId,
+  generateCustomWalletId,
+} = require("../../services/randomOrderId");
 
 const {
   transporter,
@@ -25,8 +30,9 @@ const registerForm = async (req, res) => {
 // register user
 const register = async (req, res) => {
   try {
-    const { name, email, password, confirmPassword } = req.body;
+    const { name, email, password, confirmPassword, referralCode } = req.body;
 
+    // Validate required fields
     if (!name || !email || !password || !confirmPassword) {
       return res
         .status(400)
@@ -46,6 +52,7 @@ const register = async (req, res) => {
         .json({ success: false, message: "User already exists." });
     }
 
+    // Hash password
     const hashedPassword = await bcrypt.hash(password, 12);
 
     const newUser = new User({
@@ -53,13 +60,65 @@ const register = async (req, res) => {
       email,
       password: hashedPassword,
       isVerified: false,
+      ref_id: generateRefId(),
     });
+
+    let referrer = null;
+    if (referralCode) {
+      const referralRegex = /^RF[A-Za-z0-9]{8}$/;
+      if (!referralRegex.test(referralCode)) {
+        return res
+          .status(400)
+          .json({ success: false, message: "Invalid referral code format." });
+      }
+
+      referrer = await User.findOne({ ref_id: referralCode });
+      if (!referrer) {
+        return res
+          .status(400)
+          .json({ success: false, message: "Invalid referral code." });
+      }
+
+      newUser.referred_by = referrer._id;
+    }
 
     await newUser.save();
 
+    let newUserWallet = await Wallet.findOne({ user: newUser._id });
+    if (!newUserWallet) {
+      newUserWallet = new Wallet({ user: newUser._id, balance: 0 });
+    }
+
+    if (referralCode && referrer) {
+      newUserWallet.balance += 50;
+      await newUserWallet.save();
+      const newUserTransaction = new WalletTransaction({
+        wallet: newUserWallet._id,
+        type: "credit",
+        amount: 50,
+        custom_wallet_id: generateCustomWalletId(),
+        description: "Referral bonus for using referral code",
+      });
+      await newUserTransaction.save();
+
+      let referrerWallet = await Wallet.findOne({ user: referrer._id });
+      if (!referrerWallet) {
+        referrerWallet = new Wallet({ user: referrer._id, balance: 0 });
+      }
+      referrerWallet.balance += 200;
+      await referrerWallet.save();
+      const referrerTransaction = new WalletTransaction({
+        wallet: referrerWallet._id,
+        type: "credit",
+        amount: 200,
+        custom_wallet_id: generateCustomWalletId(),
+        description: "Referral bonus for referring a new user",
+      });
+      await referrerTransaction.save();
+    }
+
     const otp = generateOtp();
     const expiresAt = expiringTime();
-
     await Otp.findOneAndUpdate(
       { email },
       { otp, expiresAt },
@@ -70,11 +129,7 @@ const register = async (req, res) => {
       from: '"Book Cycle®" <alexaxay10619@gmail.com>',
       to: email,
       subject: "Your OTP for Email Verification",
-      html: getOtpEmailTemplate({
-        name,
-        otp,
-        expiryMinutes: 2,
-      }),
+      html: getOtpEmailTemplate({ name, otp, expiryMinutes: 2 }),
     };
 
     transporter.sendMail(mailOptions, (err, info) => {
@@ -85,10 +140,7 @@ const register = async (req, res) => {
       }
     });
 
-    const tokenPayload = {
-      id: newUser._id,
-    };
-
+    const tokenPayload = { id: newUser._id };
     const token = jwt.sign(tokenPayload, process.env.JWT_SECRET);
 
     res.json({
@@ -100,7 +152,8 @@ const register = async (req, res) => {
       redirectTo: "/user/verify-otp",
     });
   } catch (error) {
-    res.status(500).json({ success: false, message: "Internal server error." });
+    console.error("Registration error:", error);
+    res.status(500).json({ success: false, message: "Server error." });
   }
 };
 

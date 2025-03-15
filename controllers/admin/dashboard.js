@@ -97,7 +97,7 @@ const dashboard = async (req, res) => {
       currentFilter = "custom";
     } else if (filter) {
       if (filter === "weekly") {
-        // Current week: Sunday to Saturday
+        // Sunday to Saturday
         startDate = new Date(now);
         startDate.setDate(now.getDate() - now.getDay());
         startDate.setHours(0, 0, 0, 0);

@@ -1,5 +1,6 @@
 const crypto = require("crypto");
 const Payment = require("../../models/paymentSchema");
+const razorpayInstance = require("../../services/razorpay");
 const { Cart, CartItem } = require("../../models/cartSchemas");
 const { Wallet, WalletTransaction } = require("../../models/walletSchemas");
 const { generateCustomWalletId } = require("../../services/randomOrderId");
@@ -30,6 +31,7 @@ const verifyPayment = async (req, res) => {
   try {
     const { orderId, paymentId, orderIdRazor, signature, walletAmount } =
       req.body;
+
     const generatedSignature = crypto
       .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET)
       .update(orderIdRazor + "|" + paymentId)
@@ -121,9 +123,8 @@ const paymentFailedPage = async (req, res) => {
       throw new Error("Order not found or invalid status");
     }
 
-    res.render("user/paymentFailed", { orderId });
+    res.render("user/retryPayment", { orderId });
   } catch (error) {
-    console.error(error.message);
     return res.redirect("/user/home");
   }
 };

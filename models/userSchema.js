@@ -9,6 +9,12 @@ const userSchema = new mongoose.Schema(
     googleId: { type: String, default: null },
     isVerified: { type: Boolean, default: false },
     isAdmin: { type: Boolean, default: false },
+    ref_id: { type: String, default: null, unique: true },
+    referred_by: {
+      type: mongoose.Schema.Types.ObjectId,
+      default: null,
+      ref: "User",
+    },
     isBlocked: { type: Boolean, default: false },
   },
   { timestamps: true }

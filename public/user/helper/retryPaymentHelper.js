@@ -42,10 +42,10 @@ document
         rzp.open();
       }
     } catch (error) {
-      showAlert(
-        ".alert-bad",
-        "An error occurred while retrying payment. Please try again later."
-      );
+      const errMesg =
+        error.response.data.message ||
+        "An error occurred while retrying payment. Please try again later.";
+      showAlert(".alert-bad", errMesg);
     }
   });
 
