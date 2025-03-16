@@ -185,7 +185,6 @@ const allReviews = async (req, res) => {
     }).populate("product_id");
     return res.render("user/allReviews", { reviews, moment });
   } catch (err) {
-    console.log("Error from allReviews controller", err);
     return res.status(500).send("An error occurred while fetching reviews");
   }
 };

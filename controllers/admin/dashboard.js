@@ -291,7 +291,6 @@ const dashboard = async (req, res) => {
       toDate: endDate,
     });
   } catch (error) {
-    console.error("Error fetching dashboard stats:", error);
     return res.status(500).json({ success: false, message: "Server error" });
   }
 };

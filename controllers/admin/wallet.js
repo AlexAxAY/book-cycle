@@ -71,18 +71,21 @@ const walletPage = async (req, res) => {
   }
 };
 
-const singleWalletInfo = async (req, res) => {
+const singleWalletInfo = async (req, res, next) => {
   try {
     const { id } = req.params;
     const wallet = await WalletTransaction.findById(id).populate({
       path: "wallet",
       populate: { path: "user" },
     });
+    if (!wallet) {
+      const error = new Error("Wallet information not found");
+      error.statusCode = 404;
+      throw error;
+    }
     return res.render("adminPanel/walletInfo", { wallet, moment });
   } catch (err) {
-    return res
-      .status(500)
-      .render("utils/errorPage", { statusCode: 500, message: "Server error!" });
+    next(err);
   }
 };
 

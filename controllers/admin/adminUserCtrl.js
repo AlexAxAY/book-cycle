@@ -124,15 +124,14 @@ const unblockUser = async (req, res) => {
   }
 };
 
-const userDetailsPage = async (req, res) => {
+const userDetailsPage = async (req, res, next) => {
   try {
     const { id } = req.params;
     const user = await User.findOne({ _id: id });
     if (!user) {
-      return res.status(404).render("utils/errorPage", {
-        statusCode: 404,
-        message: "The user doesn't exist!",
-      });
+      const error = new Error("User not found");
+      error.statusCode = 404;
+      throw error;
     } else {
       const formattedDate = moment(user.createdAt).format("Do MMM YYYY");
       return res.status(200).render("adminPanel/userDetails", {
@@ -140,10 +139,7 @@ const userDetailsPage = async (req, res) => {
       });
     }
   } catch (err) {
-    return res.status(500).render("utils/errorPage", {
-      statusCode: 500,
-      message: "Server Error!",
-    });
+    next(err);
   }
 };
 

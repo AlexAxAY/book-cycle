@@ -59,14 +59,16 @@ const allOrders = async (req, res) => {
   }
 };
 
-const getSingleOrder = async (req, res) => {
+const getSingleOrder = async (req, res, next) => {
   try {
     const { id } = req.params;
     const order = await Order.findById(id)
       .populate("user_id")
       .populate({ path: "order_items.product" });
     if (!order) {
-      return res.status(404).send("Order not found");
+      const error = new Error("Order not found");
+      error.statusCode = 404;
+      throw error;
     }
     const cancel = await Cancel.findOne({ order_id: id });
     let orderCancelled = null;
@@ -94,23 +96,20 @@ const getSingleOrder = async (req, res) => {
       returnDecisions,
     });
   } catch (err) {
-    return res.status(500).render("utils/errorPage", {
-      statusCode: 500,
-      message: "Server Error!",
-    });
+    next(err);
   }
 };
 
-const updateOrderStatus = async (req, res) => {
+const updateOrderStatus = async (req, res, next) => {
   try {
     const { id } = req.params;
     const { status, reason } = req.body;
 
     const order = await Order.findById(id);
     if (!order) {
-      return res
-        .status(404)
-        .json({ success: false, message: "Order not found" });
+      const error = new Error("Order not found");
+      error.statusCode = 404;
+      throw error;
     }
 
     let validTransitions = [];
@@ -183,7 +182,7 @@ const updateOrderStatus = async (req, res) => {
       message: "Order status updated successfully",
     });
   } catch (err) {
-    return res.status(500).json({ success: false, message: "Server error" });
+    next(err);
   }
 };
 

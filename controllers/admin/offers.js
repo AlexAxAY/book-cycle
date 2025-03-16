@@ -3,17 +3,14 @@ const Product = require("../../models/productSchema");
 const Offer = require("../../models/offerSchema");
 const moment = require("moment");
 
-const offerModulePage = async (req, res) => {
+const offerModulePage = async (req, res, next) => {
   try {
     const categories = await Category.find({ is_deleted: false });
     const products = await Product.find({ is_deleted: false });
 
     return res.render("adminPanel/offerModule", { categories, products });
   } catch (err) {
-    return res.status(500).render("utils/errorPage", {
-      statusCode: 500,
-      message: "Server Error!",
-    });
+    next(err);
   }
 };
 
@@ -275,10 +272,7 @@ const viewOffers = async (req, res) => {
       return res.render("adminPanel/viewOffers", { offers, moment });
     }
   } catch (err) {
-    return res.status(500).render("utils/errorPage", {
-      statusCode: 500,
-      message: "Server Error!",
-    });
+    next(err);
   }
 };
 

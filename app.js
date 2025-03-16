@@ -20,6 +20,10 @@ const {
   setHeaderMiddleware,
 } = require("./middleware/main/appMiddlewares");
 const connectDB = require("./config/mongo");
+const {
+  invalidURL,
+  errorHandler,
+} = require("./middleware/main/errorHandlingMiddleware.js");
 
 const PORT = process.env.PORT;
 const app = express();
@@ -76,6 +80,8 @@ app.use("/user", userRoutes);
 // G-auth route
 app.use("/", googleAuthRoutes);
 
-app.listen(PORT, () => {
-  console.log(`Server is running on ${PORT}`);
-});
+// Error handling middleware
+app.use(invalidURL);
+app.use(errorHandler);
+
+app.listen(PORT);

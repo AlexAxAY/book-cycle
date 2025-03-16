@@ -34,7 +34,7 @@ const addBanner = async (req, res) => {
   }
 };
 
-const viewAllBanners = async (req, res) => {
+const viewAllBanners = async (req, res, next) => {
   try {
     const page = parseInt(req.query.page) || 1;
     const limit = 20;
@@ -51,28 +51,25 @@ const viewAllBanners = async (req, res) => {
       totalPages,
     });
   } catch (err) {
-    return res
-      .status(500)
-      .render("utils/errorPage", { statusCode: 500, message: "Server error!" });
+    next(err);
   }
 };
 
-const deleteBanner = async (req, res) => {
+const deleteBanner = async (req, res, next) => {
   try {
     const { id } = req.params;
     const dlt = await Banner.findByIdAndDelete(id);
     if (!dlt) {
-      return res.status(400).send("Product not found!");
+      const error = new Error("Banner not found");
+      error.statusCode = 404;
+      throw error;
     }
     return res.status(200).json({
       success: true,
       message: "Banner deleted successfully!!",
     });
   } catch (err) {
-    return res.status(500).json({
-      success: false,
-      message: "Server error! Cant delete the banner!",
-    });
+    next(err);
   }
 };
 

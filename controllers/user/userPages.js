@@ -5,7 +5,7 @@ const Review = require("../../models/ratingSchema");
 const moment = require("moment");
 
 // landing page get
-const landingPage = async (req, res) => {
+const landingPage = async (req, res, next) => {
   try {
     const products = await Product.find({ is_deleted: false });
     const banners = await Banner.find();
@@ -14,14 +14,11 @@ const landingPage = async (req, res) => {
       banners,
     });
   } catch (err) {
-    return res.status(500).render("utils/userErrorPage", {
-      statusCode: 500,
-      message: "Server error!",
-    });
+    next(err);
   }
 };
 
-const shoppingPage = async (req, res) => {
+const shoppingPage = async (req, res, next) => {
   try {
     const { search, category, minPrice, maxPrice, rating, sort, page } =
       req.query;
@@ -111,15 +108,12 @@ const shoppingPage = async (req, res) => {
       currentPage,
     });
   } catch (error) {
-    return res.status(500).render("utils/userErrorPage", {
-      statusCode: 500,
-      message: "Server error!",
-    });
+    next(error);
   }
 };
 
 // single product page get
-const singlePage = async (req, res) => {
+const singlePage = async (req, res, next) => {
   try {
     const { id } = req.params;
     const product = await Product.findById(id);
@@ -150,10 +144,7 @@ const singlePage = async (req, res) => {
       reviews,
     });
   } catch (err) {
-    return res.status(500).render("utils/userErrorPage", {
-      statusCode: 500,
-      message: "Server error!",
-    });
+    next(err);
   }
 };
 

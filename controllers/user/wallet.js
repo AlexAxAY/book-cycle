@@ -5,7 +5,7 @@ const { Wallet, WalletTransaction } = require("../../models/walletSchemas");
 const { generateCustomWalletId } = require("../../services/randomOrderId");
 const moment = require("moment");
 
-const viewWallet = async (req, res) => {
+const viewWallet = async (req, res, next) => {
   try {
     const userId = req.user ? req.user.id : null;
     const user = await User.findById(userId);
@@ -53,10 +53,7 @@ const viewWallet = async (req, res) => {
       currentPage: page,
     });
   } catch (err) {
-    return res.status(500).render("utils/userErrorPage", {
-      statusCode: 500,
-      message: "Server error!",
-    });
+    next(err);
   }
 };
 

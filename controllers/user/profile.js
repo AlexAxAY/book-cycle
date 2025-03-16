@@ -1,6 +1,6 @@
 const User = require("../../models/userSchema");
 
-const getProfile = async (req, res) => {
+const getProfile = async (req, res, next) => {
   try {
     const userId = req.user ? req.user.id : null;
     if (userId === null) {
@@ -9,14 +9,11 @@ const getProfile = async (req, res) => {
     const user = await User.findOne({ _id: userId });
     return res.status(200).render("user/profilePage", { user });
   } catch (err) {
-    return res.status(500).render("utils/userErrorPage", {
-      statusCode: 500,
-      message: "Server error!",
-    });
+    next(err);
   }
 };
 
-const updateProfile = async (req, res) => {
+const updateProfile = async (req, res, next) => {
   try {
     const userId = req.user ? req.user.id : null;
     if (!userId) {
@@ -79,7 +76,7 @@ const updateProfile = async (req, res) => {
       });
     }
   } catch (err) {
-    return res.status(500).json({ message: "Internal Server Error" });
+    next(err);
   }
 };
 

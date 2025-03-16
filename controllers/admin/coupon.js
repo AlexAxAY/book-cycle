@@ -4,17 +4,18 @@ const couponForm = async (req, res) => {
   return res.render("adminPanel/addCoupon");
 };
 
-const couponUpdateForm = async (req, res) => {
+const couponUpdateForm = async (req, res, next) => {
   try {
     const { id } = req.params;
     const coupon = await Coupon.findById(id);
     if (!coupon) {
-      console.log("No coupon found");
-      return res.send("No coupon found!");
+      const error = new Error("Coupon not found");
+      error.statusCode = 404;
+      throw error;
     }
     return res.render("adminPanel/updateCoupon", { coupon });
   } catch (err) {
-    console.log("error in couponUpdateForm controller", err);
+    next(err);
   }
 };
 
@@ -81,19 +82,17 @@ const addCoupon = async (req, res) => {
   }
 };
 
-const allCoupons = async (req, res) => {
+const allCoupons = async (req, res, next) => {
   try {
     const page = parseInt(req.query.page) || 1;
     const limit = 10;
     const skip = (page - 1) * limit;
 
-    // Retrieve the current page's coupons
     const coupons = await Coupon.find({ is_deleted: false })
       .sort({ _id: -1 })
       .skip(skip)
       .limit(limit);
 
-    // Get total count to calculate number of pages
     const totalCoupons = await Coupon.countDocuments({ is_deleted: false });
     const totalPages = Math.ceil(totalCoupons / limit);
 
@@ -103,8 +102,7 @@ const allCoupons = async (req, res) => {
       totalPages,
     });
   } catch (err) {
-    console.log("Error from allCoupons controller", err);
-    return res.status(500).send("Internal Server Error");
+    next(err);
   }
 };
 
@@ -121,7 +119,6 @@ const editCoupon = async (req, res) => {
       active,
     } = req.body;
 
-    // Validate required fields
     if (
       !coupon_code ||
       !discount_value ||
@@ -135,7 +132,6 @@ const editCoupon = async (req, res) => {
       });
     }
 
-    // Validate discount for percentage type
     if (discount_type === "percentage" && Number(discount_value) > 90) {
       return res.status(400).json({
         success: false,
@@ -144,7 +140,6 @@ const editCoupon = async (req, res) => {
       });
     }
 
-    // Find the coupon by its ID
     const coupon = await Coupon.findById(couponId);
     if (!coupon) {
       return res.status(404).json({
@@ -164,7 +159,6 @@ const editCoupon = async (req, res) => {
       });
     }
 
-    // Update coupon fields
     coupon.coupon_code = coupon_code.trim();
     coupon.discount_value = discount_value;
     coupon.discount_type = discount_type;
@@ -172,7 +166,6 @@ const editCoupon = async (req, res) => {
     coupon.min_order_value = min_order_value;
     coupon.active = active !== undefined ? active : coupon.active;
 
-    // Save the updated coupon
     await coupon.save();
 
     return res.status(200).json({
@@ -181,7 +174,6 @@ const editCoupon = async (req, res) => {
       coupon,
     });
   } catch (error) {
-    console.error("Error updating coupon:", error);
     return res.status(500).json({
       success: false,
       message: "Internal server error.",
@@ -189,16 +181,15 @@ const editCoupon = async (req, res) => {
   }
 };
 
-const deleteCoupon = async (req, res) => {
+const deleteCoupon = async (req, res, next) => {
   try {
     const couponId = req.params.id;
 
     const coupon = await Coupon.findById(couponId);
     if (!coupon) {
-      return res.status(404).json({
-        success: false,
-        message: "Coupon not found.",
-      });
+      const error = new Error("Coupon not found");
+      error.statusCode = 404;
+      throw error;
     }
 
     coupon.is_deleted = true;
@@ -209,11 +200,7 @@ const deleteCoupon = async (req, res) => {
       message: "Coupon deleted successfully!",
     });
   } catch (error) {
-    console.error("Error deleting coupon:", error);
-    return res.status(500).json({
-      success: false,
-      message: "Internal server error.",
-    });
+    next(error);
   }
 };
 

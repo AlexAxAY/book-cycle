@@ -147,8 +147,7 @@ const salesReportPage = async (req, res) => {
       });
     }
   } catch (err) {
-    console.error("Error in salesReportPage controller:", err);
-    return res.status(500).send("Internal Server Error");
+    next(err);
   }
 };
 

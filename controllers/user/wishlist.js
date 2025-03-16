@@ -1,6 +1,6 @@
 const { Wishlist, WishlistItem } = require("../../models/wishlistSchema");
 
-const wishlistPage = async (req, res) => {
+const wishlistPage = async (req, res, next) => {
   try {
     const userId = req.user ? req.user.id : null;
 
@@ -20,10 +20,7 @@ const wishlistPage = async (req, res) => {
 
     return res.render("user/wishlistPage", { wishlistItems, count });
   } catch (err) {
-    return res.status(500).render("utils/userErrorPage", {
-      statusCode: 500,
-      message: "Server error! Please try again later!",
-    });
+    next(err);
   }
 };
 
@@ -69,9 +66,6 @@ const removeFromWishlist = async (req, res) => {
     const userId = req.user ? req.user.id : null;
     const { id } = req.params;
 
-    console.log("Received userId:", userId);
-    console.log("Received productId:", id);
-
     if (!userId) {
       return res.status(401).json({ success: false, message: "Please login!" });
     }
@@ -89,7 +83,6 @@ const removeFromWishlist = async (req, res) => {
     });
 
     if (!wishlistItem) {
-      console.log("Item not found in wishlist");
       return res
         .status(404)
         .json({ success: false, message: "Item not found in wishlist" });

@@ -2,24 +2,18 @@ const State = require("../../models/stateSchema");
 const Address = require("../../models/addressSchema");
 const User = require("../../models/userSchema");
 
-const getAddressPage = async (req, res) => {
+const getAddressPage = async (req, res, next) => {
   try {
     const states = await State.find();
     const userId = req.user ? req.user.id : null;
-    if (userId === null) {
-      console.log(userId);
-    }
     const user = await User.findOne({ _id: userId });
     return res.render("user/userAddressPage", { states, user });
   } catch (err) {
-    return res.status(500).render("utils/userErrorPage", {
-      statusCode: 500,
-      message: "Server error!",
-    });
+    next(err);
   }
 };
 
-const addressUpdatePage = async (req, res) => {
+const addressUpdatePage = async (req, res, next) => {
   try {
     const { id } = req.params;
     const states = await State.find();
@@ -33,14 +27,11 @@ const addressUpdatePage = async (req, res) => {
       .status(200)
       .render("user/updateAddressPage", { address, states });
   } catch (err) {
-    return res.status(500).render("utils/userErrorPage", {
-      statusCode: 500,
-      message: "Server error!",
-    });
+    next(err);
   }
 };
 
-const addAddress = async (req, res) => {
+const addAddress = async (req, res, next) => {
   try {
     const {
       name,
@@ -120,14 +111,11 @@ const addAddress = async (req, res) => {
       .status(200)
       .json({ success: true, message: "Address added successfully." });
   } catch (error) {
-    return res.status(500).json({
-      success: false,
-      message: "Server error. Please try again later.",
-    });
+    next(error);
   }
 };
 
-const viewAllAddress = async (req, res) => {
+const viewAllAddress = async (req, res, next) => {
   try {
     const userId = req.user ? req.user.id : null;
 
@@ -135,14 +123,11 @@ const viewAllAddress = async (req, res) => {
     const addresses = await Address.find({ user_id: userId });
     return res.render("user/viewAddress", { user, addresses });
   } catch (err) {
-    return res.status(500).render("utils/userErrorPage", {
-      statusCode: 500,
-      message: "Server error!",
-    });
+    next(err);
   }
 };
 
-const deleteAddress = async (req, res) => {
+const deleteAddress = async (req, res, next) => {
   try {
     const { id } = req.params;
     await Address.findByIdAndDelete(id);
@@ -150,14 +135,11 @@ const deleteAddress = async (req, res) => {
       .status(200)
       .json({ success: true, message: "Address deleted successfully" });
   } catch (err) {
-    return res.status(500).json({
-      success: false,
-      message: "Server error in deleting the address",
-    });
+    next(err);
   }
 };
 
-const updateAddress = async (req, res) => {
+const updateAddress = async (req, res, next) => {
   try {
     const { id } = req.params;
     const {
@@ -236,10 +218,7 @@ const updateAddress = async (req, res) => {
       .status(200)
       .json({ success: true, message: "Address updated successfully." });
   } catch (error) {
-    return res.status(500).json({
-      success: false,
-      message: "Server error. Please try again later.",
-    });
+    next(error);
   }
 };
 

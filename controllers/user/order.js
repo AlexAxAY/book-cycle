@@ -17,7 +17,7 @@ const {
   generateCustomOrderId,
 } = require("../../services/randomOrderId");
 
-const orderSummary = async (req, res) => {
+const orderSummary = async (req, res, next) => {
   try {
     const { id } = req.params;
     const order = await Order.findById(id)
@@ -27,9 +27,10 @@ const orderSummary = async (req, res) => {
       .populate("coupon_applied");
 
     if (!order) {
-      return console.log("order not found!");
+      const error = new Error("Order not found");
+      error.statusCode = 404;
+      throw error;
     }
-
     const productIds = order.order_items.map((item) => item.product._id);
 
     const ratings = await Rating.find({
@@ -84,8 +85,7 @@ const orderSummary = async (req, res) => {
       totalProductDiscount,
     });
   } catch (err) {
-    console.log("Error in orderSummary controller", err);
-    return res.status(500).send("server error!");
+    next(err);
   }
 };
 
@@ -484,7 +484,7 @@ const proceedToBuy = async (req, res) => {
   }
 };
 
-const orders = async (req, res) => {
+const orders = async (req, res, next) => {
   try {
     const userId = req.user ? req.user.id : null;
     const user = await User.findById({ _id: userId });
@@ -561,10 +561,7 @@ const orders = async (req, res) => {
       currentYear: new Date().getFullYear(),
     });
   } catch (err) {
-    return res.status(500).render("utils/userErrorPage", {
-      statusCode: 500,
-      message: "Server error!",
-    });
+    next(err);
   }
 };
 

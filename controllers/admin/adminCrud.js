@@ -8,7 +8,7 @@ const catManagePage = async (req, res) => {
 };
 
 // Navigates to the category update page
-const catUpdatePage = async (req, res) => {
+const catUpdatePage = async (req, res, next) => {
   try {
     const { id } = req.params;
     const data = await Category.findById(id);
@@ -20,15 +20,12 @@ const catUpdatePage = async (req, res) => {
     }
     return res.render("adminPanel/updateCategory", { data });
   } catch (err) {
-    return res.status(500).render("utils/errorPage", {
-      statusCode: 500,
-      message: "Server Error!",
-    });
+    next(err);
   }
 };
 
 // Navigates to the categories view page
-const catViewPage = async (req, res) => {
+const catViewPage = async (req, res, next) => {
   try {
     const perPage = 50;
     const page = parseInt(req.query.page) || 1;
@@ -46,10 +43,7 @@ const catViewPage = async (req, res) => {
       totalPages,
     });
   } catch (err) {
-    return res.status(500).render("utils/errorPage", {
-      statusCode: 500,
-      message: "Server Error!",
-    });
+    next(err);
   }
 };
 
@@ -80,7 +74,6 @@ const createCat = async (req, res) => {
 
     return res.status(200).json({ message: "Category added successfully!" });
   } catch (err) {
-    console.log("Error in adding the category! From backend!");
     return res.status(400).json({ message: "Error in adding the category!" });
   }
 };
@@ -134,7 +127,7 @@ const deleteCategory = async (req, res) => {
 };
 
 // Navigates to the all products page
-const viewAllProductsPage = async (req, res) => {
+const viewAllProductsPage = async (req, res, next) => {
   try {
     const perPage = 10;
     const page = parseInt(req.query.page) || 1;
@@ -199,43 +192,33 @@ const viewAllProductsPage = async (req, res) => {
       query: req.query,
     });
   } catch (err) {
-    return res.status(500).render("utils/errorPage", {
-      statusCode: 500,
-      message: "Server Error!",
-    });
+    next(err);
   }
 };
 
 // single product page
-const singleProductPage = async (req, res) => {
+const singleProductPage = async (req, res, next) => {
   try {
     const { id } = req.params;
     const product = await Product.findById(id);
     if (!product) {
-      return res
-        .staus(404)
-        .json({ success: false, message: "Product not found!" });
+      const error = new Error("Product not found");
+      error.statusCode = 404;
+      throw error;
     }
     return res.render("adminPanel/singleProduct", { product });
   } catch (err) {
-    return res.status(500).render("utils/errorPage", {
-      statusCode: 500,
-      message: "Server Error!",
-    });
+    next(err);
   }
 };
 
 // Navigates to the product addition page
-const viewAddProducts = async (req, res) => {
+const viewAddProducts = async (req, res, next) => {
   try {
     const categories = await Category.find();
     return res.render("adminPanel/addProducts", { categories });
   } catch (error) {
-    console.error("Error fetching categories:", error);
-    return res.status(500).render("utils/errorPage", {
-      statusCode: 500,
-      message: "Server Error!",
-    });
+    next(err);
   }
 };
 
@@ -389,23 +372,20 @@ const addProduct = async (req, res) => {
   }
 };
 
-const updateProductPage = async (req, res) => {
+const updateProductPage = async (req, res, next) => {
   try {
     const { id } = req.params;
     const product = await Product.findById(id);
     const categories = await Category.find();
     if (!product) {
-      return res
-        .status(400)
-        .json({ success: true, message: "Product not found!" });
+      const error = new Error("Product not found");
+      error.statusCode = 404;
+      throw error;
     } else {
       return res.render("adminPanel/updateProducts", { product, categories });
     }
   } catch (err) {
-    return res.status(500).render("utils/errorPage", {
-      statusCode: 500,
-      message: "Server Error!",
-    });
+    next(err);
   }
 };
 

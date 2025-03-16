@@ -103,7 +103,6 @@ const verifyPayment = async (req, res) => {
         .json({ success: false, message: "Payment Invalid!" });
     }
   } catch (error) {
-    console.error(error);
     return res.status(500).json({
       success: false,
       message: "Server error!",

@@ -236,27 +236,26 @@ const addCheckoutAddress = async (req, res) => {
   }
 };
 
-const checkoutAddressUpdatePage = async (req, res) => {
+const checkoutAddressUpdatePage = async (req, res, next) => {
   try {
     const { id } = req.params;
     const states = await State.find();
     if (!states) {
-      console.log("NO states found");
+      const error = new Error("Server Error");
+      error.statusCode = 500;
+      throw error;
     }
     const address = await Address.findById(id);
     if (!address) {
-      return res
-        .status(404)
-        .json({ success: false, message: "Address not found!" });
+      const error = new Error("Address not found");
+      error.statusCode = 404;
+      throw error;
     }
     return res
       .status(200)
       .render("user/checkoutUpdateAddressPage", { address, states });
   } catch (err) {
-    return res.status(500).render("utils/userErrorPage", {
-      statusCode: 500,
-      message: "Server error!",
-    });
+    next(err);
   }
 };
 

@@ -2,7 +2,7 @@ const { Cart, CartItem } = require("../../models/cartSchemas");
 const Product = require("../../models/productSchema");
 
 // Cart page
-const cartPage = async (req, res) => {
+const cartPage = async (req, res, next) => {
   try {
     const userId = req.user ? req.user.id : null;
     const cart = await Cart.findOne({ userId });
@@ -20,10 +20,7 @@ const cartPage = async (req, res) => {
 
     return res.status(200).render("user/cartPage", { cartItems });
   } catch (err) {
-    return res.status(500).render("utils/userErrorPage", {
-      statusCode: 500,
-      message: "Server error!",
-    });
+    next(err);
   }
 };
 
@@ -166,7 +163,6 @@ const getCartDetails = async (req, res) => {
       },
     });
   } catch (error) {
-    console.error("Error fetching cart details:", error);
     return res.status(500).json({ success: false, message: "Server error" });
   }
 };
