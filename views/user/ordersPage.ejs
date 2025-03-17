@@ -18,6 +18,9 @@
     <!-- navbar -->
     <header><%- include("../partials/user/userNavbar.ejs") %></header>
 
+    <!-- alert -->
+    <%- include("../partials/user/alertMessage.ejs") %>
+
     <!-- main section -->
     <div
       class="container-fluid mt-4 p-4"
@@ -160,13 +163,10 @@
                           "
                           class="track-btn"
                         >
-                        <% if (order.status === "Cancelled" || order.status === "Delivered") { %>
-                          View order
-                        <% } else if (order.status === "Pending") { %>
-                          Pending payment
-                        <% } else { %>
-                          Track your order
-                        <% } %>
+                          <% if (order.status === "Cancelled" || order.status
+                          === "Delivered") { %> View order <% } else if
+                          (order.status === "Pending") { %> Pending payment <% }
+                          else { %> Track your order <% } %>
                         </a>
                         <% if (order.status === "Delivered") {%>
                         <p class="mb-0 m-3 text-success status">
@@ -229,8 +229,5 @@
 
     <!-- Bootstrap Scripts -->
     <%- include("../partials/admin/bootScript.ejs") %>
-
-    <!-- Custom JS for filtering and pagination -->
-    <script src="/user/helper/filterOrders.js"></script>
   </body>
 </html>
