@@ -9,7 +9,6 @@ document.addEventListener("DOMContentLoaded", function () {
   const alertBad = document.querySelector(".alert-bad");
   const alertGood = document.querySelector(".alert-good");
 
-  // Helper function to show an alert message and hide it after 3 seconds
   function showFormAlert(alertElement, message) {
     alertElement.textContent = message;
     alertElement.classList.remove("d-none");
@@ -18,7 +17,6 @@ document.addEventListener("DOMContentLoaded", function () {
     }, 3000);
   }
 
-  // Toggle select inputs based on radio choice
   function toggleSelection() {
     if (byNameRadio.checked) {
       productSelectDiv.style.display = "block";
@@ -31,25 +29,21 @@ document.addEventListener("DOMContentLoaded", function () {
   byNameRadio.addEventListener("change", toggleSelection);
   byCategoryRadio.addEventListener("change", toggleSelection);
 
-  // Validate discount value: check for emptiness, negativity, then for percentage limit
   function validateDiscount() {
     const value = discountValueInput.value.trim();
 
-    // Check if discount value is empty
     if (value === "") {
       showFormAlert(alertBad, "Discount value is required.");
       discountValueInput.classList.add("is-invalid");
       return false;
     }
 
-    // Check if discount value is negative
     if (parseFloat(value) < 0) {
       showFormAlert(alertBad, "Discount value cannot be negative.");
       discountValueInput.classList.add("is-invalid");
       return false;
     }
 
-    // Check if percentage discount exceeds limit
     if (discountTypeSelect.value === "percentage" && parseFloat(value) > 90) {
       showFormAlert(alertBad, "Percentage discount cannot exceed 90%.");
       discountValueInput.classList.add("is-invalid");
@@ -60,11 +54,10 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   discountValueInput.addEventListener("input", function () {
-    // Remove invalid class when user starts typing
     if (discountValueInput.value.trim() !== "") {
       discountValueInput.classList.remove("is-invalid");
     }
-    // Also run validation on input
+
     validateDiscount();
   });
 
@@ -72,7 +65,6 @@ document.addEventListener("DOMContentLoaded", function () {
     e.preventDefault();
     if (!validateDiscount()) return;
 
-    // Prepare data for backend including the new "action" field
     const formData = {
       applyBy: document.querySelector('input[name="applyBy"]:checked').value,
       productName: document.getElementById("productName").value,

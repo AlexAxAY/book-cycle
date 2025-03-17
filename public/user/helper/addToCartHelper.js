@@ -16,8 +16,6 @@ document.addEventListener("DOMContentLoaded", () => {
           showAlert(errorAlert, response.data.message, "bad");
         }
       } catch (error) {
-        console.error("Error adding to cart:", error.response || error);
-
         const status = error.response?.status;
 
         if (status === 403 || status === 401) {

@@ -5,11 +5,10 @@ document.addEventListener("DOMContentLoaded", function () {
   const verifyBtn = document.querySelector(".otp-btn");
   const resendBtn = document.querySelector(".resend-btn");
 
-  // Retrieve pending user from localStorage
   let pendingUser = JSON.parse(localStorage.getItem("pendingUser"));
   const token = pendingUser?.token;
   const purpose = pendingUser?.purpose;
-  // Convert otpExpiresAt to a timestamp (number) if it exists
+
   let otpExpiresAt = pendingUser?.otpExpiresAt
     ? new Date(pendingUser.otpExpiresAt).getTime()
     : null;
@@ -19,14 +18,12 @@ document.addEventListener("DOMContentLoaded", function () {
     return;
   }
 
-  // Helper to show alerts
   function showAlert(element, message, isError = true) {
     element.textContent = message;
     element.classList.remove("d-none");
     setTimeout(() => element.classList.add("d-none"), 3000);
   }
 
-  // Calculate the remaining time in seconds
   let timeLeft = Math.floor((otpExpiresAt - Date.now()) / 1000);
 
   function updateTimerDisplay() {
@@ -52,7 +49,6 @@ document.addEventListener("DOMContentLoaded", function () {
     }, 1000);
   }
 
-  // If the stored OTP expiry time is already past, disable the form.
   if (Date.now() > otpExpiresAt) {
     showAlert(alertBad, "Your OTP has expired. Please request a new one.");
     otpInput.disabled = true;
@@ -85,16 +81,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
       if (response.data.success) {
         showAlert(alertGood, response.data.message, false);
-        // Remove pendingUser from localStorage on successful verification
+
         localStorage.removeItem("pendingUser");
 
         setTimeout(() => {
-          // Check the returned redirectTo value and navigate accordingly.
           const redirectTo = response.data.redirectTo;
           if (redirectTo === "/user/change-password") {
             window.location.href = "/user/change-password";
           } else {
-            // Default (for registration or other cases)
             window.location.href = redirectTo || "/user/home";
           }
         }, 2000);

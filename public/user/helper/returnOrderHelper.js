@@ -18,10 +18,6 @@ function showSuccessAlert(message) {
 
 function openReturnModal(productId, productName, productQuantity) {
   const modal = document.getElementById("returnModal");
-  if (!modal) {
-    console.error("Return modal not found.");
-    return;
-  }
 
   modal.dataset.productId = productId;
   modal.dataset.productName = productName;
@@ -47,7 +43,6 @@ function openReturnModal(productId, productName, productQuantity) {
 const id = window.location.pathname.split("/").pop();
 
 document.addEventListener("DOMContentLoaded", () => {
-  // Close modal on click.
   const closeModalBtn = document.getElementById("returnCloseModal");
   if (closeModalBtn) {
     closeModalBtn.addEventListener("click", () => {
@@ -55,11 +50,10 @@ document.addEventListener("DOMContentLoaded", () => {
       const modal = document.getElementById("returnModal");
       if (modal) {
         modal.classList.add("d-none");
-        console.log("Return modal should be hidden now.");
       }
     });
   } else {
-    console.error("Return modal close element not found.");
+    showErrorAlert("Error");
   }
 
   document.querySelectorAll(".return-order-btn").forEach((button) => {
@@ -132,7 +126,6 @@ document.addEventListener("DOMContentLoaded", () => {
         showErrorAlert(
           "An error occurred while processing your return request."
         );
-        console.error(error);
       } finally {
         modal.classList.add("d-none");
         document.getElementById("returnReason").value = "";

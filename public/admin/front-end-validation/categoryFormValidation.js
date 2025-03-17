@@ -6,7 +6,6 @@ function hideAlert() {
   alert.classList.add("d-none");
 }
 
-// Form submit handler
 document.getElementById("form").addEventListener("submit", async (e) => {
   e.preventDefault();
 
@@ -19,7 +18,6 @@ document.getElementById("form").addEventListener("submit", async (e) => {
 
   let valid = true;
 
-  // Validate category field
   if (!cat.value.trim()) {
     cat.classList.add("is-invalid");
     valid = false;
@@ -32,12 +30,10 @@ document.getElementById("form").addEventListener("submit", async (e) => {
     alert.classList.add("alert-warning");
   } else {
     try {
-      // Collect form data
       const formdata = {
         category: cat.value.trim(),
       };
 
-      // Optional: If the description field exists, include it
       const descriptionField = document.getElementById("description");
       if (descriptionField && descriptionField.value.trim()) {
         formdata.description = descriptionField.value.trim();
@@ -61,7 +57,6 @@ document.getElementById("form").addEventListener("submit", async (e) => {
       alert.classList.remove("d-none");
       alert.classList.remove("alert-success");
       alert.classList.add("alert-danger");
-      console.error("Error in adding the category:", err);
     }
   }
 });

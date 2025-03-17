@@ -27,14 +27,12 @@ function showAlert(message, type) {
   alertBox.classList.remove("d-none");
   alertBox.style.opacity = "1";
 
-  // Hide after 2 seconds
   setTimeout(() => {
     alertBox.style.opacity = "0";
     setTimeout(() => alertBox.classList.add("d-none"), 500);
   }, 2000);
 }
 
-// Attach click event to delete buttons
 document.addEventListener("DOMContentLoaded", () => {
   const deleteButtons = document.querySelectorAll(".delete-icon");
 
@@ -49,7 +47,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  // Confirm delete button inside modal
   document.getElementById("confirmDeleteBtn").addEventListener("click", () => {
     const addressId = document
       .getElementById("confirmDeleteBtn")

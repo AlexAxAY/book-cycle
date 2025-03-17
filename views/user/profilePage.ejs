@@ -27,7 +27,25 @@
 
       <!-- Profile Section -->
       <div class="content">
-        <h2 class="mb-4">Profile</h2>
+        <div>
+          <h2 class="mb-4">Profile</h2>
+          <small>
+            <p>
+              Ref. code:
+              <span id="ref-code" class="text-muted"><%= user.ref_id %></span>
+              <i
+                class="fa-solid fa-copy"
+                id="copy"
+                title="copy"
+                style="cursor: pointer"
+              ></i>
+              <span id="msg" class="d-none">
+                <small class="text-success">Copied!</small>
+              </span>
+            </p>
+          </small>
+        </div>
+
         <form novalidate>
           <div class="mb-3">
             <label for="name" class="form-label">Name</label>

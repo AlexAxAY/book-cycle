@@ -7,10 +7,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const removeBtn = document.getElementById("removeImage");
   const alertContainer = document.getElementById("alertContainer");
 
-  let alertTimeout; // Variable to store timeout reference
+  let alertTimeout;
 
   function showAlert(message, type = "danger") {
-    // Clear any existing alert timeout
     clearTimeout(alertTimeout);
 
     alertContainer.innerHTML = `
@@ -20,13 +19,11 @@ document.addEventListener("DOMContentLoaded", () => {
           </div>
         `;
 
-    // Set timeout to remove alert after 3 seconds
     alertTimeout = setTimeout(() => {
       alertContainer.innerHTML = "";
     }, 3000);
   }
 
-  // Image preview handler
   imageInput.addEventListener("change", function () {
     if (this.files && this.files[0]) {
       const file = this.files[0];
@@ -42,7 +39,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // Remove image handler
   removeBtn.addEventListener("click", () => {
     imageInput.value = "";
     previewImage.src = "#";
@@ -50,25 +46,21 @@ document.addEventListener("DOMContentLoaded", () => {
     imageInput.classList.add("is-invalid");
   });
 
-  // Real-time validation for title
   titleInput.addEventListener("input", () => {
     if (titleInput.value.trim()) {
       titleInput.classList.remove("is-invalid");
     }
   });
 
-  // Form submission handler
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
     let isValid = true;
 
-    // Validate title
     if (!titleInput.value.trim()) {
       titleInput.classList.add("is-invalid");
       isValid = false;
     }
 
-    // Validate image
     if (!imageInput.files.length) {
       imageInput.classList.add("is-invalid");
       isValid = false;
@@ -79,7 +71,6 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    // Prepare form data
     const formData = new FormData(form);
 
     try {
@@ -99,7 +90,6 @@ document.addEventListener("DOMContentLoaded", () => {
     } catch (error) {
       const message = error.response?.data?.message || "Something went wrong!";
       showAlert(message);
-      console.log("erriririrr:", error);
     }
   });
 });

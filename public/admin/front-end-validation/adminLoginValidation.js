@@ -11,11 +11,9 @@ document
 
     let errors = [];
 
-    // Clear previous error styles
     emailInput.classList.remove("is-invalid");
     passwordInput.classList.remove("is-invalid");
 
-    // Frontend validation
     if (!email) {
       emailInput.classList.add("is-invalid");
       errors.push("Email is required");
@@ -33,7 +31,6 @@ document
     loginAdmin({ email, password });
   });
 
-// Input event listeners to clear error styles
 document.querySelectorAll(".signin-form input").forEach((input) => {
   input.addEventListener("input", function () {
     this.classList.remove("is-invalid");
@@ -45,7 +42,6 @@ async function loginAdmin(credentials) {
     const response = await axios.post("/admin/login", credentials);
 
     if (response.data.success) {
-      // Show success message before redirect
       showAlert([response.data.message], true);
       setTimeout(() => {
         window.location.href = "/admin/products";
@@ -68,12 +64,10 @@ function showAlert(messages, isSuccess = false) {
   const alertBox = document.getElementById("alertBox");
   alertBox.innerHTML = messages.map((msg) => `<p>${msg}</p>`).join("");
 
-  // Update alert styling based on success/error
-  alertBox.className = "alert"; // Reset classes
+  alertBox.className = "alert";
   alertBox.classList.add(isSuccess ? "alert-success" : "alert-danger");
   alertBox.classList.remove("d-none");
 
-  // Hide alert after 2.5 seconds
   setTimeout(() => {
     alertBox.classList.add("d-none");
   }, 2000);

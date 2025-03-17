@@ -6,7 +6,6 @@ document.addEventListener("DOMContentLoaded", () => {
         : document.querySelector(".alert-good");
     if (!alertEl) return;
 
-    // Set the message and show the alert
     alertEl.textContent = message;
     alertEl.classList.remove("d-none");
 
@@ -42,14 +41,13 @@ document.addEventListener("DOMContentLoaded", () => {
           ) {
             showAlert(error.response.data.message, "error");
           }
-          console.error("Error updating quantity:", error);
+
           quantityInput.value = currentQuantity;
         }
       }
     });
   });
 
-  // Attach click events for the minus buttons
   minusButtons.forEach((button) => {
     button.addEventListener("click", async function () {
       const cartItemId = this.getAttribute("data-id");
@@ -73,21 +71,19 @@ document.addEventListener("DOMContentLoaded", () => {
           ) {
             showAlert(error.response.data.message, "error");
           }
-          console.error("Error updating quantity:", error);
-          // Optionally revert the UI quantity back on error
+
           quantityInput.value = currentQuantity;
         }
       }
     });
   });
 
-  // Function to update the Price Details section dynamically
   async function updateCartDetails() {
     try {
       const response = await axios.get("/user/cart-details");
       if (response.data.success) {
         const data = response.data.data;
-        // Update the Price Details section (assumes your price details section has class "price-details")
+
         const priceDetailsEl = document.querySelector(".price-details");
         priceDetailsEl.innerHTML = `
           <div class="row h-100" style="flex-direction: column">
@@ -132,7 +128,7 @@ document.addEventListener("DOMContentLoaded", () => {
         `;
       }
     } catch (error) {
-      console.error("Error updating cart details:", error);
+      showAlert("Sorry! Error", "error");
     }
   }
 });

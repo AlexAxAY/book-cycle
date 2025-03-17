@@ -1,7 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
   let selectedCategoryId = null;
 
-  // Get modal, buttons, and placeholders
   const deleteModal = new bootstrap.Modal(
     document.getElementById("deleteCategoryModal")
   );
@@ -10,34 +9,28 @@ document.addEventListener("DOMContentLoaded", () => {
     "categoryNamePlaceholder"
   );
 
-  // Alert elements
   const successAlert = document.querySelector(".alert-good");
   const errorAlert = document.querySelector(".alert-bad");
 
-  // Function to show alerts
   function showDltAlert(alertElement, message) {
     alertElement.textContent = message;
     alertElement.classList.remove("d-none");
     setTimeout(() => {
       alertElement.classList.add("d-none");
-    }, 3000); // Hide after 3 seconds
+    }, 3000);
   }
 
-  // Add event listener to delete buttons
   document.querySelectorAll(".delete-btn").forEach((button) => {
     button.addEventListener("click", function () {
-      selectedCategoryId = this.getAttribute("data-id"); // Store category ID
-      const categoryName = this.getAttribute("data-name"); // Get category name
+      selectedCategoryId = this.getAttribute("data-id");
+      const categoryName = this.getAttribute("data-name");
 
-      // Set the category name in the modal
       categoryNamePlaceholder.textContent = categoryName;
 
-      // Show the modal
       deleteModal.show();
     });
   });
 
-  // When confirm delete is clicked
   confirmDeleteButton.addEventListener("click", async () => {
     if (!selectedCategoryId) return;
 
@@ -54,7 +47,6 @@ document.addEventListener("DOMContentLoaded", () => {
         showDltAlert(errorAlert, "Error: Unable to delete category.");
       }
     } catch (error) {
-      console.error(error);
       showDltAlert(
         errorAlert,
         "An error occurred while deleting the category."

@@ -59,7 +59,6 @@ document.addEventListener("DOMContentLoaded", () => {
           );
         }
       } catch (error) {
-        console.error("Error adding to cart:", error.response || error);
         const status = error.response?.status;
         if (status === 403 || status === 401) {
           const errorMessage =

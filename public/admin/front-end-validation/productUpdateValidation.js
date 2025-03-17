@@ -1,4 +1,3 @@
-// Utility function to convert data URLs to File objects
 function dataURLtoFile(dataurl, filename) {
   const arr = dataurl.split(",");
   const mime = arr[0].match(/:(.*?);/)[1];
@@ -29,7 +28,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const imageInput = document.getElementById("images");
   imageInput.addEventListener("input", () => {
-    // Count ALL images: existing + new previews + new files
     const existingImagesCount = document.querySelectorAll(
       "input[name='existingImages[]']"
     ).length;
@@ -51,7 +49,6 @@ document.addEventListener("DOMContentLoaded", () => {
     event.preventDefault();
     let isValid = true;
 
-    // Validate required fields
     requiredFields.forEach((fieldId) => {
       const field = document.getElementById(fieldId);
       field.classList.toggle("is-invalid", !field.value.trim());
@@ -64,10 +61,8 @@ document.addEventListener("DOMContentLoaded", () => {
       const id = window.location.pathname.split("/").pop();
       const formData = new FormData(form);
 
-      // Clear existing files to avoid duplicates
       formData.delete("images");
 
-      // Process preview images
       const previewImages = document.querySelectorAll("#image-previews img");
       let newFileCount = 0;
 
@@ -78,17 +73,14 @@ document.addEventListener("DOMContentLoaded", () => {
         );
 
         if (isNewImage) {
-          // Convert data URL to File
           const filename = `cropped_${Date.now()}.png`;
           const file = dataURLtoFile(img.src, filename);
 
-          // Append to FormData as files
           formData.append("images", file);
           newFileCount++;
         }
       });
 
-      // Validate total images (existing + new)
       const existingCount = document.querySelectorAll(
         'input[name="existingImages[]"]'
       ).length;
@@ -106,11 +98,9 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
       }
 
-      // Remove base64 data from JSON payload
       formData.delete("newImages");
       formData.delete("existingCroppedImages");
 
-      // Append existing images
       const existingImagesArray = Array.from(
         document.getElementsByName("existingImages[]")
       ).map((img) => JSON.parse(img.value));
@@ -119,7 +109,6 @@ document.addEventListener("DOMContentLoaded", () => {
         formData.append("existingImages[]", JSON.stringify(imageDetails));
       });
 
-      // Send request
       const response = await axios.put(`/admin/product/${id}`, formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
@@ -145,7 +134,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // Remove validation error on input
   requiredFields.forEach((fieldId) => {
     document.getElementById(fieldId).addEventListener("input", function () {
       this.classList.remove("is-invalid");

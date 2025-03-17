@@ -33,7 +33,6 @@ document.addEventListener("DOMContentLoaded", function () {
       return;
     }
 
-    // Validate phone number (10 digits)
     const phoneRegex = /^\d{10}$/;
     if (!phoneRegex.test(phone.value.trim())) {
       showAlert(".alert-bad", "Please enter a valid 10-digit phone number.");
@@ -41,7 +40,6 @@ document.addEventListener("DOMContentLoaded", function () {
       return;
     }
 
-    // Validate alternate phone number if provided (must be 10 digits)
     if (altPhone.value.trim() && !phoneRegex.test(altPhone.value.trim())) {
       showAlert(
         ".alert-bad",
@@ -51,7 +49,6 @@ document.addEventListener("DOMContentLoaded", function () {
       return;
     }
 
-    // Validate pincode (6 digits)
     const pincodeRegex = /^\d{6}$/;
     if (!pincodeRegex.test(pincode.value.trim())) {
       showAlert(".alert-bad", "Please enter a valid 6-digit pincode.");
@@ -59,7 +56,6 @@ document.addEventListener("DOMContentLoaded", function () {
       return;
     }
 
-    // Prepare data for submission
     const data = {
       name: name.value.trim(),
       address_line: addressLine.value.trim(),
@@ -92,14 +88,12 @@ document.addEventListener("DOMContentLoaded", function () {
         showAlert(".alert-bad", response.data.message);
       }
     } catch (error) {
-      console.error("Error adding address:", error.response || error);
       const errorMessage =
         error.response?.data?.message || "An error occurred. Please try again.";
       showAlert(".alert-bad", errorMessage);
     }
   });
 
-  // Utility function to show alert messages using your custom alert boxes
   function showAlert(selector, message) {
     const alertEl = document.querySelector(selector);
     alertEl.textContent = message;
@@ -109,7 +103,6 @@ document.addEventListener("DOMContentLoaded", function () {
     }, 1000);
   }
 
-  // Add event listeners for real-time validation
   document
     .querySelectorAll(
       "#addressForm input, #addressForm textarea, #addressForm select"
@@ -121,7 +114,6 @@ document.addEventListener("DOMContentLoaded", function () {
       });
     });
 
-  // Utility function to hide alert messages immediately
   function hideAlert(selector) {
     const el = document.querySelector(selector);
     if (el) {
@@ -129,7 +121,6 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
-  // Function to add "is-invalid" style to empty required fields
   function validateFields(fields) {
     fields.forEach((field) => {
       if (!field.value.trim()) {
@@ -138,7 +129,6 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
-  // Function to reset validation styles
   function resetValidation(fields) {
     fields.forEach((field) => {
       field.classList.remove("is-invalid", "is-valid");

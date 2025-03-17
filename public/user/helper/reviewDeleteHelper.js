@@ -36,7 +36,6 @@ document.addEventListener("DOMContentLoaded", () => {
           }, 3000);
         }
       } catch (error) {
-        console.error(error);
         errorAlert.textContent = "Error deleting review.";
         errorAlert.classList.remove("d-none");
         setTimeout(() => {

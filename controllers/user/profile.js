@@ -3,9 +3,6 @@ const User = require("../../models/userSchema");
 const getProfile = async (req, res, next) => {
   try {
     const userId = req.user ? req.user.id : null;
-    if (userId === null) {
-      console.log(userId);
-    }
     const user = await User.findOne({ _id: userId });
     return res.status(200).render("user/profilePage", { user });
   } catch (err) {

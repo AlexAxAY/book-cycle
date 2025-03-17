@@ -6,7 +6,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const alertGood = document.querySelector(".alert-good");
   const alertBad = document.querySelector(".alert-bad");
 
-  // Function to show alerts
   function showvalAlert(message, type) {
     const alertBox = type === "good" ? alertGood : alertBad;
     alertBox.textContent = message;
@@ -14,14 +13,12 @@ document.addEventListener("DOMContentLoaded", () => {
     setTimeout(() => alertBox.classList.add("d-none"), 3000);
   }
 
-  // Remove validation error when typing
   [currentPassword, newPassword, confirmNewPassword].forEach((input) => {
     input.addEventListener("input", () => {
       input.classList.remove("is-invalid");
     });
   });
 
-  // Form submission
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
 

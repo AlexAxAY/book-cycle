@@ -78,7 +78,6 @@ document.addEventListener("DOMContentLoaded", () => {
         showMoneyAlert(alertBad, "Failed to create payment order");
       }
     } catch (err) {
-      console.error(err);
       showMoneyAlert(alertBad, "Error processing your request");
     }
   });

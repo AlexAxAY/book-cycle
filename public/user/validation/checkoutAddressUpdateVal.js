@@ -20,7 +20,6 @@ document.addEventListener("DOMContentLoaded", function () {
       'input[name="addressType"]:checked'
     );
 
-    // Validate required fields (landmark & alternate phone are optional)
     if (
       !name.value.trim() ||
       !phone.value.trim() ||
@@ -34,7 +33,6 @@ document.addEventListener("DOMContentLoaded", function () {
       return;
     }
 
-    // Validate phone number (10 digits)
     const phoneRegex = /^\d{10}$/;
     if (!phoneRegex.test(phone.value.trim())) {
       showAlert(".alert-bad", "Please enter a valid 10-digit phone number.");
@@ -42,7 +40,6 @@ document.addEventListener("DOMContentLoaded", function () {
       return;
     }
 
-    // Validate alternate phone number (if provided, must be 10 digits)
     if (altPhone.value.trim() && !phoneRegex.test(altPhone.value.trim())) {
       showAlert(
         ".alert-bad",
@@ -52,7 +49,6 @@ document.addEventListener("DOMContentLoaded", function () {
       return;
     }
 
-    // Validate pincode (6 digits)
     const pincodeRegex = /^\d{6}$/;
     if (!pincodeRegex.test(pincode.value.trim())) {
       showAlert(".alert-bad", "Please enter a valid 6-digit pincode.");
@@ -60,7 +56,6 @@ document.addEventListener("DOMContentLoaded", function () {
       return;
     }
 
-    // Prepare data for submission
     const data = {
       name: name.value.trim(),
       phone: phone.value.trim(),
@@ -96,7 +91,6 @@ document.addEventListener("DOMContentLoaded", function () {
         showAlert(".alert-bad", response.data.message);
       }
     } catch (error) {
-      console.error("Error:", error);
       showAlert(
         ".alert-bad",
         error.response.data.message || "An error occurred. Please try again."
@@ -104,7 +98,6 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   });
 
-  // Function to validate empty fields
   function validateFields(fields) {
     fields.forEach((field) => {
       if (!field.value.trim()) {
@@ -113,14 +106,12 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
-  // Function to reset validation styles
   function resetValidation(fields) {
     fields.forEach((field) => {
       field.classList.remove("is-invalid", "is-valid");
     });
   }
 
-  // Add event listeners for real-time validation
   document.querySelectorAll("input").forEach((input) => {
     input.addEventListener("input", function () {
       if (this.value.trim()) {
@@ -133,7 +124,6 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   });
 
-  // Utility function to show alert messages
   function showAlert(selector, message) {
     const alertEl = document.querySelector(selector);
     alertEl.textContent = message;
@@ -144,7 +134,6 @@ document.addEventListener("DOMContentLoaded", function () {
     }, 3000);
   }
 
-  // Utility function to hide alert messages
   function hideAlert(selector) {
     document.querySelector(selector).classList.add("d-none");
   }

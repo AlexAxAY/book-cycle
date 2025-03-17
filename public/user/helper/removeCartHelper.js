@@ -19,7 +19,6 @@ document.addEventListener("DOMContentLoaded", () => {
           showAlert(errorAlert, response.data.message, "bad");
         }
       } catch (error) {
-        console.error("Error removing item from cart:", error);
         showAlert(errorAlert, "Failed to remove product from cart", "bad");
       }
     });

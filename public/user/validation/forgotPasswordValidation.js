@@ -1,5 +1,4 @@
 document.addEventListener("DOMContentLoaded", () => {
-  // Get form and input elements
   const form = document.querySelector("form");
   const emailInput = document.getElementById("email");
   const alertGood = document.querySelector(".alert-good");

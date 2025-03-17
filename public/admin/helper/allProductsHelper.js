@@ -48,7 +48,6 @@ async function handleFilters(e) {
   const used = document.getElementById("used").value;
   const category = document.getElementById("category").value;
 
-  // Merge filter values into currentParams
   if (date) currentParams.date = date;
   else delete currentParams.date;
 

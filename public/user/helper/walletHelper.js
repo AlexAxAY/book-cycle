@@ -28,7 +28,7 @@ document.addEventListener("DOMContentLoaded", () => {
       updateTransactionsTable(transactions);
       updatePaginationControls(totalPages, currentPage);
     } catch (err) {
-      console.error("Error fetching transactions:", err);
+      alert("An error occured!");
     }
   };
 

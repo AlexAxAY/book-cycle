@@ -13,11 +13,9 @@ document.getElementById("form").addEventListener("submit", async (e) => {
   const desc = document.getElementById("description");
   const alertText = document.getElementById("alert-text");
 
-  // Reset validation states
   cat.classList.remove("is-invalid");
   alert.classList.add("d-none");
 
-  // Validate category field
   if (!cat.value.trim()) {
     cat.classList.add("is-invalid");
     alertText.innerText = "Category cannot be empty!";
@@ -28,25 +26,22 @@ document.getElementById("form").addEventListener("submit", async (e) => {
   }
 
   try {
-    const id = window.location.pathname.split("/").pop(); // Extract category ID from URL
+    const id = window.location.pathname.split("/").pop();
     const response = await axios.put(`/admin/manage-category/${id}`, {
       category: cat.value.trim(),
       description: desc.value.trim(),
     });
 
-    // Handle success
     if (response.status === 200) {
       alertText.innerText = response.data.message;
       alert.classList.remove("d-none", "alert-warning");
       alert.classList.add("alert-success");
 
-      // Redirect after 1 seconds
       setTimeout(() => {
         window.location.href = "/admin/view-categories";
       }, 1000);
     }
   } catch (error) {
-    // Handle errors
     alertText.innerText =
       error.response && error.response.data.message
         ? error.response.data.message

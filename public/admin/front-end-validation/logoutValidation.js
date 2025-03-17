@@ -1,4 +1,3 @@
-// Add event listener for logout button
 document.querySelectorAll(".logout-btn").forEach((button) => {
   button.addEventListener("click", function (e) {
     e.preventDefault();
@@ -6,7 +5,6 @@ document.querySelectorAll(".logout-btn").forEach((button) => {
   });
 });
 
-// Function to show custom alert
 function showAlert(type, message) {
   const alertElement =
     type === "success"
@@ -16,7 +14,6 @@ function showAlert(type, message) {
   alertElement.textContent = message;
   alertElement.classList.remove("d-none");
 
-  // Hide the alert after 3 seconds
   setTimeout(() => {
     alertElement.classList.add("d-none");
   }, 3000);

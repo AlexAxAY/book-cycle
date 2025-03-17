@@ -5,7 +5,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const clearFiltersBtn = document.getElementById("clearFilters");
   const tableBody = document.querySelector("table tbody");
 
-  // Get DOM elements for aggregate metrics.
   const totalRevenueEl = document.getElementById("totalRevenue");
   const totalDiscountEl = document.getElementById("totalDiscount");
   const totalRefundEl = document.getElementById("totalRefund");
@@ -29,7 +28,6 @@ document.addEventListener("DOMContentLoaded", () => {
         headers: { "X-Requested-With": "XMLHttpRequest" },
       });
 
-      // Update the orders table.
       const orders = response.data.orders;
       tableBody.innerHTML = "";
       if (orders.length > 0) {
@@ -48,13 +46,11 @@ document.addEventListener("DOMContentLoaded", () => {
           tableBody.appendChild(row);
         });
       } else {
-        // Insert a row with a message if no orders are found.
         const noDataRow = document.createElement("tr");
         noDataRow.innerHTML = `<td colspan="7" class="text-center">No details available</td>`;
         tableBody.appendChild(noDataRow);
       }
 
-      // Update aggregate metrics.
       if (totalRevenueEl) {
         totalRevenueEl.textContent =
           "₹" + response.data.totalRevenue.toFixed(2);
@@ -70,16 +66,14 @@ document.addEventListener("DOMContentLoaded", () => {
         totalOrdersEl.textContent = response.data.totalOrders;
       }
     } catch (error) {
-      console.error("Error fetching filtered orders:", error);
+      alert("Error!");
     }
   }
 
-  // Trigger fetching orders on filter or date input change.
   filterSelect.addEventListener("change", fetchOrders);
   fromDateInput.addEventListener("change", fetchOrders);
   toDateInput.addEventListener("change", fetchOrders);
 
-  // Clear filters and refresh the table.
   clearFiltersBtn.addEventListener("click", () => {
     filterSelect.selectedIndex = 0;
     fromDateInput.value = "";

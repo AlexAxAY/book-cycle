@@ -5,9 +5,6 @@ document.addEventListener("DOMContentLoaded", () => {
     btn.addEventListener("click", async (e) => {
       e.preventDefault();
       const id = btn.getAttribute("data-product-id");
-      if (id) {
-        console.log("id is there", id);
-      }
 
       try {
         const response = await axios.delete(`/user/wishlist/${id}`);
@@ -35,7 +32,6 @@ document.addEventListener("DOMContentLoaded", () => {
           }, 2000);
         }
       } catch (error) {
-        console.log("Error occurred:", error);
         const alertBad = document.querySelector(".alert-bad");
         alertBad.textContent =
           error.response?.data?.message || "Something went wrong!";

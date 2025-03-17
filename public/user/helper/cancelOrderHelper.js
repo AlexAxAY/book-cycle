@@ -92,7 +92,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }, 1500);
       }
     } catch (err) {
-      console.error("Cancellation error:", err);
       alertBad.textContent =
         (err.response && err.response.data.message) ||
         "Cancellation failed. Please try again.";

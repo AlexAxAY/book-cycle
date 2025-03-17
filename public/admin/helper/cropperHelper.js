@@ -1,17 +1,16 @@
 document.addEventListener("DOMContentLoaded", () => {
-  let cropper; // Global reference to the Cropper instance
+  let cropper;
   const imageInput = document.getElementById("images");
   const imagePreviewsContainer = document.getElementById("image-previews");
-  const form = document.getElementById("productForm"); // Assuming you have a form element
+  const form = document.getElementById("productForm");
 
-  // Handle image selection and previewing
   imageInput.addEventListener("change", (event) => {
     const files = event.target.files;
     if (files.length) {
       Array.from(files).forEach((file) => {
         const reader = new FileReader();
         reader.onload = () => {
-          const originalImageSrc = reader.result; // Save original image data
+          const originalImageSrc = reader.result;
 
           const previewContainer = document.createElement("div");
           previewContainer.classList.add("image-preview-container");
@@ -95,7 +94,6 @@ document.addEventListener("DOMContentLoaded", () => {
               saveButton.classList.add("d-none");
               editButton.classList.remove("d-none");
 
-              // Enable the form submission after image is cropped
               form.querySelector('button[type="submit"]').disabled = false;
             }
           });
@@ -128,9 +126,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // Prevent form submission if the cropped images are not populated
   form.addEventListener("submit", (event) => {
-    // Check if the user has either uploaded an image or cropped one
     const croppedImagesInput = form.querySelector(
       "input[name='cropped_images']"
     );

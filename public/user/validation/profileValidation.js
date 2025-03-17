@@ -4,15 +4,14 @@ document.addEventListener("DOMContentLoaded", () => {
   const alertBad = document.querySelector(".alert-bad");
   const nameInput = document.getElementById("name");
   const emailInput = document.getElementById("email");
+  const copyIcon = document.getElementById("copy");
 
-  // Remove invalid state when user starts typing
   [nameInput, emailInput].forEach((input) => {
     input.addEventListener("input", () => {
       input.classList.remove("is-invalid");
     });
   });
 
-  // Helper to show alerts
   function showAlert(message, type) {
     const alertBox = type === "good" ? alertGood : alertBad;
     alertBox.textContent = message;
@@ -23,7 +22,30 @@ document.addEventListener("DOMContentLoaded", () => {
     }, 3000);
   }
 
-  // Helper to validate email format
+  copyIcon.addEventListener("click", async () => {
+    const msg = document.getElementById("msg");
+    try {
+      const refCode = document.getElementById("ref-code").innerText.trim();
+      await navigator.clipboard.writeText(refCode);
+      msg.classList.remove("d-none");
+      const smallText = msg.querySelector("small");
+      smallText.classList.remove("text-danger");
+      smallText.classList.add("text-success");
+      setTimeout(() => {
+        msg.classList.add("d-none");
+      }, 2000);
+    } catch (err) {
+      msg.classList.remove("d-none");
+      const smallText = msg.querySelector("small");
+      smallText.classList.remove("text-success");
+      smallText.classList.add("text-danger");
+      smallText.textContent = "Error!";
+      setTimeout(() => {
+        msg.classList.add("d-none");
+      }, 2000);
+    }
+  });
+
   function validateEmail(email) {
     const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return re.test(email);
@@ -34,11 +56,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const name = nameInput.value.trim();
     const email = emailInput.value.trim();
-    // Gender is optional; if none selected, default to empty string
+
     const gender =
       document.querySelector('input[name="gender"]:checked')?.value || null;
 
-    // Validate required fields (name & email)
     if (!name || !email) {
       if (!name) nameInput.classList.add("is-invalid");
       if (!email) emailInput.classList.add("is-invalid");
@@ -52,7 +73,6 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    // Prepare data to send
     const formData = { name, email, gender };
 
     try {
@@ -76,7 +96,6 @@ document.addEventListener("DOMContentLoaded", () => {
         setTimeout(() => location.reload(), 2000);
       }
     } catch (error) {
-      console.error("Error updating profile:", error);
       const errorMessage =
         error.response?.data?.message || "Something went wrong!";
       showAlert(errorMessage, "bad");

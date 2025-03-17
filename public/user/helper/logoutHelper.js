@@ -18,7 +18,6 @@ document.querySelector(".logout").addEventListener("click", async (e) => {
       }, 1000);
     }
   } catch (err) {
-    console.log("Error in logging out!", err);
     if (err.response || err.response.data.message || err.response.data) {
       badAlert.classList.remove("d-none");
       badAlert.textContent =

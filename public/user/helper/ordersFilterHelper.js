@@ -31,9 +31,7 @@ document.addEventListener("DOMContentLoaded", function () {
       const data = response.data;
       renderOrders(data.orders);
       renderPagination(data.totalPages, data.currentPage, filters);
-    } catch (error) {
-      console.error("Error fetching orders:", error);
-    }
+    } catch (error) {}
   }
 
   function renderOrders(orders) {

@@ -22,26 +22,22 @@ document.addEventListener("DOMContentLoaded", () => {
     "publish_date",
   ];
 
-  let isSubmitting = false; // Flag to prevent multiple submissions
+  let isSubmitting = false;
 
-  // Function to validate the file input
   function validateImageInput() {
     const imageInput = document.getElementById("images");
     const files = imageInput.files;
 
-    // Check if there are files selected
     if (files.length === 0) {
       imageInput.classList.add("is-invalid");
-      return false; // Invalid if no files are selected
+      return false;
     }
 
-    // Check if more than 3 files are selected
     if (files.length > 3) {
       imageInput.classList.add("is-invalid");
-      return false; // Invalid if more than 3 files
+      return false;
     }
 
-    // Remove the invalid class if the input is valid
     imageInput.classList.remove("is-invalid");
     return true;
   }
@@ -50,9 +46,8 @@ document.addEventListener("DOMContentLoaded", () => {
     e.preventDefault();
     const files = this.files;
 
-    // If more than 3 files are selected, reset the input and show an alert
     if (files.length > 3) {
-      this.value = ""; // Clear the file input
+      this.value = "";
       alert("You can only select up to 3 images.");
     }
   });
@@ -61,10 +56,9 @@ document.addEventListener("DOMContentLoaded", () => {
     e.preventDefault();
     const files = this.files;
     const previewContainer = document.getElementById("image-previews");
-    const existingImages = previewContainer.children.length; // Count already displayed images
+    const existingImages = previewContainer.children.length;
     const totalImages = existingImages + files.length;
 
-    // If more than 3 files are selected, reset the input and show an alert
     if (totalImages > 3) {
       this.value = "";
       alert(
@@ -77,12 +71,11 @@ document.addEventListener("DOMContentLoaded", () => {
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
 
-    if (isSubmitting) return; // Prevent multiple submissions
+    if (isSubmitting) return;
     isSubmitting = true;
 
     let isValid = true;
 
-    // Validate each required field
     requiredFields.forEach((fieldId) => {
       const field = document.getElementById(fieldId);
 
@@ -94,43 +87,29 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
 
-    // Validate image input field (check if it's valid and has 3 or fewer files)
     if (!validateImageInput()) {
       isValid = false;
     }
 
-    // If any field is invalid, reset the flag and stop further processing
     if (!isValid) {
       isSubmitting = false;
       return;
     }
 
-    // Collect cropped images data
     const croppedImages = [];
     document.querySelectorAll(".cropped-image-input").forEach((input) => {
       croppedImages.push(input.value);
     });
 
-    console.log("Cropped Images before stringyfying:", croppedImages);
-
-    // Proceed with form submission if all fields are valid
     try {
       const formData = new FormData(form);
-
-      // Append cropped images to formData as a JSON string
 
       croppedImages.forEach((image, index) => {
         formData.append(`cropped_images[${index}]`, image);
       });
 
-      // Debug FormData to check values
-      for (let pair of formData.entries()) {
-        console.log(pair[0], pair[1]);
-      }
-
       const response = await axios.post("/admin/add-products", formData);
 
-      // Create alert container
       const alertText = document.getElementById("alert-text");
 
       if (response.data.success) {
@@ -149,7 +128,6 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     } catch (error) {
       const alertText = document.getElementById("alert-text");
-      console.error("Error submitting form:", error);
       alertBox.classList.remove("d-none", "alert-success");
       alertBox.classList.add("alert-warning");
       alertText.innerText =
@@ -157,11 +135,10 @@ document.addEventListener("DOMContentLoaded", () => {
           ? error.response.data.message
           : "Something went wrong while submitting the form!";
     } finally {
-      isSubmitting = false; // Reset the flag after submission is complete
+      isSubmitting = false;
     }
   });
 
-  // Remove error on input change
   requiredFields.forEach((fieldId) => {
     const field = document.getElementById(fieldId);
     field.addEventListener("input", () => {
