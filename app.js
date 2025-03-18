@@ -84,4 +84,6 @@ app.use("/", googleAuthRoutes);
 app.use(invalidURL);
 app.use(errorHandler);
 
-app.listen(PORT);
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
+});
