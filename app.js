@@ -25,7 +25,7 @@ const {
   errorHandler,
 } = require("./middleware/main/errorHandlingMiddleware.js");
 
-const PORT = process.env.PORT;
+const PORT = process.env.PORT || 3000;
 const app = express();
 
 // middlewares
