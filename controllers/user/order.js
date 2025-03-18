@@ -946,7 +946,6 @@ const downloadInvoice = async (req, res) => {
     });
     return res.end(pdfBuffer, "binary");
   } catch (err) {
-    console.error("PDF Generation Error:", err);
     return res.status(500).render("utils/userErrorPage", {
       statusCode: 500,
       message: "Server error!",
