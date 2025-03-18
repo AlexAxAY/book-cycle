@@ -4,7 +4,6 @@ const { logout } = require("../controllers/user/userAuth");
 
 const router = express.Router();
 
-// Route to initiate Google OAuth login
 router.get(
   "/auth/google",
   passport.authenticate("google", { scope: ["profile", "email"] })
@@ -23,7 +22,6 @@ router.get(
   }
 );
 
-// logout for google auth
 router.get("/logout", logout);
 
 module.exports = router;

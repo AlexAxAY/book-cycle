@@ -32,7 +32,6 @@ const register = async (req, res) => {
   try {
     const { name, email, password, confirmPassword, referralCode } = req.body;
 
-    // Validate required fields
     if (!name || !email || !password || !confirmPassword) {
       return res
         .status(400)
@@ -52,7 +51,6 @@ const register = async (req, res) => {
         .json({ success: false, message: "User already exists." });
     }
 
-    // Hash password
     const hashedPassword = await bcrypt.hash(password, 12);
 
     const newUser = new User({
